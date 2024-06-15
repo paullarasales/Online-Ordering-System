@@ -144,6 +144,7 @@ class AdminController extends Controller
         if ($request->input('action') === 'verify') {
             $image->update(['verified' => true]);
         } else {
+            
         }
 
         // Redirect back or return a response

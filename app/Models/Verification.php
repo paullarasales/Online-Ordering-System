@@ -11,7 +11,6 @@ class Verification extends Model
 
     protected $fillable = [
         'valid_id1',
-        'valid_id2',
         'verified'
     ];
 
