@@ -36,10 +36,8 @@ class UserController extends Controller
 
     public function verify(Request $request)
     {
-        // dd($request->all());
         $request->validate([
             'valid_id1' => 'required|image|mimes:jpg,png,jpeg|max:2048',
-            'valid_id2' => 'required|image|mimes:jpg,png,jpeg|max:2048'
         ]);
 
         $user = Auth::user();
@@ -47,18 +45,20 @@ class UserController extends Controller
         $validId = new Verification;
         $validId->user_id = $user->id;
 
-        if ($request->hasFile('valid_id1') && $request->hasFile('valid_id2')) {
-            $file1 = $request->file('valid_id1');
-            $file2 = $request->file('valid_id2');
+        $existingVerification = Verification::where('user_id', $user->id)->first();
 
-            $filename1 = time() . '_1.' . $file1->getClientOriginalExtension();
-            $filename2 = time() . '_2.' . $file2->getClientOriginalExtension();
+        if ($existingVerification && !$existingVerification->verified) {
+            return redirect()->route('verify.message')->with('status', 'Please wait while we verifying your account thankyou');
+        }
 
-            $path1 = $file1->storeAs('verifications', $filename1, 'public');
-            $path2 = $file2->storeAs('verifications', $filename2, 'public');
+        if ($request->hasFile('valid_id1')) {
+            $file = $request->file('valid_id1');
+            
+            $filename = time() . '_1.' . $file->getClientOriginalExtension();
 
-            $validId->valid_id1 = $path1;
-            $validId->valid_id2 = $path2;
+            $path = $file->storeAs('verifications', $filename, 'public');
+
+            $validId->valid_id1 = $path;
         }
 
         $validId->save();
@@ -87,7 +87,7 @@ class UserController extends Controller
         $cart = Cart::firstOrCreate(['user_id' => $userId]);
 
         $verification = Verification::where('user_id', $userId)->first();
-        // dd($verification);
+        
         if (!$verification || !$verification->verified) {
             return redirect()->route('verify.form')->with('error', 'Please verify your account first');
         }

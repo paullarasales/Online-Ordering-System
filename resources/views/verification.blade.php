@@ -11,24 +11,20 @@
                 </a>
             </div>
            
-            
             @if($userVerification && $userVerification->verified)
                 <p class="text-green-500">Your account is verified.</p>
-
+            @elseif($userVerification && !$userVerification->verified)
+                <p class="text-blue-500">Please wait while we verify your account.</p>
             @else
                 <p class="text-red-500">Your account is not verified. Please upload two valid IDs.</p>
                 <form action="{{ route('verify.upload')}}" method="POST" enctype="multipart/form-data" class="mt-4" id="verificationForm">
-                    @csrf <!-- CSRF token -->
+                    @csrf
                     
                     <label for="valid_id1" class="block mb-2">Upload ID 1:</label>
                     <input type="file" id="valid_id1" name="valid_id1" accept="image/*" required onchange="previewImage(this, 'preview1')" class="border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:border-blue-500">
                     <img id="preview1" class="hidden w-32 h-32 object-cover rounded-lg" alt="ID 1 Preview">
                     
-                    <label for="valid_id2" class="block mb-2">Upload ID 2:</label>
-                    <input type="file" id="valid_id2" name="valid_id2" accept="image/*" required onchange="previewImage(this, 'preview2')" class="border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:outline-none focus:border-blue-500">
-                    <img id="preview2" class="hidden w-32 h-32 object-cover rounded-lg" alt="ID 2 Preview">
-                    
-                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">Submit</button>
+                    <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200" id="submitBtn">Submit</button>
                 </form>
             @endif
         </div>
@@ -48,5 +44,10 @@
                 reader.readAsDataURL(file);
             }
         }
+        
+        // Disable form submission after the first submission
+        document.getElementById('verificationForm').addEventListener('submit', function() {
+            document.getElementById('submitBtn').disabled = true;
+        });
     </script>
 </x-app-layout>
