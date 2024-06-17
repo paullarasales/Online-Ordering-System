@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuinate\Support\Facades\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Product;
 use App\Models\Category;
@@ -23,7 +22,15 @@ class AdminController extends Controller
          // Fetch customers along with their verification information
         $customers = User::where('usertype', 'user')->with('verification')->get();
 
-        return view('admin.customer', compact('customers'));
+        $verifiedUsers = $customers->filter(function ($customer) {
+            return $customer->verification && $customer->verification->verified;
+        });
+
+        $notVerifiedUsers = $customers->filter(function ($customer) {
+            return !$customer->verification || !$customer->verification->verified;
+        });
+
+        return view('admin.customer', compact('verifiedUsers', 'notVerifiedUsers'));
     }
 
 
