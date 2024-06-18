@@ -36,6 +36,7 @@ class UserController extends Controller
 
     public function verify(Request $request)
     {
+        // dd($request->all());
         $request->validate([
             'valid_id1' => 'required|image|mimes:jpg,png,jpeg|max:2048',
         ]);
@@ -54,7 +55,7 @@ class UserController extends Controller
         if ($request->hasFile('valid_id1')) {
             $file = $request->file('valid_id1');
             
-            $filename = time() . '_1.' . $file->getClientOriginalExtension();
+            $filename = time() . '.' . $file->getClientOriginalExtension();
 
             $path = $file->storeAs('verifications', $filename, 'public');
 
@@ -111,7 +112,6 @@ class UserController extends Controller
 
     public function updateQuantity(Request $request, $cartItemId)
     {
-        // Validate the request data
         $request->validate([
             'quantity' => 'required|integer|min:1',
         ]);
