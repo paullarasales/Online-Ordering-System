@@ -30,7 +30,6 @@ class UserController extends Controller
     {
 
         $userVerification = Verification::where('user_id', auth()->id())->first();
-        // dd($user);
         return view('verification', compact('userVerification'));
     }
 

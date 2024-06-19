@@ -31,6 +31,7 @@ Route::middleware('auth')->group(function (){
     Route::post('/create-order', [UserController::class, 'createOrder'])->name('createOrder');
     Route::post('/updateQuantity/cart/{cartItemId}', [UserController::class, 'updateQuantity'])->name('updateQuantity');
     Route::get('/thankyou/{orderId}', [UserController::class, 'thankyou'])->name('thankyou');
+    Route::get('/view/order', [UserController::class, 'view-order'])->name('view-order');
     Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile')->middleware(['auth', 'verified']);
 });
 
@@ -66,7 +67,7 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
-    
+
 
 Route::get('/email/verify', function () {
     return view('auth.verify-email');
