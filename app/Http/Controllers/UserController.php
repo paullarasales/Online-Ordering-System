@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Verification;
 use App\Models\Product;
@@ -192,6 +191,17 @@ class UserController extends Controller
 
             return redirect()->route('home')->with('error', 'Order not found.');
         }
+    }
+
+    public function viewOrder() {
+
+        $userId = auth()->id();
+
+        $orders = Order::where('user_id', $userId)
+                    ->with('items.product')
+                    ->get();
+
+        return view('myorder', compact('orders'));
     }
     
 }
