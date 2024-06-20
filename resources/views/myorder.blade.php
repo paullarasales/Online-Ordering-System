@@ -25,6 +25,9 @@
                                     <th scope="col" class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Quantity
                                     </th>
+                                    <th scope="col" class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                        Total
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -39,16 +42,24 @@
                                         <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             {{ $item->quantity }}
                                         </td>
+                                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                            ₱{{ number_format($item->quantity * $item->product->price, 2) }}
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="3" class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
+                                        <td colspan="4" class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                                             No items found for this order.
                                         </td>
                                     </tr>
                                 @endforelse
+
                             </tbody>
                         </table>
+
+                        @if ($order->status === 'delivered')
+                            <button class="cancel-order-btn bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded mt-4">Cancel Order</button>
+                        @endif
                     </div>
                 @empty
                     <div class="mb-8">
@@ -73,13 +84,44 @@
                         if (xhr.readyState === 4 && xhr.status === 200) {
                             let response = JSON.parse(xhr.responseText);
                             container.querySelector('.order-status').textContent = response.status;
+
+                            // Display total amount
+                            container.querySelector('.order-total').textContent = '$' + response.total_amount.toFixed(2);
+
+                            // Enable cancellation button if status is 'delivered'
+                            if (response.status.toLowerCase() === 'delivered') {
+                                let cancelBtn = container.querySelector('.cancel-order-btn');
+                                if (cancelBtn) {
+                                    cancelBtn.disabled = false;
+                                }
+                            }
                         }
                     }
 
                     xhr.send();
                 });
             }
-            setInterval(fetchOrderStatus, 5000)
-        })
+
+            // Handle cancellation button click
+            document.addEventListener('click', function(event) {
+                if (event.target.classList.contains('cancel-order-btn')) {
+                    let orderId = event.target.closest('.order-container').dataset.orderId;
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('POST', `/order/${orderId}/cancel`, true);
+                    xhr.setRequestHeader('Content-Type', 'application/json');
+
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            // Optionally update UI or show a confirmation message
+                            console.log('Order cancelled successfully.');
+                        }
+                    }
+
+                    xhr.send(JSON.stringify({ orderId: orderId }));
+                }
+            });
+
+            setInterval(fetchOrderStatus, 5000);
+        });
     </script>
 </x-app-layout>
