@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function (){
     Route::get('/thankyou/{orderId}', [UserController::class, 'thankyou'])->name('thankyou');
     Route::get('/view/order', [UserController::class, 'viewOrder'])->name('view.order');
     Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile')->middleware(['auth', 'verified']);
+    Route::get('/order/{order}/status', [UserController::class, 'fetchOrderStatus'])->name('fetchOrderStatus');
 });
 
 Route::get('/dashboard', [AdminController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard')->middleware('admin');
@@ -47,6 +48,7 @@ Route::post('/profile/update/{id}',  [ProfileUpdate::class, 'update'])->name('pr
 Route::get('/admin/view/{userId}', [AdminController::class, 'viewUserImages'])->name('admin.view')->middleware('admin');
 Route::post('/verify/image', [AdminController::class, 'verifyImage'])->name('verify.image')->middleware('admin');
 Route::get('/admin/orders/{orderId}', [AdminController::class, 'show'])->name('admin.order.details')->middleware('admin');
+Route::patch('admin/order/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.updateOrderStatus');
 
 
 Route::post('Product-add', [ProductController::class, 'addProduct'])->name('products.store')->middleware('admin');

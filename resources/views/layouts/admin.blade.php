@@ -18,6 +18,9 @@
     <!-- Include Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+
     <style>
         body {
             font-family: 'Poppins', sans-serif;
@@ -185,5 +188,7 @@
             </div>
         </main>
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>

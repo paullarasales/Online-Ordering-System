@@ -157,4 +157,17 @@ class AdminController extends Controller
         // Redirect back or return a response
         return redirect()->back()->with('success', 'Image verification status updated successfully.');
     }
+
+    public function updateOrderStatus(Request $request, $orderId)
+    {
+        $request->validate([
+            'status' => 'required|in:processing,on deliver'
+        ]);
+
+        $order = Order::findOrFail($orderId);
+        $order->status = $request->status;
+        $order->save();
+
+        return response()->json(['success' => 'Order status updated successfully']);
+    }
 }

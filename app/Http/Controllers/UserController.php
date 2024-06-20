@@ -203,5 +203,9 @@ class UserController extends Controller
 
         return view('myorder', compact('orders'));
     }
-    
+
+    public function fetchOrderStatus($orderId) {
+        $order = Order::findOrFail($orderId);
+        return response()->json(['status' => ucfirst($order->status)]);
+    }
 }

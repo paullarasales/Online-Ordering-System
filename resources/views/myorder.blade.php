@@ -9,11 +9,9 @@
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
                 @forelse ($orders as $order)
-                    <div class="mb-8">
-                        <h3 class="font-semibold text-lg">{{ __('Order ID: ') }}{{ $order->id }}</h3>
+                    <div class="mb-8 order-container" data-order-id="{{ $order->id }}">
                         <p>{{ __('Order Date: ') }}{{ $order->created_at->format('Y-m-d') }}</p>
-                        <p>{{ __('Status: ') }}{{ $order->status }}</p>
-                        <p>{{ __('Total: ') }}${{ number_format($order->total, 2) }}</p>
+                        <p>{{ __('Status: ') }}<span class="order-status">{{ ucfirst($order->status) }}</span></p> <!-- Display status -->
 
                         <table class="min-w-full leading-normal mt-4">
                             <thead>
@@ -60,4 +58,28 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            function fetchOrderStatus() {
+                let orderContainers = document.querySelectorAll('.order-container');
+
+                orderContainers.forEach(function(container) {
+                    let orderId = container.dataset.orderId;
+                    let xhr = new XMLHttpRequest();
+                    xhr.open('GET', `/order/${orderId}/status`, true);
+
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4 && xhr.status === 200) {
+                            let response = JSON.parse(xhr.responseText);
+                            container.querySelector('.order-status').textContent = response.status;
+                        }
+                    }
+
+                    xhr.send();
+                });
+            }
+            setInterval(fetchOrderStatus, 5000)
+        })
+    </script>
 </x-app-layout>
