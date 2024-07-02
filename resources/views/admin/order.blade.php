@@ -7,7 +7,7 @@
                 <thead class="bg-gray-50">
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User ID</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Name</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Method</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -18,7 +18,7 @@
                     @foreach ($orders as $order)
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->id }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ $order->user_id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $order->user->name }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->address }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->payment_method }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -63,7 +63,7 @@
                         } else if (xhr.readyState === 4) {
                             Swal.fire({
                                 title: 'Error!',
-                                text: 'An Error Occured while updating the order status.',
+                                text: 'An error occurred while updating the order status.',
                                 icon: 'error',
                                 confirmButtonText: 'OK',
                             });

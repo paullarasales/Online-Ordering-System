@@ -26,6 +26,11 @@
             <input type="text" name="address" id="address" class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
         </div>
 
+        <div class="mb-4">
+            <label for="contactno" class="block text-sm font-medium text-gray-700">Contact Number</label>
+            <input type="text" name="contactno" id="contactno" class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+        </div>
+
         <!-- Method of payment -->
         <div class="mb-4">
             <label for="payment_method" class="block text-sm font-medium text-gray-700">Payment Method</label>

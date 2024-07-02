@@ -156,6 +156,7 @@ class UserController extends Controller
         $order = new Order();
         $order->user_id = auth()->id();
         $order->address = $request->input('address');
+        $order->contactno = $request->input('contactno');
         $order->payment_method = $request->input('payment_method');
         $order->save();
 

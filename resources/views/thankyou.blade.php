@@ -5,7 +5,6 @@
         <!-- Display order details -->
         <h2 class="text-xl font-semibold mb-2">Order Details</h2>
         <p><strong>Order ID:</strong> {{ $order->id }}</p>
-        <p><strong>User ID:</strong> {{ $order->user_id }}</p>
         <p><strong>Address:</strong> {{ $order->address }}</p>
         <p><strong>Payment Method:</strong> {{ $order->payment_method }}</p>
 

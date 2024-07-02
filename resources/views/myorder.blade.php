@@ -20,7 +20,7 @@
                                         Product
                                     </th>
                                     <th scope="col" class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Image
+                                        
                                     </th>
                                     <th scope="col" class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
                                         Quantity
@@ -57,7 +57,7 @@
                             </tbody>
                         </table>
 
-                        @if ($order->status === 'delivered')
+                        @if ($order->status === 'Processing')
                             <button class="cancel-order-btn bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded mt-4">Cancel Order</button>
                         @endif
                     </div>
