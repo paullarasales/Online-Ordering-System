@@ -4,7 +4,6 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
-use App\View\Components\AdminLayout;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
@@ -34,6 +33,7 @@ Route::middleware('auth')->group(function (){
     Route::get('/view/order', [UserController::class, 'viewOrder'])->name('view.order');
     Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile')->middleware(['auth', 'verified']);
     Route::get('/order/{order}/status', [UserController::class, 'fetchOrderStatus'])->name('fetchOrderStatus');
+    Route::post('/order/{order}/cancel', [UserController::class, 'cancelOrder'])->name('order.cancel');
 });
 
 Route::get('/dashboard', [AdminController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard')->middleware('admin');
@@ -48,7 +48,7 @@ Route::post('/profile/update/{id}',  [ProfileUpdate::class, 'update'])->name('pr
 Route::get('/admin/view/{userId}', [AdminController::class, 'viewUserImages'])->name('admin.view')->middleware('admin');
 Route::post('/verify/image', [AdminController::class, 'verifyImage'])->name('verify.image')->middleware('admin');
 Route::get('/admin/orders/{orderId}', [AdminController::class, 'show'])->name('admin.order.details')->middleware('admin');
-Route::patch('admin/order/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.updateOrderStatus');
+Route::patch('/admin/order/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.updateOrderStatus');
 
 
 Route::post('Product-add', [ProductController::class, 'addProduct'])->name('products.store')->middleware('admin');

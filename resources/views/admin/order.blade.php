@@ -8,6 +8,7 @@
                     <tr>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">User Name</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Number</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Address</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment Method</th>
                         <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -19,12 +20,15 @@
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->user->name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $order->contactno}}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->address }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->payment_method }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <select name="status" id="status-{{ $order->id }}" data-order-id="{{ $order->id }}" class="status-dropdown">
                                     <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
                                     <option value="on deliver" {{ $order->status == 'on deliver' ? 'selected' : '' }}>On Deliver</option>
+                                    <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : ''}}>Cancelled</option>
                                 </select>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">

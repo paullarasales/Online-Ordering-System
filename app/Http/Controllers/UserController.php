@@ -207,6 +207,20 @@ class UserController extends Controller
 
     public function fetchOrderStatus($orderId) {
         $order = Order::findOrFail($orderId);
-        return response()->json(['status' => ucfirst($order->status)]);
+
+        // Calculate total amount
+        $totalAmount = $order->items->sum(function($item) {
+            return $item->quantity * $item->product->price;
+        });
+    
+        return response()->json(['status' => $order->status, 'total_amount' => $totalAmount]);
+    }
+    
+    public function cancelOrder(Order $order) {
+        if (strcasecmp($order->status, 'processing') === 0) {
+            $order->status = 'Cancelled';
+            $order->save();
+        }
+        return response()->json(['status' =>  $order->status]);
     }
 }
