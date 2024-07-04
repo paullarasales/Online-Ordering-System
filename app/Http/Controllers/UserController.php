@@ -15,21 +15,21 @@ class UserController extends Controller
     public function index()
     {
         $products = Product::paginate(8);
-        return view('dashboard', compact('products'));
+        return view('customer.dashboard', compact('products'));
     }
 
     public function profile()
     {
         $user = Auth::user();
 
-        return view('profile', compact('user'));
+        return view('customer.profile', compact('user'));
     }
 
     public function verifyAccountForm()
     {
 
         $userVerification = Verification::where('user_id', auth()->id())->first();
-        return view('verification', compact('userVerification'));
+        return view('customer.verification', compact('userVerification'));
     }
 
     public function verify(Request $request)
@@ -67,7 +67,7 @@ class UserController extends Controller
 
     public function verifyMessage()
     {
-        return view('verification-message');
+        return view('customer.verification-message');
     }
 
     public function addToCartPage()
@@ -76,7 +76,7 @@ class UserController extends Controller
         $cart = Cart::firstOrCreate(['user_id' => $userId]);
         $cartItems = $cart->items()->with('product')->get();
 
-        return view('cart', compact('cartItems'));
+        return view('customer.cart', compact('cartItems'));
     }
 
     public function addToCart($productId)
@@ -143,12 +143,11 @@ class UserController extends Controller
 
         $paymentMethod = 'Cash On Delivery';
 
-        return view('confirmation', compact('cartItems', 'totalPrice', 'paymentMethod'));
+        return view('customer.confirmation', compact('cartItems', 'totalPrice', 'paymentMethod'));
     }
 
     public function createOrder(Request $request)
     {
-        // dd($request->all());
         // Fetch cart items from the request
         $cartItemsData = $request->input('cartItems');
 
@@ -185,9 +184,7 @@ class UserController extends Controller
 
                 $item->product = Product::find($item->product_id);
             }
-
-            // Pass the order object to the view
-            return view('thankyou', compact('order'));
+            return view('customer.thankyou', compact('order'));
         } else {
 
             return redirect()->route('home')->with('error', 'Order not found.');
@@ -202,7 +199,7 @@ class UserController extends Controller
                     ->with('items.product')
                     ->get();
 
-        return view('myorder', compact('orders'));
+        return view('customer.myorder', compact('orders'));
     }
 
     public function fetchOrderStatus($orderId) {
@@ -216,9 +213,9 @@ class UserController extends Controller
         return response()->json(['status' => $order->status, 'total_amount' => $totalAmount]);
     }
     
-    public function cancelOrder(Order $order) {
+    public function cancelOrder(Request $request, Order $order) {
         if (strcasecmp($order->status, 'processing') === 0) {
-            $order->status = 'Cancelled';
+            $order->status = 'cancelled';
             $order->save();
         }
         return response()->json(['status' =>  $order->status]);

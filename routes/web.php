@@ -51,6 +51,7 @@ Route::get('/admin/orders/{orderId}', [AdminController::class, 'show'])->name('a
 Route::patch('/admin/order/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.updateOrderStatus');
 
 
+
 Route::post('Product-add', [ProductController::class, 'addProduct'])->name('products.store')->middleware('admin');
 Route::get('Product-update/{id}/edit', [AdminController::class, 'edit'])->name('update-view')->middleware('admin');
 Route::delete('Product-delete/{id}/detete', [ProductController::class, 'destroy'])->name('product.destroy')->middleware('admin');
