@@ -158,26 +158,45 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Image verification status updated successfully.');
     }
 
-    public function updateStatus(Request $request, $orderId)
+    public function updateStatus(Request $request)
     {
-        $request->validate([
-            'status' => 'required|in:processing,on deliver,delivered,cancelled'
-        ]);
-        
-        $order = Order::findOrFail($orderId);
-        $order->status = $request->status; // Update the status
-    
-        // Additional validation or checks if needed
-      
-    
-        $order->save();
-    
-        return response()->json([
-            'status' => $order->status,
-            'message' => 'Order status updated successfully.',
-        ]);
-    }
-    
-    
+        $orderId = $request->input('order_id');
+        $status = $request->input('status');
 
+        $order = Order::find($orderId);
+        if ($order) {
+            $order->status = $status;
+            $order->save();
+            return response()->json(['success' => true]);
+        } else {
+            return response()->json(['success' => false, 'message' => 'Order not found'], 404);
+        }
+    }
+
+   public function fetchOrdersAndNotify()
+    {
+        $orders = Order::all();
+
+        $newOrders = Order::where('notified', false)->get();
+
+        foreach ($newOrders as $order) {
+            $order->notified = true;
+            $order->save();
+        }
+    
+        
+        return view('admin.notification', compact('newOrders', 'orders'));
+    }
+
+    public function fetchNewOrders()
+    {
+        $newOrders = Order::where('notified', false)->get();
+
+        foreach ($newOrders as $order) {
+            $order->notified = true;
+            $order->save();
+        }
+
+        return response()->json(['newOrders' => $newOrders]);
+    }
 }

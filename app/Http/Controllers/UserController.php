@@ -157,6 +157,7 @@ class UserController extends Controller
         $order->address = $request->input('address');
         $order->contactno = $request->input('contactno');
         $order->payment_method = $request->input('payment_method');
+        $order->notified = false;
         $order->save();
 
         foreach ($cartItemsData as $cartItemId => $cartItemData) {
@@ -216,6 +217,7 @@ class UserController extends Controller
     public function cancelOrder(Request $request, Order $order) {
         if (strcasecmp($order->status, 'processing') === 0) {
             $order->status = 'cancelled';
+            $order->notified = false;
             $order->save();
         }
         return response()->json(['status' =>  $order->status]);

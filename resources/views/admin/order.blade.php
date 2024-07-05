@@ -20,7 +20,7 @@
                         <tr>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->id }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->user->name }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ $order->contactno}}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $order->contactno }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->address }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->payment_method }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -28,7 +28,7 @@
                                     <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
                                     <option value="on deliver" {{ $order->status == 'on deliver' ? 'selected' : '' }}>On Deliver</option>
                                     <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : ''}}>Cancelled</option>
+                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                 </select>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -44,36 +44,37 @@
     @endif
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let dropdowns = document.querySelectorAll('.status-dropdown');
+        document.addEventListener('DOMContentLoaded', function () {
+            const statusDropdowns = document.querySelectorAll('.status-dropdown');
 
-            dropdowns.forEach(function(dropdown) {
-                dropdown.addEventListener('change', function() {
-                    let orderId = this.dataset.orderId;
-                    let status = this.value;
-                    let xhr = new XMLHttpRequest();
-                    xhr.open('PATCH', `/admin/order/${orderId}/status`, true);
-                    xhr.setRequestHeader('Content-Type', 'application/json');
-                    xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+            statusDropdowns.forEach(dropdown => {
+                dropdown.addEventListener('change', function () {
+                    const orderId = this.getAttribute('data-order-id');
+                    const status = this.value;
 
-                    xhr.onreadystatechange = function () {
-                        if (xhr.readyState === 4 && xhr.status === 200) {
-                            Swal.fire({
-                                title: 'Success!',
-                                text: 'Order status updated successfully.',
-                                icon: 'success',
-                                confirmButtonText: 'OK'
-                            });
-                        } else if (xhr.readyState === 4) {
-                            Swal.fire({
-                                title: 'Error!',
-                                text: 'An error occurred while updating the order status.',
-                                icon: 'error',
-                                confirmButtonText: 'OK',
-                            });
+                    fetch("{{ route('admin.orders.updateStatus') }}", {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            order_id: orderId,
+                            status: status
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert('Status updated successfully');
+                        } else {
+                            alert('Failed to update status: ' + data.message);
                         }
-                    }
-                    xhr.send(JSON.stringify({ status: status }));
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while updating the status');
+                    });
                 });
             });
         });

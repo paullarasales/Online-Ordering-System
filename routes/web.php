@@ -48,8 +48,9 @@ Route::post('/profile/update/{id}',  [ProfileUpdate::class, 'update'])->name('pr
 Route::get('/admin/view/{userId}', [AdminController::class, 'viewUserImages'])->name('admin.view')->middleware('admin');
 Route::post('/verify/image', [AdminController::class, 'verifyImage'])->name('verify.image')->middleware('admin');
 Route::get('/admin/orders/{orderId}', [AdminController::class, 'show'])->name('admin.order.details')->middleware('admin');
-Route::patch('/admin/order/{order}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.updateOrderStatus');
-
+Route::post('/admin/orders/update-status', [AdminController::class, 'updateStatus'])->name('admin.orders.updateStatus');
+Route::get('/admin/fetch-all-orders', [AdminController::class, 'fetchOrdersAndNotify'])->name('admin.newOrders');
+Route::get('/admin/fetch-new-orders', [AdminController::class, 'fetchNewOrders'])->name('admin.fetchNewOrders');    
 
 
 Route::post('Product-add', [ProductController::class, 'addProduct'])->name('products.store')->middleware('admin');

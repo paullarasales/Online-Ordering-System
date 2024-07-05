@@ -109,6 +109,16 @@
                             {{ __('Profile')}}
                         </x-side-nav-link>
                     </div>
+
+                    <div class="{{ request()->routeIs('admin.newOrders') ? 'bg-gray-200 w-full' : 'w-44' }} flex items-center gap-2 rounded-sm h-12">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ request()->routeIs('admin.newOrders') ? '#8B5CF6' : '#000000'}}" viewBox="0 0 24 24" stroke-width="1.5" class="ml-10 w-6 h-6">
+                            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
+                        </svg>
+                                              
+                        <x-side-nav-link href="{{ route('admin.newOrders') }}" :active="request()->routeIs('admin.newOrders')" class="text-xl text-black font-medium mt-1 flex items-center w-full">
+                            {{ __('Notifaction')}}
+                        </x-side-nav-link>
+                    </div>
                 </nav>
             </aside>
            <!-- Main -->
