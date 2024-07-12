@@ -38,11 +38,18 @@
             <aside :class="{ '-translate-x-full': !open }" class="z-10 bg-white text-black w-64 px-2 py-4 absolute inset-y-0 left-0 md:relative transform md:translate-x-0 transition ease-in-out duration-200">
                 <!-- Logo -->
                 <div class="flex items-center justify-between">
-                    <div class="flex flex-col items-center space-y-2 w-full">
+                    <div class="flex flex-row items-start space-y-2 w-full">
                         <header>
-                            <a href="#your-link-here" class="flex items-center justify-center flex-col">
-                                <img src="{{ asset('logo/no-bg.png')}}" alt="" class="h-32 w-32">
-                                <p class="text-lg md:text-md font-semibold tracking-md">Twenty Four Twenty One</p>
+                            <a href="#your-link-here" class="flex items-center justify-center flex-row">
+                                <img src="{{ asset('logo/no-bg.png')}}" alt="" class="h-20 w-20">
+                                <div class="flex flex-col">
+                                    <div>
+                                        <h1 class="font-md text-xl">Twenty Four</h1>
+                                    </div>
+                                    <div class="ml-4">
+                                        <h1 class="font-md text-xl">Twenty One</h1>
+                                    </div>
+                                </div>
                             </a>
                         </header>
                     </div>
@@ -54,12 +61,12 @@
                     </button>
                 </div>
 
-                <nav class="flex flex-col mt-3 p-3 gap-3 w-full">
+                <nav class="flex flex-col mt-10 p-3 gap-3 w-full">
                     <div class="{{ request()->routeIs('dashboard') ? 'bg-gray-200 w-full text-2xl font-md' : 'w-44' }} flex items-center gap-2 rounded-sm h-12">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="{{ request()->routeIs('dashboard') ? '#8B5CF6' : '#000000' }}" viewBox="0 0 24 24" stroke-width="1.5" class="ml-10 w-9 h-9">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
                         </svg>
-                        <x-side-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" class="text-lg text-black font-medium mt-1 flex items-center">
+                        <x-side-nav-link href="{{ route('dashboard') }}" :active="request()->routeIs('dashboard')" class="text-lg text-black font-medium mt-1 flex items-start">
                             {{ __('Dashboard')}}
                         </x-side-nav-link>
                     </div>                    
@@ -78,7 +85,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
                         </svg>
                         <x-side-nav-link href="{{ route('order') }}" :active="request()->routeIs('order')" class="text-lg text-black font-medium mt-1 flex items-center w-full">
-                            {{ __('Orders')}}
+                            {{ __('Order List')}}
                         </x-side-nav-link>
                     </div>
 
@@ -87,7 +94,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
                         </svg>      
                         <x-side-nav-link href="{{ route('message') }}" :active="request()->routeIs('message')" class="text-lg text-black font-medium mt-1 flex items-center w-full">
-                            {{ __('Messages')}}
+                            {{ __('Chats')}}
                         </x-side-nav-link>
                     </div>
 
@@ -147,9 +154,9 @@
                                             @if(Auth::user()->photo)
                                             <img class="w-9 h-9 rounded-full ml-2" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">
                                             @endif
-                                            <div class="flex flex-col items-center justify-center">
+                                            {{-- <div class="flex flex-col items-center justify-center">
                                                 <p class="text-gray-800 font-medium">{{ Auth::user()->name }}</p>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="ms-1 mt-1">
                                             <svg class="fill-current h-7 w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">

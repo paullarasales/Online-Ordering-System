@@ -16,6 +16,7 @@
                             <div class="border-t border-gray-200 py-4">
                                 <p class="text-lg">{{ $order->user->name }} placed an order:</p>
                                 <p class="mt-2">Order ID: {{ $order->id }}</p>
+                                <p>{{ $order->status}}</p>
                             </div>
                         @endforeach
                     </div>
@@ -27,6 +28,7 @@
                             <div class="border-t border-gray-200 py-4">
                                 <p class="text-lg">{{ $order->user->name }} placed an order:</p>
                                 <p class="mt-2">Order ID: {{ $order->id }}</p>
+                                <p>{{ $order->status}}</p>
                             </div>
                         @endforeach
                     </div>
@@ -49,12 +51,14 @@
                         data.newOrders.reverse().forEach(order => {
                             const orderHtml = `
                                 <div class="border-t border-gray-200 py-4">
-                                    <p class="text-lg">${order.customer_name} placed an order:</p>
+                                    <p class="text-lg">${order.user.name} placed an order:</p>
                                     <p class="mt-2">Order ID: ${order.id}</p>
                                 </div>
                             `;
                             newOrdersContainer.insertAdjacentHTML('beforeend', orderHtml);
                         });
+
+                        alert('New Order');
                     }
                 } catch (error) {
                     console.error('Error fetching new orders:', error);

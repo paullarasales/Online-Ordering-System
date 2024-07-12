@@ -191,12 +191,12 @@ class AdminController extends Controller
     public function fetchNewOrders()
     {
         $newOrders = Order::where('notified', false)->get();
-
+    
         foreach ($newOrders as $order) {
             $order->notified = true;
             $order->save();
         }
-
+    
         return response()->json(['newOrders' => $newOrders]);
     }
 }

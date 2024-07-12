@@ -4,34 +4,48 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileUpdate extends Controller
 {
-    public function update(Request $request){
-        // dd($request->all());
+    public function update(Request $request)
+    {
         $user = Auth::user();
 
+        // Validate the incoming request data
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|max:255|unique:users,email, '.$user->id,
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg.gif|max:2048'
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
-        $user->name = $request->name;
-        $user->email = $request->email;
+        // Prepare the data to update
+        $data = [
+            'name' => $request->name,
+            'email' => $request->email
+        ];
 
-        if($request->hasFile('photo')) {
+        // Handle the photo upload if present
+        if ($request->hasFile('photo')) {
             $imagePath = $request->file('photo')->store('profile', 'public');
-            $user->photo = $imagePath;
+            $data['photo'] = $imagePath;
+
+            // Delete old photo if exists
+            if ($user->photo) {
+                Storage::disk('public')->delete($user->photo);
+            }
         }
 
-        $user->save();
+        // Update user information using query builder
+        DB::table('users')->where('id', $user->id)->update($data);
 
+        // Redirect back with a success message
         return redirect()->back()->with('success', 'Profile updated');
     }
 
-    public function destroy() {
-
+    public function destroy()
+    {
+        // Code for destroying profile if needed
     }
 }

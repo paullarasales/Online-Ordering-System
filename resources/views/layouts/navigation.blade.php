@@ -46,7 +46,7 @@
 
                                     <div>
                                         <x-side-nav-link href="{{ route('view.order') }}" :active="request()->routeIs('view.order')" class="text-xl text-black font-medium mt-1 flex items-center w-full" id="cart-link">
-                                           My Order
+                                           Track My Order
                                         </x-side-nav-link>
                                     </div>
                                 </div>
