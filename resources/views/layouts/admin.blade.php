@@ -40,14 +40,14 @@
                 <div class="flex items-center justify-between">
                     <div class="flex flex-row items-start space-y-2 w-full">
                         <header>
-                            <a href="#your-link-here" class="flex items-center justify-center flex-row">
+                            <a href="{{ route('dashboard') }}" class="flex items-center justify-center flex-row">
                                 <img src="{{ asset('logo/no-bg.png')}}" alt="" class="h-20 w-20">
                                 <div class="flex flex-col">
                                     <div>
-                                        <h1 class="font-md text-xl">Twenty Four</h1>
+                                        <h1 class="font-md text-2xl">Twenty Four</h1>
                                     </div>
                                     <div class="ml-4">
-                                        <h1 class="font-md text-xl">Twenty One</h1>
+                                        <h1 class="font-md text-2xl">Twenty One</h1>
                                     </div>
                                 </div>
                             </a>
@@ -128,7 +128,7 @@
                     </div>
                 </nav>
             </aside>
-           <!-- Main -->
+        <!-- Main -->
         <main class="flex-1 h-screen w-full overflow-y-auto rounded-l-md">
             <!-- Top Navigation -->
             <nav class="">
@@ -143,7 +143,7 @@
                         </div>
 
                         <div>
-                            <h1 class="text-2xl font-medium">Welcome Back Admin</h1>
+                            <h1 class="text-2xl font-medium">Welcome Back {{ Auth::user()->name }}</h1>
                         </div>
                         <!-- User Dropdown -->
                         <div class="sm:flex flex items-center justify-center sm:items-center absolute inset-y-0 right-0">

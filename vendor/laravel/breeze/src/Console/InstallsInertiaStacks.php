@@ -61,6 +61,8 @@ trait InstallsInertiaStacks
         // Views...
         copy(__DIR__.'/../../stubs/inertia-vue/resources/views/app.blade.php', resource_path('views/app.blade.php'));
 
+        @unlink(resource_path('views/welcome.blade.php'));
+
         // Components + Pages...
         (new Filesystem)->ensureDirectoryExists(resource_path('js/Components'));
         (new Filesystem)->ensureDirectoryExists(resource_path('js/Layouts'));
@@ -228,6 +230,8 @@ trait InstallsInertiaStacks
 
         // Views...
         copy(__DIR__.'/../../stubs/inertia-react/resources/views/app.blade.php', resource_path('views/app.blade.php'));
+
+        @unlink(resource_path('views/welcome.blade.php'));
 
         // Components + Pages...
         (new Filesystem)->ensureDirectoryExists(resource_path('js/Components'));

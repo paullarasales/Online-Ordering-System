@@ -7,12 +7,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
-use App\Http\Controllers\ProController;
-use App\Http\Controllers\LandingController;
 use App\Http\Controllers\ProfileUpdate;
-use App\Http\Controllers\Auth\EmailVerificationPromptController;
-use App\Http\Controllers\Auth\VerifyEmailController;
-
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -26,6 +21,8 @@ Route::middleware('auth')->group(function (){
     Route::get('/verify', [UserController::class, 'verifyAccountForm'])->name('verify.form');
     Route::post('/verify/upload', [UserController::class, 'verify'])->name('verify.upload');
     Route::get('/verify/message', [UserController::class, 'verifyMessage'])->name('verify.message');
+    Route::get('/add-to-cart', [UserController::class, 'addToCartPage'])->name('cart');
+    Route::match(['get', 'post'], '/add-to-cart/{productId}', [UserController::class, 'addToCart'])->name('add-to-cart');
     Route::post('/checkout', [UserController::class, 'prepareCheckout'])->name('checkout');
     Route::post('/create-order', [UserController::class, 'createOrder'])->name('createOrder');
     Route::post('/updateQuantity/cart/{cartItemId}', [UserController::class, 'updateQuantity'])->name('updateQuantity');
@@ -77,7 +74,6 @@ Route::get('/email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-Route::get('/add-to-cart', [UserController::class, 'addToCartPage'])->name('cart');
-Route::match(['get', 'post'], '/add-to-cart/{productId}', [UserController::class, 'addToCart'])->name('add-to-cart');
+
 
 require __DIR__.'/auth.php';

@@ -128,7 +128,6 @@ class UserController extends Controller
         // Return a success response
         return response()->json(['message' => 'Quantity updated successfully']);
         } catch (\Exception $e) {
-            // Return an error response if something goes wrong
             return response()->json(['error' => 'Failed to update quantity'], 500);
         }
     }
