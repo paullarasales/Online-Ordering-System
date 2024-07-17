@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
      <link rel="shortcut icon" href="{{ asset('logo/no-bg.png') }}">
-    <title>2 4 2 1</title>
+    <title>2421</title>
     <link rel="stylesheet" href="{{ asset('css/landing.css')}}">
     <script src="https://unpkg.com/scrollreveal"></script>
 </head>

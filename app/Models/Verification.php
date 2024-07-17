@@ -11,7 +11,8 @@ class Verification extends Model
 
     protected $fillable = [
         'valid_id1',
-        'verified'
+        'verified',
+        'notified'
     ];
 
     public function user()

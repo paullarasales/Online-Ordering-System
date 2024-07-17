@@ -65,6 +65,19 @@
                 }
             }
 
+            async function fetchNewVerifications() {
+                try {
+                    const response = await fetch('/admin/fetch-new-orders');
+                    const data = await response.json();
+
+                    if (data.newVerifications.length > 0) {
+                        
+                    }
+                } catch (error) {
+                    console.error('Error fetching new verifications', error);
+                }
+            }
+
             setInterval(fetchNewOrdersAndUpdate, 4000);
         });
     </script>

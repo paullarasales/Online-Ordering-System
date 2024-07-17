@@ -47,7 +47,8 @@ Route::post('/verify/image', [AdminController::class, 'verifyImage'])->name('ver
 Route::get('/admin/orders/{orderId}', [AdminController::class, 'show'])->name('admin.order.details')->middleware('admin');
 Route::post('/admin/orders/update-status', [AdminController::class, 'updateStatus'])->name('admin.orders.updateStatus');
 Route::get('/admin/fetch-all-orders', [AdminController::class, 'fetchOrdersAndNotify'])->name('admin.newOrders');
-Route::get('/admin/fetch-new-orders', [AdminController::class, 'fetchNewOrders'])->name('admin.fetchNewOrders');    
+Route::get('/admin/fetch-new-orders', [AdminController::class, 'fetchNewOrders'])->name('admin.fetchNewOrders');
+Route::get('/admin/fetch-new-verifications', [AdminController::class, 'fetchNewVerifications'])->name('admin.fetchNewVerifications');    
 
 
 Route::post('Product-add', [ProductController::class, 'addProduct'])->name('products.store')->middleware('admin');

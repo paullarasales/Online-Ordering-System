@@ -199,4 +199,16 @@ class AdminController extends Controller
     
         return response()->json(['newOrders' => $newOrders]);
     }
+
+    public function fetchNewVerifications() 
+    {
+        $newVerifications = Verification::where('notified', false)->get();
+
+        foreach ($newVerifications as $verification) {
+            $verification->notified = true;
+            $verification->save();
+        }
+
+        return response()->json(['newVerifications' => $newVerifications]);
+    }
 }
