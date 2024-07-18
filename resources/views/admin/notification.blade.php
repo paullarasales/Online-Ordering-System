@@ -21,6 +21,14 @@
                         @endforeach
                     </div>
 
+                    <div id="new-verifications-container" class="mt-6">
+                        @foreach ($newVerifications->reverse() as $verification)
+                            <div class="border-t border-gray-200 py-4">
+                                <p class="text-lg">{{ $verification->user->name}} new registered needs to verify</p>
+                            </div>
+                        @endforeach
+                    </div>
+
                     <h1 class="text-2xl font-semibold text-gray-900 mt-6">All Orders:</h1>
                     <div id="orders-container" class="mt-6">
                         <!-- All orders will be dynamically added here -->
@@ -71,14 +79,27 @@
                     const data = await response.json();
 
                     if (data.newVerifications.length > 0) {
-                        
+                        const newVerificationsContainer = document.getElementById('new-verifications-container');
+
+                        newVerificationsContainer.innerHTML = '';
+
+                        data.newVerifications.reverse().foreach(verification = {
+                            const verificationHtml = `
+                                <div class="border-t border-gray-200 py-4">
+                                    <p class="text-lg">${verification.user.name} need to verify</p
+                                </div>
+                            `;
+                            newVerificationsContainer.insertAdjacentHTML('beforeend', verificationHtml)
+                        });
+
+                        alert('New user needs to be verify');
                     }
                 } catch (error) {
                     console.error('Error fetching new verifications', error);
                 }
             }
 
-            setInterval(fetchNewOrdersAndUpdate, 4000);
+            setInterval(fetchNewOrdersAndUpdate, fetchNewVerifications 4000);
         });
     </script>
 </x-admin-layout>

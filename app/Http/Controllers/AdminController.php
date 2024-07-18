@@ -151,7 +151,7 @@ class AdminController extends Controller
         if ($request->input('action') === 'verify') {
             $image->update(['verified' => true]);
         } else {
-            
+
         }
 
         // Redirect back or return a response
@@ -176,31 +176,39 @@ class AdminController extends Controller
    public function fetchOrdersAndNotify()
     {
         $orders = Order::all();
+        $verifications = Verification::all();
 
         $newOrders = Order::where('notified', false)->get();
+        $newVerifications = Verification::where('notified', false)->get();
 
         foreach ($newOrders as $order) {
             $order->notified = true;
             $order->save();
         }
-    
-        
-        return view('admin.notification', compact('newOrders', 'orders'));
+
+        foreach ($newVerifications as $verification) {
+            $verification->notified = true;
+            $verification->save();
+        }
+
+
+        return view('admin.notification', compact('newOrders', 'orders', 'newVerifications', 'verifications'));
     }
 
     public function fetchNewOrders()
     {
         $newOrders = Order::where('notified', false)->get();
-    
+
         foreach ($newOrders as $order) {
             $order->notified = true;
             $order->save();
         }
-    
+
         return response()->json(['newOrders' => $newOrders]);
     }
 
-    public function fetchNewVerifications() 
+
+    public function fetchNewVerifications()
     {
         $newVerifications = Verification::where('notified', false)->get();
 
