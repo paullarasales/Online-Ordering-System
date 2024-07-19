@@ -21,14 +21,6 @@
                         @endforeach
                     </div>
 
-                    <div id="new-verifications-container" class="mt-6">
-                        @foreach ($newVerifications->reverse() as $verification)
-                            <div class="border-t border-gray-200 py-4">
-                                <p class="text-lg">{{ $verification->user->name}} new registered needs to verify</p>
-                            </div>
-                        @endforeach
-                    </div>
-
                     <h1 class="text-2xl font-semibold text-gray-900 mt-6">All Orders:</h1>
                     <div id="orders-container" class="mt-6">
                         <!-- All orders will be dynamically added here -->
@@ -46,60 +38,42 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            async function fetchNewOrdersAndUpdate() {
-                try {
-                    const response = await fetch('/admin/fetch-new-orders');
-                    const data = await response.json();
+     document.addEventListener('DOMContentLoaded', async () => {
+    async function fetchNewOrdersAndUpdate() {
+        try {
+            const response = await fetch('/admin/fetch-new-orders');
+            const data = await response.json();
 
-                    if (data.newOrders.length > 0) {
-                        const newOrdersContainer = document.getElementById('new-orders-container');
-                        newOrdersContainer.innerHTML = '';
+            console.log('Fetched Data:', data); // Add this log
 
-                        data.newOrders.reverse().forEach(order => {
-                            const orderHtml = `
-                                <div class="border-t border-gray-200 py-4">
-                                    <p class="text-lg">${order.user.name} placed an order:</p>
-                                    <p class="mt-2">Order ID: ${order.id}</p>
-                                </div>
-                            `;
-                            newOrdersContainer.insertAdjacentHTML('beforeend', orderHtml);
-                        });
+            if (data.newOrders.length > 0) {
+                const newOrdersContainer = document.getElementById('new-orders-container');
+                newOrdersContainer.innerHTML = '';
 
-                        alert('New Order');
-                    }
-                } catch (error) {
-                    console.error('Error fetching new orders:', error);
-                }
+                data.newOrders.reverse().forEach(order => {
+                    const userName = order.user ? order.user.name : 'Unknown User';
+                    const orderHtml = `
+                        <div class="border-t border-gray-200 py-4">
+                            <p class="text-lg">${userName} placed an order:</p>
+                            <p class="mt-2">Order ID: ${order.id}</p>
+                            <p>${order.status}</p>
+                        </div>
+                    `;
+                    newOrdersContainer.insertAdjacentHTML('beforeend', orderHtml);
+                });
+
+                alert('New Order');
+            } else {
+                console.log('No new orders'); // Add this log
             }
+        } catch (error) {
+            console.error('Error fetching new orders:', error);
+        }
+    }
 
-            async function fetchNewVerifications() {
-                try {
-                    const response = await fetch('/admin/fetch-new-orders');
-                    const data = await response.json();
+    setInterval(fetchNewOrdersAndUpdate, 4000);
+});
 
-                    if (data.newVerifications.length > 0) {
-                        const newVerificationsContainer = document.getElementById('new-verifications-container');
 
-                        newVerificationsContainer.innerHTML = '';
-
-                        data.newVerifications.reverse().foreach(verification = {
-                            const verificationHtml = `
-                                <div class="border-t border-gray-200 py-4">
-                                    <p class="text-lg">${verification.user.name} need to verify</p
-                                </div>
-                            `;
-                            newVerificationsContainer.insertAdjacentHTML('beforeend', verificationHtml)
-                        });
-
-                        alert('New user needs to be verify');
-                    }
-                } catch (error) {
-                    console.error('Error fetching new verifications', error);
-                }
-            }
-
-            setInterval(fetchNewOrdersAndUpdate, fetchNewVerifications 4000);
-        });
     </script>
 </x-admin-layout>
