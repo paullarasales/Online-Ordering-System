@@ -195,5 +195,22 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            async function newOrders() {
+                try {
+                    const response = await fetch('/admin/fetch-new-orders');
+                    const data = await response.json();
+
+                    if (data.newOrders.length > 0) {
+                        alert('New Order');
+                    }
+
+                } catch (error) {
+                    console.error('Error fetching new orders', error);
+                }
+            }
+        });
+    </script>
 </body>
 </html>

@@ -44,7 +44,7 @@
             const response = await fetch('/admin/fetch-new-orders');
             const data = await response.json();
 
-            console.log('Fetched Data:', data); // Add this log
+            console.log('Fetched Data:', data);
 
             if (data.newOrders.length > 0) {
                 const newOrdersContainer = document.getElementById('new-orders-container');
@@ -64,7 +64,7 @@
 
                 alert('New Order');
             } else {
-                console.log('No new orders'); // Add this log
+                console.log('No new orders');
             }
         } catch (error) {
             console.error('Error fetching new orders:', error);

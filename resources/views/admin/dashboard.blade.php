@@ -101,4 +101,21 @@
 
         document.getElementById('todaysDate').innerText = formattedDate;
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            async function getNotif() {
+                const response = await fetch('/admin/fetch-new-orders');
+                const data = await response.json();
+
+                console.log(data);
+
+                if (data.newOrders.length > 0) {
+                    alert('New Order');
+                }
+            }
+
+            setInterval(getNotif, 2000);
+        });
+    </script>
 </x-admin-layout>
