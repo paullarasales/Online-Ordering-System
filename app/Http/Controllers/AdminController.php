@@ -36,7 +36,7 @@ class AdminController extends Controller
 
     public function order() {
         // Fetch all orders from the database
-        $orders = Order::with('user')->get();
+        $orders = Order::with('user')->orderBy('created_at', 'desc')->get();
 
         // Pass the orders to the view
         return view('admin.order', compact('orders'));

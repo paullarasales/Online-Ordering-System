@@ -38,7 +38,8 @@
             @forelse ($order->items as $item)
             <li class="flex items-center py-2">
                 <div class="flex-1">
-                    @if ($item->product)
+                @if ($item->product)
+                        <img src="{{ asset($item->product->photo)}}" class="h-20 w-20">
                         <h3 class="text-lg font-semibold">{{ $item->product->product_name }}</h3>
                         <p class="text-gray-600">Quantity: {{ $item->quantity }}</p>
                     @else
@@ -52,7 +53,7 @@
         @empty
             <li>No items found</li>
         @endforelse
-        
+
         </ul>
     </dd>
 </div>
