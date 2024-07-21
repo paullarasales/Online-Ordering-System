@@ -2,6 +2,7 @@
     <div class="flex flex-col w-full h-screen p-6">
         <!-- Header -->
         <div class="flex flex-row justify-between w-full h-10">
+            <div id="alert-container" class="fixed top-4 right-4 z-50"></div>
             <!-- Overview -->
             <div>
                 <h1 class="text-2xl font-semibold p-auto">
@@ -111,11 +112,43 @@
                 console.log(data);
 
                 if (data.newOrders.length > 0) {
-                    alert('New Order');
+                    showCustomAlert('New Order', '{{ route('order')}}');
                 }
             }
 
-            setInterval(getNotif, 2000);
+            function showCustomAlert(message, redirectUrl) {
+                const alertContainer = document.getElementById('alert-container');
+
+                const alert = document.createElement('div');
+
+                alert.classList.add('max-w-sm', 'w-full', 'bg-white', 'shadow-md', 'rounded-md', 'pointer-events-auto', 'ring-1', 'ring-black', 'ring-opacity-5', 'overflow-hidden', 'm-4', 'p-4', 'flex', 'justify-between', 'items-center', 'space-x-4');
+
+                alert.innerHTML = `
+                    <div class="flex-shrink-0">
+                        <svg class="h-6 w-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4H8m4-4H8m-4 8h16M5 12h2m4-4h2v4h1M5 8                            h2m-2 8h2M3 16h18" />
+                        </svg>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm font-medium text-gray-900">${message}</p>
+                    </div>
+                    <div class="ml-auto">
+                        <button id="redirect-btn" class="bg-blue-500 text-white px-3 py-1 rounded-md">View</button>
+                    </div>
+                `;
+
+                alert.querySelector('#redirect-btn').addEventListener('click', () => {
+                    window.location.href = redirectUrl;
+                });
+
+                alertContainer.appendChild(alert);
+
+                setTimeout(() => {
+                    alert.remove();
+                }, 10000);
+            }
+
+            setInterval(getNotif, 5000);
         });
     </script>
 </x-admin-layout>
