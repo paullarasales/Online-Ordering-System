@@ -148,6 +148,10 @@
                 }, 10000);
             }
 
+            async function getNotifVerification() {
+                const response = await fetch('/admin/fetch-new-verifications');
+            }
+
             setInterval(getNotif, 5000);
         });
     </script>

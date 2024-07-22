@@ -22,13 +22,15 @@
                     </div>
 
                     <h1 class="text-2xl font-semibold text-gray-900 mt-6">All Orders:</h1>
-                    <div id="orders-container" class="mt-6">
-                        <!-- All orders will be dynamically added here -->
-                        @foreach ($orders->reverse() as $order)
+                    <div id="notifications-container" class="mt-6">
+                        @foreach ($notifications as $notification)
                             <div class="border-t border-gray-200 py-4">
-                                <p class="text-lg">{{ $order->user->name }} placed an order:</p>
-                                <p class="mt-2">Order ID: {{ $order->id }}</p>
-                                <p>{{ $order->status}}</p>
+                                @if($notification->type === 'order')
+                                    <p class="text-lg">{{ $notification->user->name }} placed an order:</p>
+                                    <p class="mt-2">Order ID: {{ $notification->id }}</p>
+                                @elseif($notification->type === 'verification')
+                                    <p class="text-lg">{{ $notification->user->name }} submitted a verification:</p>
+                                @endif
                             </div>
                         @endforeach
                     </div>

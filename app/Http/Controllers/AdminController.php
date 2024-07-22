@@ -173,20 +173,42 @@ class AdminController extends Controller
         }
     }
 
-   public function fetchOrdersAndVerification()
+    public function fetchOrdersAndVerification()
     {
-        $orders = Order::all();
+        $orders = Order::all()->map(function ($order) {
+            $order->type = 'order';
+            return $order;
+        });
+    
+        $verifications = Verification::all()->map(function ($verification) {
+            $verification->type = 'verification';
+            return $verification;
+        });
+    
+        $newOrders = $orders->filter(function ($order) {
+            return !$order->notified;
+        });
 
-        $newOrders = Order::where('notified', false)->get();
+        $newVerifications = $verifications->filter(function ($verification) {
+            return !$verification->notified;
+        });
 
         foreach ($newOrders as $order) {
             $order->notified = true;
             $order->save();
         }
+    
+        foreach ($newVerifications as $verification) {
+            $verification->notified = true;
+            $verification->save();
+        }
 
-
-        return view('admin.notification', compact('newOrders', 'orders'));
+        $notifications = $orders->merge($verifications)->sortByDesc('created_at');
+    
+        return view('admin.notification', compact('newOrders', 'orders', 'newVerifications', 'verifications', 'notifications'));
     }
+    
+    
 
     public function fetchNewOrders()
     {
