@@ -51,6 +51,8 @@ Route::get('/admin/fetch-all-orders', [AdminController::class, 'fetchOrdersAndVe
 Route::get('/admin/fetch-new-orders', [AdminController::class, 'fetchNewOrders'])->name('admin.fetchNewOrders');
 Route::get('/admin/fetch-all-verifications', [AdminController::class, 'fetchVerifications'])->name('admin.fetchVerifications');
 Route::get('/admin/fetch-new-verifications', [AdminController::class, 'fetchNewVerifications'])->name('admin.fetchNewVerifications');
+Route::get('/admin/fetch-only', [AdminController::class, 'justFetchOrders'])->name('admin.fetchOnly');
+Route::get('/admin/fetch-only-verifications', [AdminController::class, 'justFetchVerifications'])->name('admin.fetchVerificationOnly');
 
 
 Route::post('Product-add', [ProductController::class, 'addProduct'])->name('products.store')->middleware('admin');

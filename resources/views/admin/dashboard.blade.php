@@ -105,14 +105,50 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
+            let ordersNotified = false;
+            let verificationNotified = false;
+
             async function getNotif() {
-                const response = await fetch('/admin/fetch-new-orders');
-                const data = await response.json();
+                try {
+                    const response = await fetch('/admin/fetch-only');
+                    const data = await response.json();
+                    const notificationShown = localStorage.getItem('notificationShown');
 
-                console.log(data);
+                    console.log(data);
+                    console.log('Order notification shown', notificationShown);
 
-                if (data.newOrders.length > 0) {
-                    showCustomAlert('New Order', '{{ route('order')}}');
+                    if (data.orders && data.orders.length > 0) {
+                        if (!ordersNotified) {
+                            showCustomAlert('New Orders', '{{ route('order')}}');
+                            ordersNotified = true;
+                        }
+                    } else {
+                        ordersNotified = false;
+                    }
+                } catch (error) {
+                    console.error('Error fetching order', error);
+                }
+            }
+
+            async function getNotifVerification() {
+                try {
+                    const response = await fetch('/admin/fetch-only-verifications');
+                    const data = await response.json();
+                    const notificationShown = localStorage.getItem('notificationShown');
+
+                    console.log('Verification data', data);
+                    console.log('Verification notification shown', notificationShown);
+
+                    if (data.orders && data.orders.length > 0) {
+                        if (!verificationNotified) {
+                            showCustomAlert('New Verification', '{{ route('customer')}}');
+                            verificationNotified = true;
+                        }
+                    } else {
+                        verificationNotified = false;
+                    }
+                } catch (error) {
+                    console.error('Error fetching verification', error);
                 }
             }
 
@@ -145,14 +181,11 @@
 
                 setTimeout(() => {
                     alert.remove();
+                    localStorage.removeItem('notificationShown');
                 }, 10000);
             }
-
-            async function getNotifVerification() {
-                const response = await fetch('/admin/fetch-new-verifications');
-            }
-
             setInterval(getNotif, 5000);
+            setInterval(getNotifVerification, 5000);
         });
     </script>
 </x-admin-layout>

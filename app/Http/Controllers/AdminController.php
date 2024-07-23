@@ -225,7 +225,9 @@ class AdminController extends Controller
 
     public function fetchNewVerifications()
     {
-        $newVerifications = Verification::where('notified', false)->get();
+        $newVerifications = Verification::with('user')
+                            ->where('notified', false)
+                            ->get();
 
         foreach ($newVerifications as $verification) {
             $verification->notified = true;
@@ -233,5 +235,23 @@ class AdminController extends Controller
         }
 
         return response()->json(['newVerifications' => $newVerifications]);
+    }
+
+    public function justFetchOrders()
+    {
+        $orders = Order::with('user')
+                        ->where('notified', false)
+                        ->get();
+
+        return response()->json(['orders' => $orders]);
+    }
+
+    public function justFetchVerifications()
+    {
+        $verifications = Verification::with('user')
+                        ->where('notified', false)
+                        ->get();
+
+        return response()->json(['verifications' => $verifications]);
     }
 }

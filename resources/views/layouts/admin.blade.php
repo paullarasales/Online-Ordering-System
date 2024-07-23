@@ -9,7 +9,6 @@
 
     <link rel="shortcut icon" href="{{ asset('logo/no-bg.png') }}">
 
-
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -19,7 +18,6 @@
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
 
     <style>
         body {
@@ -35,7 +33,7 @@
 <body class="font-poppins antialiased">
     <div class="relative min-h-screen md:flex" x-data="{ open: true }">
         <!-- Sidebar -->
-            <aside :class="{ '-translate-x-full': !open }" class="z-10 bg-white text-black w-64 px-2 py-4 absolute inset-y-0 left-0 md:relative transform md:translate-x-0 transition ease-in-out duration-200">
+         <aside :class="{ '-translate-x-full': !open }" class="z-10 bg-white text-black w-64 px-2 py-4 absolute inset-y-0 left-0 md:relative transform md:translate-x-0 transition ease-in-out duration-200">
                 <!-- Logo -->
                 <div class="flex items-center justify-between">
                     <div class="flex flex-row items-start space-y-2 w-full">
@@ -134,49 +132,55 @@
             <nav class="">
                 <div class="mx-auto px-2 sm:px-6 lg:px-8">
                     <div class="relative flex items-center justify-between h-16">
-                        <div class="absolute inset-y-0 left-0 flex items-center md:hidden">
-                            <button type="button" @click="open = !open" @click.away="open = false" class="inline-flex items-center justify-center p-2 rounded-md text-black hover:bg-blue-700 focus:outline-none">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="block w-6 h-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7"></path>
-                                </svg>
-                            </button>
+                        <div class="{{ request()->routeIs('admin.newOrders') ? 'bg-gray-200 w-full' : 'w-44' }} flex items-center gap-2 rounded-sm h-12">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ request()->routeIs('admin.newOrders') ? '#8B5CF6' : '#000000'}}" viewBox="0 0 24 24" stroke-width="1.5" class="ml-10 w-6 h-6">
+                                <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
+                            </svg>
                         </div>
-
+                        
                         <div>
                             <h1 class="text-2xl font-medium">Welcome Back {{ Auth::user()->name }}</h1>
                         </div>
+                        
                         <!-- User Dropdown -->
                         <div class="sm:flex flex items-center justify-center sm:items-center absolute inset-y-0 right-0">
-                            <div x-data="{ open: false }" class="relative">
+                            <div x-data="{ open: false }" class="relative flex items-center">
+                                <!-- Notification Icon -->
                                 <button @click="open = !open" class="inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-lg rounded-md text-black-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                    <div class="flex items-center justify-end w-48">
-                                        <div class="flex gap-2">
-                                            @if(Auth::user()->photo)
-                                            <img class="w-9 h-9 rounded-full ml-2" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">
-                                            @endif
-                                            {{-- <div class="flex flex-col items-center justify-center">
-                                                <p class="text-gray-800 font-medium">{{ Auth::user()->name }}</p>
-                                            </div> --}}
-                                        </div>
-                                        <div class="ms-1 mt-1">
-                                            <svg class="fill-current h-7 w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
-                                            </svg>
-                                        </div>
-                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.403-2.806A2.25 2.25 0 0 0 17.75 12H6.25a2.25 2.25 0 0 0-2.847 1.194L2 17h5m8 0v2.25a2.25 2.25 0 1 1-4.5 0V17m2.25 0h-2.25M15 17h5m-5 0v2.25a2.25 2.25 0 1 1-4.5 0V17m2.25 0H15zM3 17h5" />
+                                    </svg>
                                 </button>
-                                <!-- Dropdown Menu -->
-                                <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 sm:w-48 sm:top-full sm:mt-1 sm:ml-6">
-                                    <div class="py-1">
-                                        <x-dropdown-link :href="route('profile')">
-                                            {{ __('Edit Profile') }}
-                                        </x-dropdown-link>
-                                        <form method="POST" action="{{ route('logout') }}">
-                                            @csrf
-                                            <x-dropdown-link :href="route('logout')" onclick="event.preventDefault();this.closest('form').submit();">
-                                                {{ __('Log Out') }}
+                                
+                                <!-- Profile Dropdown -->
+                                <div x-data="{ open: false }" class="relative ms-4">
+                                    <button @click="open = !open" class="inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-lg rounded-md text-black-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                        <div class="flex items-center justify-end w-48">
+                                            <div class="flex gap-2">
+                                                @if(Auth::user()->photo)
+                                                <img class="w-9 h-9 rounded-full ml-2" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">
+                                                @endif
+                                            </div>
+                                            <div class="ms-1 mt-1">
+                                                <svg class="fill-current h-7 w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    </button>
+                                    <!-- Dropdown Menu -->
+                                    <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 sm:w-48 sm:top-full sm:mt-1 sm:ml-6">
+                                        <div class="py-1">
+                                            <x-dropdown-link :href="route('profile')">
+                                                {{ __('Edit Profile') }}
                                             </x-dropdown-link>
-                                        </form>
+                                            <form method="POST" action="{{ route('logout') }}">
+                                                @csrf
+                                                <x-dropdown-link :href="route('logout')" onclick="event.preventDefault();this.closest('form').submit();">
+                                                    {{ __('Log Out') }}
+                                                </x-dropdown-link>
+                                            </form>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -187,30 +191,16 @@
             <!-- Main Content -->
             <div class="flex flex-col md:flex-row w-full md:h-full md:gap-2">
                 <div class="flex-1">
-                    {{ $slot }}
+                    <div class="mx-auto px-2 sm:px-6 lg:px-8">
+                        <div class="relative py-4 bg-white overflow-hidden shadow sm:rounded-lg">
+                            {{ $slot }}
+                        </div>
+                    </div>
                 </div>
-            </div>
             </div>
         </main>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async function() {
-            async function newOrders() {
-                try {
-                    const response = await fetch('/admin/fetch-new-orders');
-                    const data = await response.json();
-
-                    if (data.newOrders.length > 0) {
-                        alert('New Order');
-                    }
-
-                } catch (error) {
-                    console.error('Error fetching new orders', error);
-                }
-            }
-        });
-    </script>
+    @stack('scripts')
 </body>
 </html>

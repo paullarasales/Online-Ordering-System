@@ -15,6 +15,10 @@ class Verification extends Model
         'notified'
     ];
 
+    protected $casts = [
+        'notified' => 'boolean'
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
