@@ -46,10 +46,6 @@
                             {{ __('Users') }}
                         </p>
                     </div>
-
-                    <div class="flex items-center justify-center w-full h-2/5">
-                        <h1>View All</h1>
-                    </div>
                 </div>
                 <!-- Right -->
                 <div class="w-5/12 h-full rounded-md" style="box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;"">
@@ -134,14 +130,12 @@
                 try {
                     const response = await fetch('/admin/fetch-only-verifications');
                     const data = await response.json();
-                    const notificationShown = localStorage.getItem('notificationShown');
 
                     console.log('Verification data', data);
-                    console.log('Verification notification shown', notificationShown);
 
-                    if (data.orders && data.orders.length > 0) {
+                    if (data.verifications && data.verifications.length > 0) {
                         if (!verificationNotified) {
-                            showCustomAlert('New Verification', '{{ route('customer')}}');
+                            showCustomAlert('New Verification', '{{ route('customer')}}', '{{ asset('audio/verification.mp3')}}');
                             verificationNotified = true;
                         }
                     } else {
@@ -152,7 +146,7 @@
                 }
             }
 
-            function showCustomAlert(message, redirectUrl) {
+            function showCustomAlert(message, redirectUrl, audioFile) {
                 const alertContainer = document.getElementById('alert-container');
 
                 const alert = document.createElement('div');
@@ -179,10 +173,13 @@
 
                 alertContainer.appendChild(alert);
 
+                const audio = new Audio(audioFile);
+                audio.play();
+
                 setTimeout(() => {
                     alert.remove();
                     localStorage.removeItem('notificationShown');
-                }, 10000);
+                }, 20000);
             }
             setInterval(getNotif, 5000);
             setInterval(getNotifVerification, 5000);
