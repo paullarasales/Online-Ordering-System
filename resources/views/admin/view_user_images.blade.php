@@ -19,6 +19,12 @@
                                     <input type="hidden" name="action" value="verify">
                                     <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg">Verify</button>
                                 </form>
+                                <form action="{{ route('verify.image') }}" method="POST">
+                                    @csrf
+                                    <input type="hidden" name="image_id" value="{{ $image->id }}">
+                                    <input type="hidden" name="action" value="reject">
+                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg">Reject</button>
+                                </form>
                             </div>
                         </div>
                     @endif

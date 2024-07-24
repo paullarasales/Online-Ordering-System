@@ -150,8 +150,9 @@ class AdminController extends Controller
         // Update the verified status based on the action
         if ($request->input('action') === 'verify') {
             $image->update(['verified' => true]);
-        } else {
-
+        } elseif($request->input('action') === 'reject') {
+            $image->update(['verified' => false]);
+            return redirect()->route('customer')->with('success', 'rejection success');
         }
 
         // Redirect back or return a response

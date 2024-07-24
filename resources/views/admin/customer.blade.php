@@ -19,7 +19,6 @@
                             <th class="px-4 py-2">Email</th>
                             <th class="px-4 py-2">Email Verified At</th>
                             <th class="px-4 py-2">Verification Status</th>
-                            <th class="px-4 py-2">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -31,9 +30,6 @@
                             <td class="border px-4 py-2">{{ $customer->email_verified_at }}</td>
                             <td class="border px-4 py-2">
                                 <span class="text-green-600">Verified</span>
-                            </td>
-                            <td class="border px-4 py-2">
-                                <a href="{{ route('admin.view', $customer->id) }}" class="bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-200">View</a>
                             </td>
                         </tr>
                         @endforeach

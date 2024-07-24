@@ -139,13 +139,6 @@
                         <!-- User Dropdown -->
                         <div class="sm:flex flex items-center justify-center sm:items-center absolute inset-y-0 right-0">
                             <div x-data="{ open: false }" class="relative flex items-center">
-                                <!-- Notification Icon -->
-                                <button @click="open = !open" class="inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-lg rounded-md text-black-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.403-2.806A2.25 2.25 0 0 0 17.75 12H6.25a2.25 2.25 0 0 0-2.847 1.194L2 17h5m8 0v2.25a2.25 2.25 0 1 1-4.5 0V17m2.25 0h-2.25M15 17h5m-5 0v2.25a2.25 2.25 0 1 1-4.5 0V17m2.25 0H15zM3 17h5" />
-                                    </svg>
-                                </button>
-                                
                                 <!-- Profile Dropdown -->
                                 <div x-data="{ open: false }" class="relative ms-4">
                                     <button @click="open = !open" class="inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-lg rounded-md text-black-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
