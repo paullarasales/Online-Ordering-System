@@ -31,7 +31,7 @@
 
                     if (data.orders && data.orders.length > 0) {
                         if (!ordersNotified) {
-                            showCustomAlert('New Orders', '{{ route('order')}}', '{{ asset('audio/order.mp3')}}');
+                            showCustomAlert('New Orders', '{{ route('admin.newOrders')}}', '{{ asset('audio/order.mp3')}}');
                             ordersNotified = true;
                         }
                     } else {
@@ -51,7 +51,7 @@
 
                     if (data.verifications && data.verifications.length > 0) {
                         if (!verificationNotified) {
-                            showCustomAlert('New Verification', '{{ route('customer')}}', '{{ asset('audio/verification.mp3')}}');
+                            showCustomAlert('New Verification', '{{ route('admin.newOrders')}}', '{{ asset('audio/verification.mp3')}}');
                             verificationNotified = true;
                         }
                     } else {

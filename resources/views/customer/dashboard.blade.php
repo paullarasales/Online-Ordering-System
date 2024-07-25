@@ -47,5 +47,9 @@
         <div class="pagination">
             {{ $products->links('vendor.pagination.tailwind') }}
         </div>
+        
+        <script>
+            
+        </script>
     </div>
 </x-app-layout>

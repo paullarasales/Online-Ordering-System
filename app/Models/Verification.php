@@ -12,7 +12,8 @@ class Verification extends Model
     protected $fillable = [
         'valid_id1',
         'verified',
-        'notified'
+        'notified',
+        'status'
     ];
 
     protected $casts = [

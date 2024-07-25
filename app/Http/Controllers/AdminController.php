@@ -136,28 +136,25 @@ class AdminController extends Controller
 
     public function verifyImage(Request $request)
     {
-        // Validate the incoming request
         $request->validate([
             'image_id' => 'required|exists:verifications,id',
             'action' => 'required|in:verify,reject',
         ]);
 
-        // Get the image record
         $image = Verification::findOrFail($request->input('image_id'));
 
-        // dd($image);
-
-        // Update the verified status based on the action
         if ($request->input('action') === 'verify') {
-            $image->update(['verified' => true]);
-        } elseif($request->input('action') === 'reject') {
-            $image->update(['verified' => false]);
-            return redirect()->route('customer')->with('success', 'rejection success');
+            $image->update(['verified' => true, 'status' => 'verified', 'notified' => true]);
+            return redirect()->back()->with('success', 'Image verified successfully.');
+        } elseif ($request->input('action') === 'reject') {
+            $image->update(['verified' => false, 'status' => 'rejected', 'notified' => true]);
+            dd($image->status);
+            return redirect()->back()->with('success', 'Image rejected successfully.');
         }
 
-        // Redirect back or return a response
-        return redirect()->back()->with('success', 'Image verification status updated successfully.');
+        return redirect()->back()->with('error', 'Invalid action.');
     }
+
 
     public function updateStatus(Request $request)
     {

@@ -44,6 +44,7 @@ class UserController extends Controller
         $validId = new Verification;
         $validId->user_id = $user->id;
         $validId->notified = false;
+        $validId->status = 'pending';
 
         $existingVerification = Verification::where('user_id', $user->id)->first();
 
@@ -222,4 +223,6 @@ class UserController extends Controller
         }
         return response()->json(['status' =>  $order->status]);
     }
+
+    
 }
