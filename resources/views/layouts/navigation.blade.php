@@ -28,15 +28,21 @@
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
                             <div class="flex items-center justify-end w-56">
                                 <div class="flex items-center justify-evenly flex-row w-5/12">
-                                    <div class="flex items-center gap-1 rounded-sm h-12">               
+                                    <div>
+                                        <x-side-nav-link href="{{ route('notification') }}" :active="request()->routeIs('notification')" class="text-xl text-black font-medium mt-1 flex items-center w-full" id="cart-link">
+                                           Notif
+                                        <span id="notif-count" class="bg-red-600 text-white text-xs rounded-full px-2 ml-2" style="display: none;">0</span>
+                                        </x-side-nav-link>
+                                    </div>
+                                    <div class="flex items-center gap-1 rounded-sm h-12">
                                         <x-side-nav-link href="{{ route('chat.index') }}" :active="request()->routeIs('chat.index')" class="text-xl text-black font-medium mt-1 flex items-center w-full" id="chat-link">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
-                                            </svg> 
+                                            </svg>
                                         </x-side-nav-link>
                                     </div>
 
-                                    <div class="flex items-center gap-1 rounded-sm h-12">               
+                                    <div class="flex items-center gap-1 rounded-sm h-12">
                                         <x-side-nav-link href="{{ route('cart') }}" :active="request()->routeIs('cart')" class="text-xl text-black font-medium mt-1 flex items-center w-full" id="cart-link">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
@@ -49,8 +55,10 @@
                                            Track My Order
                                         </x-side-nav-link>
                                     </div>
+
+
                                 </div>
-                               
+
                                 <div class="flex gap-2">
                                     @if(Auth::user()->photo)
                                     <img class="w-9 h-9 rounded-full ml-2" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">
@@ -136,28 +144,43 @@
     </div>
 </nav>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', function () {
     var cartLink = document.getElementById('cart-link');
     const chatLink = document.getElementById('chat-link');
 
     if (cartLink) {
         cartLink.addEventListener('click', function (event) {
-            // Prevent default action if necessary
-            // event.preventDefault();
-
-            // Stop event propagation if necessary
             event.stopPropagation();
-
-            // Optionally, you can navigate to the cart page programmatically
             window.location.href = cartLink.href;
         });
     }
 
     if (chatLink) {
-        chatLink.addEventListener('click', function (e) {
+        chatLink.addEventListener('click', function (event) {
             event.stopPropagation();
-        })
+        });
     }
-});
 
+    async function fetchUnreadNotifCount() {
+        try {
+            const response = await fetch('/unread-notification');
+            const data = await response.json();
+            console.log(data); // Check the structure of the response here
+            const notifElement = document.getElementById('notif-count');
+
+            if (notifElement && data.unreadCount > 0) {
+                notifElement.textContent = data.unreadCount;
+                notifElement.style.display = 'inline-block';
+            } else if (notifElement) {
+                notifElement.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error fetching the unread notification count:', error);
+        }
+    }
+
+    fetchUnreadNotifCount();
+    setInterval(fetchUnreadNotifCount, 5000);
+});
 </script>
+

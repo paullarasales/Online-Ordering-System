@@ -13,7 +13,8 @@ class Verification extends Model
         'valid_id1',
         'verified',
         'notified',
-        'status'
+        'status',
+        'notifiedbyuser'
     ];
 
     protected $casts = [

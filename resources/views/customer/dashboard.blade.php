@@ -1,4 +1,7 @@
 <x-app-layout>
+    <div id="notification" class="foxed top-0 right-0 m-4 p-4 bg-green-500 text-white rounded-md hidden">
+        <span id="notification-message"></span>
+    </div>
     <div class="container mx-auto py-4 max-w-5xl">
         <!-- Filtration Section -->
         <div class="flex flex-row md:flex-row justify-between items-center mb-4">
@@ -47,9 +50,6 @@
         <div class="pagination">
             {{ $products->links('vendor.pagination.tailwind') }}
         </div>
-        
-        <script>
-            
-        </script>
     </div>
+
 </x-app-layout>

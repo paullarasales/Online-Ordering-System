@@ -18,7 +18,22 @@ class UserController extends Controller
         return view('customer.dashboard', compact('products'));
     }
 
-    public function profile()
+     public function notification()
+    {
+        $user = Auth::user();
+
+        $verifications = Verification::where('user_id', $user->id)
+            ->where('notifiedbyuser', false)
+            ->get();
+
+        foreach ($verifications as $verification) {
+            $verification->notifiedbyuser = true;
+            $verification->save();
+        }
+        return view('customer.notification', ['verifications' => $verifications]);
+    }
+
+   public function profile()
     {
         $user = Auth::user();
 
@@ -45,6 +60,7 @@ class UserController extends Controller
         $validId->user_id = $user->id;
         $validId->notified = false;
         $validId->status = 'pending';
+        $validId->notifiedbyuser = false;
 
         $existingVerification = Verification::where('user_id', $user->id)->first();
 
@@ -54,7 +70,7 @@ class UserController extends Controller
 
         if ($request->hasFile('valid_id1')) {
             $file = $request->file('valid_id1');
-            
+
             $filename = time() . '.' . $file->getClientOriginalExtension();
 
             $path = $file->storeAs('verifications', $filename, 'public');
@@ -88,7 +104,7 @@ class UserController extends Controller
         $cart = Cart::firstOrCreate(['user_id' => $userId]);
 
         $verification = Verification::where('user_id', $userId)->first();
-        
+
         if (!$verification || !$verification->verified) {
             return redirect()->route('verify.form')->with('error', 'Please verify your account first');
         }
@@ -211,10 +227,10 @@ class UserController extends Controller
         $totalAmount = $order->items->sum(function($item) {
             return $item->quantity * $item->product->price;
         });
-    
+
         return response()->json(['status' => $order->status, 'total_amount' => $totalAmount]);
     }
-    
+
     public function cancelOrder(Request $request, Order $order) {
         if (strcasecmp($order->status, 'processing') === 0) {
             $order->status = 'cancelled';
@@ -224,5 +240,25 @@ class UserController extends Controller
         return response()->json(['status' =>  $order->status]);
     }
 
-    
+    public function getImageStatus()
+    {
+        $user = Auth::user();
+        $verification = $user->verification()->latest()->first();
+
+        if(!$verification) {
+            return response()->json(['status' => 'error', 'message' => 'Image not found'], 404);
+        }
+
+        return response()->json(['status' => $verification->status]);
+    }
+
+    public function getCountNotif() {
+        $user = Auth::user();
+
+        $unreadCount = Verification::where('user_id', $user->id)
+            ->where('notifiedbyuser', false)
+            ->count();
+
+        return response()->json(['unreadCount' => $unreadCount]);
+    }
 }

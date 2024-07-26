@@ -9,6 +9,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProfileUpdate;
+use App\Http\Controller\ApiController;
 // Route::get('/', function () {
 //     return view('welcome');
 // });
@@ -32,6 +33,9 @@ Route::middleware('auth')->group(function (){
     Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile')->middleware(['auth', 'verified']);
     Route::get('/order/{order}/status', [UserController::class, 'fetchOrderStatus'])->name('fetchOrderStatus');
     Route::post('/order/{order}/cancel', [UserController::class, 'cancelOrder'])->name('order.cancel');
+    Route::get('/image/status', [UserController::class, 'getImageStatus'])->name('id.status');
+    Route::get('/notification', [UserController::class, 'notification'])->name('notification');
+    Route::get('/unread-notification', [UserController::class, 'getCountNotif'])->name('unread-notification');
 });
 
 Route::get('/dashboard', [AdminController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard')->middleware('admin');

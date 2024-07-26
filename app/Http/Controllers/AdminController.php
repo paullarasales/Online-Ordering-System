@@ -144,10 +144,10 @@ class AdminController extends Controller
         $image = Verification::findOrFail($request->input('image_id'));
 
         if ($request->input('action') === 'verify') {
-            $image->update(['verified' => true, 'status' => 'verified', 'notified' => true]);
+            $image->update(['verified' => true, 'status' => 'verified', 'notified' => true, 'notifiedbyuser' => false]);
             return redirect()->back()->with('success', 'Image verified successfully.');
         } elseif ($request->input('action') === 'reject') {
-            $image->update(['verified' => false, 'status' => 'rejected', 'notified' => true]);
+            $image->update(['verified' => false, 'status' => 'rejected', 'notified' => true, 'notifiedbyuser' => false]);
             dd($image->status);
             return redirect()->back()->with('success', 'Image rejected successfully.');
         }
@@ -177,12 +177,12 @@ class AdminController extends Controller
             $order->type = 'order';
             return $order;
         });
-    
+
         $verifications = Verification::all()->map(function ($verification) {
             $verification->type = 'verification';
             return $verification;
         });
-    
+
         $newOrders = $orders->filter(function ($order) {
             return !$order->notified;
         });
@@ -195,18 +195,16 @@ class AdminController extends Controller
             $order->notified = true;
             $order->save();
         }
-    
+
         foreach ($newVerifications as $verification) {
             $verification->notified = true;
             $verification->save();
         }
 
         $notifications = $orders->merge($verifications)->sortByDesc('created_at');
-    
+
         return view('admin.notification', compact('newOrders', 'orders', 'newVerifications', 'verifications', 'notifications'));
     }
-    
-    
 
     public function fetchNewOrders()
     {
