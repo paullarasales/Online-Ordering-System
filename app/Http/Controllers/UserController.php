@@ -175,6 +175,7 @@ class UserController extends Controller
         $order->contactno = $request->input('contactno');
         $order->payment_method = $request->input('payment_method');
         $order->notified = false;
+        $order->notifiedbyuser = false;
         $order->save();
 
         foreach ($cartItemsData as $cartItemId => $cartItemData) {
@@ -259,6 +260,12 @@ class UserController extends Controller
             ->where('notifiedbyuser', false)
             ->count();
 
-        return response()->json(['unreadCount' => $unreadCount]);
+        $unreadOrderCount = Order::where('user_id', $user->id)
+            ->where('notifiedbyuser', false)
+            ->count();
+
+        return response()->json(['unreadCount' => $unreadCount, 'unreadOrderCount' => $unreadOrderCount]);
     }
+
+
 }

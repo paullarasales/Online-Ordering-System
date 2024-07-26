@@ -147,6 +147,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     var cartLink = document.getElementById('cart-link');
     const chatLink = document.getElementById('chat-link');
+    const notifElement = document.getElementById('notif-count');
 
     if (cartLink) {
         cartLink.addEventListener('click', function (event) {
@@ -160,16 +161,15 @@ document.addEventListener('DOMContentLoaded', function () {
             event.stopPropagation();
         });
     }
-
     async function fetchUnreadNotifCount() {
         try {
             const response = await fetch('/unread-notification');
             const data = await response.json();
-            console.log(data); // Check the structure of the response here
-            const notifElement = document.getElementById('notif-count');
+            console.log(data);
+            const totalNotifCount = data.unreadCount + data.unreadOrderCount;
 
-            if (notifElement && data.unreadCount > 0) {
-                notifElement.textContent = data.unreadCount;
+            if (notifElement && totalNotifCount > 0) {
+                notifElement.textContent = totalNotifCount;
                 notifElement.style.display = 'inline-block';
             } else if (notifElement) {
                 notifElement.style.display = 'none';
@@ -181,6 +181,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetchUnreadNotifCount();
     setInterval(fetchUnreadNotifCount, 5000);
-});
+   });
 </script>
 
