@@ -3,7 +3,10 @@
         <div id="notification" class="m-4 p-4 text-black rounded-md">
         
         </div>
-    
+        
+        <div>
+            <h1>Test</h1>
+        </div>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
                 const notificationElement = document.getElementById('notification');
