@@ -267,5 +267,15 @@ class UserController extends Controller
         return response()->json(['unreadCount' => $unreadCount, 'unreadOrderCount' => $unreadOrderCount]);
     }
 
+    public function getOrderStatus() 
+    {
+        $user = Auth::user();
+        $order = $user->order()->latest()->first();
 
+        if (!$order) {
+            return response()->json(['status' => 'error', 'message' => 'Order not found'], 400);
+        }
+
+        return response()->json(['status' => $order->status]);
+    }
 }

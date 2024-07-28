@@ -72,13 +72,13 @@ class AdminController extends Controller
 
 
         $customerMessages = Message::where('sender_id', '!=', $adminId)
-                                    ->orderBy('created_at', 'desc')
-                                    ->get();
+            ->orderBy('created_at', 'desc')
+            ->get();
 
 
         $adminMessages = Message::where('sender_id', $adminId)
-                                ->orderBy('created_at', 'desc')
-                                ->get();
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return view('admin.message', compact('customerMessages', 'adminMessages'));
     }
@@ -123,7 +123,6 @@ class AdminController extends Controller
     public function profile()
     {
         $user = Auth::user();
-        // dd($user);
         return view('admin.profile', compact('user'));
     }
 

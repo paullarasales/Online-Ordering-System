@@ -33,7 +33,8 @@ Route::middleware('auth')->group(function (){
     Route::get('/user/profile', [UserController::class, 'profile'])->name('user.profile')->middleware(['auth', 'verified']);
     Route::get('/order/{order}/status', [UserController::class, 'fetchOrderStatus'])->name('fetchOrderStatus');
     Route::post('/order/{order}/cancel', [UserController::class, 'cancelOrder'])->name('order.cancel');
-    Route::get('/image/status', [UserController::class, 'getImageStatus'])->name('id.status');
+    Route::get('/image/status', [UserController::class, 'getImageStatus'])->name('image.status');
+    Route::get('/order/status', [UserController::class, 'getOrderStatus'])->name('order.status');
     Route::get('/notification', [UserController::class, 'notification'])->name('notification');
     Route::get('/unread-notification', [UserController::class, 'getCountNotif'])->name('unread-notification');
 });
