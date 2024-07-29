@@ -30,7 +30,16 @@ class UserController extends Controller
             $verification->notifiedbyuser = true;
             $verification->save();
         }
-        return view('customer.notification', ['verifications' => $verifications]);
+
+        $orders = Order::where('user_id', $user->id)
+            ->where('notifiedbyuser', false)
+            ->get();
+
+        foreach ($orders as $order) {
+            $order->notifiedbyuser = true;
+            $order->save();
+        }
+        return view('customer.notification', ['verifications' => $verifications, 'orders' => $orders]);
     }
 
    public function profile()
@@ -236,6 +245,7 @@ class UserController extends Controller
         if (strcasecmp($order->status, 'processing') === 0) {
             $order->status = 'cancelled';
             $order->notified = false;
+            $order->notifiedbyuser = false;
             $order->save();
         }
         return response()->json(['status' =>  $order->status]);
@@ -270,7 +280,7 @@ class UserController extends Controller
     public function getOrderStatus() 
     {
         $user = Auth::user();
-        $order = $user->order()->latest()->first();
+        $order = $user->orders()->latest()->first();
 
         if (!$order) {
             return response()->json(['status' => 'error', 'message' => 'Order not found'], 400);

@@ -163,6 +163,7 @@ class AdminController extends Controller
         $order = Order::find($orderId);
         if ($order) {
             $order->status = $status;
+            $order->notifiedbyuser = false;
             $order->save();
             return response()->json(['success' => true]);
         } else {
@@ -221,8 +222,8 @@ class AdminController extends Controller
     public function fetchNewVerifications()
     {
         $newVerifications = Verification::with('user')
-                            ->where('notified', false)
-                            ->get();
+            ->where('notified', false)
+            ->get();
 
         foreach ($newVerifications as $verification) {
             $verification->notified = true;

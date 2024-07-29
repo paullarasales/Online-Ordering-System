@@ -26,7 +26,7 @@
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <select name="status" id="status-{{ $order->id }}" data-order-id="{{ $order->id }}" class="status-dropdown">
                                     <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
-                                    <option value="on deliver" {{ $order->status == 'on deliver' ? 'selected' : '' }}>On Deliver</option>
+                                    <option value="On Deliver" {{ $order->status == 'On Deliver' ? 'selected' : '' }}>On Deliver</option>
                                     <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
                                     <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                 </select>

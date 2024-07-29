@@ -10,9 +10,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProfileUpdate;
 use App\Http\Controller\ApiController;
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+
 
 Route::get('/', function (){
     return view('landing');
