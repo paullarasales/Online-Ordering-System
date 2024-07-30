@@ -279,13 +279,31 @@ class UserController extends Controller
 
     public function getOrderStatus() 
     {
-        $user = Auth::user();
-        $order = $user->orders()->latest()->first();
+        try {
+            $user = Auth::user();
+            $orders = $user->orders()->with('items.product')->get();
 
-        if (!$order) {
-            return response()->json(['status' => 'error', 'message' => 'Order not found'], 400);
+            if ($orders->isEmpty()) {
+                return response()->json(['status' => 'error', 'message' => 'Order not found'], 400);
+            }
+
+            $ordersData = $orders->map(function($order) {
+                return [
+                    'status' => $order->status,
+                    'products' => $order->items->map(function($item) {
+                        return [
+                            'product_name' => $item->product->product_name
+                        ];  
+                    }),
+                ];
+            });
+
+            return response()->json(['orders' => $ordersData]);
+        } catch (\Exception $e) {
+            // Log the exception message for debugging
+            \Log::error('Error fetching order status: ' . $e->getMessage());
+            return response()->json(['status' => 'error', 'message' => 'An error occurred'], 500);
         }
-
-        return response()->json(['status' => $order->status]);
     }
+
 }
