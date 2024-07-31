@@ -282,6 +282,7 @@ class UserController extends Controller
         try {
             $user = Auth::user();
             $orders = $user->orders()->with('items.product')->get();
+            
 
             if ($orders->isEmpty()) {
                 return response()->json(['status' => 'error', 'message' => 'Order not found'], 400);
