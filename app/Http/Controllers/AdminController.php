@@ -250,4 +250,13 @@ class AdminController extends Controller
 
         return response()->json(['verifications' => $verifications]);
     }
+
+    public function adminGetCountNotif()
+    {
+        $unreadVerification = Verification->where('notified', false)->get();
+
+        $unreadOrder = Order->where('notified', false)->get();
+
+        return response()->json(['unreadVerification' => $unreadVerification, 'unreadOrder' => $unreadOrder]);
+    }
 }

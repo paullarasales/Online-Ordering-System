@@ -5,16 +5,6 @@
             <div id="alert-container" class="fixed top-4 right-4 z-50"></div>
         </div>
     </div>
-
-    <script>
-        const currentDate = new Date();
-        const options = {day: 'numeric', month: 'long', year: 'numeric'}
-        const formattedDate = currentDate.toLocaleDateString('en-US', options)
-
-
-        document.getElementById('todaysDate').innerText = formattedDate;
-    </script>
-
     <script>
         document.addEventListener('DOMContentLoaded', async function() {
             let ordersNotified = false;
@@ -72,7 +62,7 @@
                 alert.innerHTML = `
                     <div class="flex-shrink-0">
                         <svg class="h-6 w-6 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4H8m4-4H8m-4 8h16M5 12h2m4-4h2v4h1M5 8                            h2m-2 8h2M3 16h18" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4H8m4-4H8m-4 8h16M5 12h2m4-4h2v4h1M58h2m-2 8h2M3 16h18" />
                         </svg>
                     </div>
                     <div class="ml-3">

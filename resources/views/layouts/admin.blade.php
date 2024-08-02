@@ -122,6 +122,7 @@
 
                         <x-side-nav-link href="{{ route('admin.newOrders') }}" :active="request()->routeIs('admin.newOrders')" class="text-xl text-black font-medium mt-1 flex items-center w-full">
                             {{ __('Notifaction')}}
+                            <span id="notif-count" class="bg-red-600 text-white text-xs rounded-full px-2 ml-2" style="display: none;">0</span>
                         </x-side-nav-link>
                     </div>
                 </nav>
@@ -188,6 +189,22 @@
         </main>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            async function getCount() {
+                try {
+                    const response = await fetch('/admin/unreadnotification');
+                    const data =  await response.json();
+
+                    console.log('The Count of value', data);
+                } catch (error) {
+                    console.error('Error fetching the count of the notification', error);
+                }
+            }
+
+            getCount();
+        })
+    </script>
     @stack('scripts')
 </body>
 </html>
