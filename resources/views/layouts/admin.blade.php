@@ -191,19 +191,32 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const notifElement = document.getElementById('notif-count');
+
             async function getCount() {
                 try {
                     const response = await fetch('/admin/unreadnotification');
-                    const data =  await response.json();
+                    
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    const data = await response.json();
+                    console.log('Fetched counts', data);
+                    const totalCount = data.unreadVerification + data.unreadOrder;
+                    if (notifElement && totalCount > 0) {
+                        notifElement.textContent = totalCount;
+                        notifElement.style.display = 'inline-block';
+                    } else if (notifElement) {  
+                        notifElement.style.display = 'none';
+                    }
 
-                    console.log('The Count of value', data);
                 } catch (error) {
                     console.error('Error fetching the count of the notification', error);
                 }
             }
 
-            getCount();
-        })
+            setInterval(getCount, 5000);
+        });
     </script>
     @stack('scripts')
 </body>

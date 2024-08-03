@@ -253,10 +253,14 @@ class AdminController extends Controller
 
     public function adminGetCountNotif()
     {
-        $unreadVerification = Verification->where('notified', false)->get();
+       try {
+            $unreadVerification = Verification::where('notified', false)->count();
+            $unreadOrder = Order::where('notified', false)->count();
 
-        $unreadOrder = Order->where('notified', false)->get();
-
-        return response()->json(['unreadVerification' => $unreadVerification, 'unreadOrder' => $unreadOrder]);
+            return response()->json(['unreadVerification' => $unreadVerification, 'unreadOrder' => $unreadOrder]);
+       } catch (\Exception $e) {
+            \Log::error('Error fetching notification counts: ' . $e->getMessage());
+            return response()->json(['error' => 'server error'], 500);
+       }
     }
 }
