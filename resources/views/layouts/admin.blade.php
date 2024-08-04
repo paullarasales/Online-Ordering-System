@@ -157,7 +157,7 @@
                                         </div>
                                     </button>
                                     <!-- Dropdown Menu -->
-                                    <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 sm:w-48 sm:top-full sm:mt-1 sm:ml-6">
+                                    <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 sm:w-48 sm:top-full sm:mt-1 sm:ml-6 z-50">
                                         <div class="py-1">
                                             <x-dropdown-link :href="route('profile')">
                                                 {{ __('Edit Profile') }}
