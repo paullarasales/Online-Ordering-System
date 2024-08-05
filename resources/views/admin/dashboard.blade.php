@@ -85,7 +85,7 @@
                 setTimeout(() => {
                     alert.remove();
                     localStorage.removeItem('notificationShown');
-                }, 20000);
+                }, 3000);
             }
             setInterval(getNotif, 5000);
             setInterval(getNotifVerification, 5000);
