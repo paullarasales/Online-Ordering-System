@@ -134,23 +134,31 @@
                 <div class="mx-auto px-2 sm:px-6 lg:px-8">
                     <div class="relative flex items-center justify-between h-16">
                         <div>
-                            <h1 class="text-2xl font-medium">Welcome Back {{ Auth::user()->name }}</h1>
+                            <h1 class="text-2xl font-medium">Dashboard</h1>
                         </div>
                         
                         <!-- User Dropdown -->
                         <div class="sm:flex flex items-center justify-center sm:items-center absolute inset-y-0 right-0">
                             <div x-data="{ open: false }" class="relative flex items-center">
                                 <!-- Profile Dropdown -->
-                                <div x-data="{ open: false }" class="relative ms-4">
-                                    <button @click="open = !open" class="inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-lg rounded-md text-black-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                        <div class="flex items-center justify-end w-48">
-                                            <div class="flex gap-2">
+                                <div x-data="{ open: false }" class="relative ms-4 flex flex-row items-center justify-center w-40">
+                                    <div class="flex items-center gap-2 rounded-sm h-12 ml-5">
+                                        <x-side-nav-link href="{{ route('admin.newOrders') }}" :active="request()->routeIs('admin.newOrders')" class="text-xl text-black font-medium mt-1 flex items-center w-full">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5" />
+                                            </svg>
+                                            <span id="notif-count" class="bg-red-600 text-white text-xs rounded-full px-2 ml-2" style="display: none;">0</span>
+                                        </x-side-nav-link>
+                                    </div>
+                                    <button @click="open = !open" class="relative inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-lg rounded-md text-black-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
+                                        <div class="flex items-center justify-end w-16">
+                                            <div class="flex">
                                                 @if(Auth::user()->photo)
-                                                <img class="w-9 h-9 rounded-full ml-2" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">
+                                                <img class="w-9 h-9 rounded-full ml-2 border-solid border-2 border-sky-500" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">
                                                 @endif
                                             </div>
                                             <div class="ms-1 mt-1">
-                                                <svg class="fill-current h-7 w-7" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                                                <svg class="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                                     <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
                                                 </svg>
                                             </div>
