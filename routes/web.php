@@ -65,13 +65,10 @@ Route::delete('Product-delete/{id}/detete', [ProductController::class, 'destroy'
 Route::put('/products/{id}/save', [ProductController::class, 'update'])->name('product.update')->middleware('admin');
 
 Route::middleware(['auth'])->group(function () {
-    Route::get('/chat', [ChatController::class, 'index'])->name('chat.index');
-    Route::get('/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
-    Route::post('chat/send-message', [ChatController::class, 'sendMessage'])->name('chat.send');
-    Route::get('/check-new-messages', [AdminController::class, 'checkNewMessages'])->name('check.new.messages')->middleware('admin');
-    Route::get('/admin/messages', [AdminController::class, 'getMessages'])->name('admin.messages.fetch')->middleware('admin');
-    Route::get('/sse/messages', [AdminController::class, 'streamMessages'])->name('sse.messages')->middleware('admin');
-    Route::post('/chat/respond', [ChatController::class, 'respondToCustomer'])->name('chat.respond')->middleware('admin');
+   Route::post('/send-message', [ChatController::class, 'sendMessage']);
+   Route::get('/get-messages', [ChanController::class, 'getMessages']);
+   Route::get('/get-users', [ChatController::class, 'getUsers']);
+   Route::get('/get-admin', [ChatController::class, 'getAdmin']);
 });
 
 Route::middleware('auth')->group(function () {

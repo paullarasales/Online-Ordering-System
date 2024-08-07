@@ -1,170 +1,204 @@
 <x-admin-layout>
     <style>
-        /* Message styling */
-        .message {
-            padding: 8px;
-            margin-bottom: 8px;
-            border-radius: 8px;
-            max-width: 80%;
-        }
-
-        .customer-message {
-            background-color: #3490dc;
-            color: #fff;
-            align-self: flex-start;
-        }
-
-        .admin-message {
-            background-color: #d1d5db;
-            color: #000;
-            align-self: flex-end;
-        }
-
-        /* Message container styling */
-        .message-list {
+        #chat-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            height: 100%;
+            border: 1px solid #e2e8f0; 
+            background-color: #f7fafc; 
+        }
+
+        #message-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .message {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .sender {
+            align-self: flex-end;
+            background-color: #d1fae5; 
+            text-align: right;
+        }
+
+        .receiver {
+            align-self: flex-start;
+            background-color: #edf2f7;
+            text-align: left;
+        }
+
+        #message-input-container {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0; 
+            background-color: #ffffff;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0; 
+            border-radius: 0.375rem;
+        }
+
+        #send-button {
+            margin-left: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        #send-button:hover {
+            background-color: #2563eb;
+        }
+
+        #container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        #sidebar {
+            width: 40%;
+            padding: 1rem;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+        }
+
+        #chat-container-wrapper {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-list-item {
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        }
+
+        .user-list-item:hover {
+            background-color: #e2e8f0;
         }
     </style>
 
-    <div class="flex h-full">
+    <div id="container">
         <!-- Sidebar -->
-        <div class="w-1/4 p-4 overflow-y-auto">
-            <h3 class="text-lg font-semibold mb-4">Customers</h3>
-            <div class="space-y-2">
-                @foreach($customerMessages->groupBy('sender_id') as $senderId => $senderMessages)
-                    @if(!$senderMessages->first()->sender->isAdmin())
-                        <div class="cursor-pointer message-sidebar" data-sender-id="{{ $senderId }}" onclick="toggleMessages('{{ $senderId }}')">
-                            <h4 class="text-gray-800">{{ $senderMessages->first()->sender->name }}</h4>
-                            <p class="text-sm text-gray-600">Last Message: {{ $senderMessages->last()->created_at->format('M d, H:i A') }}</p>
-                        </div>
-                    @endif
-                @endforeach
+        <div id="sidebar">
+            <h3 class="text-lg font-semibold mb-4">Customer</h3>
+            <div id="user-list">
+                
             </div>
         </div>
 
-        <!-- Message Container -->
-        <div class="flex-1 bg-gray-100 p-4 overflow-y-auto">
-            @foreach($customerMessages->groupBy('sender_id') as $senderId => $senderMessages)
-                @if(!$senderMessages->first()->sender->isAdmin())
-                    <div id="messages_{{ $senderId }}" class="message-container hidden">
-                        <div class="message-list">
-                            @php
-
-                                $allMessages = $senderMessages->merge($adminMessages->where('recipient_id', $senderId));
-
-                                $sortedMessages = $allMessages->sortBy('created_at');
-                            @endphp
-                            @foreach($sortedMessages as $message)
-                                <div class="message @if($message->sender->isAdmin()) admin-message @else customer-message @endif" data-message-id="{{ $message->id }}">
-                                    <p>{{ $message->message }}</p>
-                                    <span class="text-xs">{{ $message->created_at->format('H:i A') }}</span>
-                                </div>
-                            @endforeach
-                        </div>
-                        <form action="{{ route('chat.respond') }}" method="post" class="p-4">
-                            @csrf
-                            <input type="hidden" name="customer_id" value="{{ $senderId }}">
-                            <div class="flex">
-                                <input type="text" name="message" placeholder="Type your message..." class="flex-1 p-2 border rounded-l-md focus:outline-none focus:ring focus:border-blue-300">
-                                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Send</button>
-                            </div>
-                        </form>
-                    </div>
-                @endif
-            @endforeach
+        <!-- Chat Container -->
+        <div id="chat-container-wrapper">
+            <div id="chat-container">
+                <div id="message-list">
+                </div>
+                <div id="message-input-container">
+                    <input type="text" id="message-input" placeholder="Type a message" class="flex-1 mr-2">
+                    <button id="send-button">Send</button>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        function toggleMessages(senderId) {
-            var allMessageContainers = document.querySelectorAll('.message-container');
-            allMessageContainers.forEach(function(container) {
-                if (container.id === 'messages_' + senderId) {
-                    container.classList.remove('hidden');
-                } else {
-                    container.classList.add('hidden');
-                }
-            });
-        }
+        window.authUserId = @json(auth()->id());
+        window.authUserType = @json(auth()->user()->usertype);
+        let currentReceiverId = null;
 
+        async function fetchUserList() {
+            try {
+                const response = await fetch('/get-users');
+                const users = await response.json();
+                console.log(users);
+                const userList = document.getElementById('user-list');
 
-        function fetchNewMessages(senderId) {
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === XMLHttpRequest.DONE) {
-                    if (xhr.status === 200) {
-                        var response = JSON.parse(xhr.responseText);
-                        var newMessages = response.messages;
-                        appendNewCustomerMessages(senderId, newMessages);
-                    } else {
-                        console.error('Failed to fetch new messages for sender ID ' + senderId + '. Status: ' + xhr.status);
-                    }
-                }
-            };
-            xhr.open('GET', '/admin/messages?sender_id=' + senderId, true);
-            xhr.send();
-        }
+                userList.innerHTML = '';
 
+                users.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'user-list-item';
+                    userElement.textContent = user.name;
+                    userElement.dataset.userId = user.id;
 
-        function appendNewCustomerMessages(senderId, newMessages) {
-            var messageContainer = document.getElementById('messages_' + senderId);
-            var messageList = messageContainer.querySelector('.message-list');
+                    userElement.addEventListener('click', () => {
+                        currentReceiverId = user.id;
+                        fetchMessages();
+                    });
 
-
-            var displayedMessageIds = Array.from(messageList.children).map(function(child) {
-                return parseInt(child.getAttribute('data-message-id'));
-            });
-
-            newMessages.forEach(function(message) {
-
-                if (!displayedMessageIds.includes(message.id)) {
-                    var messageElement = document.createElement('div');
-                    messageElement.classList.add('message');
-                    messageElement.classList.add('customer-message');
-                    messageElement.setAttribute('data-message-id', message.id);
-
-                    var messageText = document.createElement('p');
-                    messageText.textContent = message.message;
-
-                    let messageTime = document.createElement('span');
-                    let createdAt = new Date(message.created_at);
-
-                    // Format the time with AM/PM
-                    let hours = createdAt.getHours();
-                    let minutes = createdAt.getMinutes();
-                    let amPM = hours >= 12 ? 'PM' : 'AM';
-                    hours = hours % 12;
-                    hours = hours ? hours : 12;
-
-                    let formattedTime = hours + ':' + (minutes < 10 ? '0' : '') + minutes + ' ' + amPM;
-
-                    messageTime.textContent = formattedTime;
-                    messageTime.classList.add('text-xs');
-
-
-
-                    messageElement.appendChild(messageText);
-                    messageElement.appendChild(messageTime);
-                    messageList.appendChild(messageElement);
-
-                    // Add the message ID to the list of displayed message IDs
-                    displayedMessageIds.push(message.id);
-                }
-            });
-
-            // Scroll to the bottom of the message list
-            messageList.scrollTop = messageList.scrollHeight;
-        }
-
-        // Function to check for new messages periodically
-        setInterval(function() {
-            var visibleMessageContainer = document.querySelector('.message-container:not(.hidden)');
-            if (visibleMessageContainer) {
-                var senderId = visibleMessageContainer.id.split('_')[1];
-                fetchNewMessages(senderId);
+                    userList.appendChild(userElement);
+                });
+            } catch (error) {
+                console.error('Error fetching user list:', error);
             }
-        }, 5000); // Check every 5 seconds
-    </script>
+        }
+
+
+        async function fetchMessages() {
+            if (!currentReceiverId) return;
+
+            try {
+                const response = await fetch(`/get-messages?receiver_id=${currentReceiverId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const messages = await response.json();
+                console.log(messages);
+                const messageList = document.getElementById('message-list');
+
+                messageList.innerHTML = '';
+
+                messages.forEach(msg => {
+                    const msgElement = document.createElement('div');
+                    msgElement.className = `message ${msg.sender_id === window.authUserId ? 'sender' : 'receiver'}`;
+                    msgElement.textContent = msg.content;
+                    messageList.appendChild(msgElement);
+                });
+                messageList.scrollTop = messageList.scrollHeight;
+            } catch (error) {
+                console.error('Error fetching messages:', error);
+            }
+        }
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const button = document.getElementById('send-button');
+
+            button.addEventListener('click', async () => {
+                const messageInput = document.getElementById('message-input');
+                const message = messageInput.value;
+
+                if (message.trim() !== '' && currentReceiverId) {
+                    await fetch('/send-message', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({ message, receiver_id: currentReceiverId })
+                    });
+                    messageInput.value = '';
+                    fetchMessages();
+                }
+            });
+
+            fetchUserList();
+            setInterval(fetchMessages, 2000);
+        });
+    </script> 
 </x-admin-layout>
