@@ -13,7 +13,7 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
+            gap: 1rem;
         }
 
         .message {
@@ -177,7 +177,7 @@
                     const msgElement = document.createElement('div');
                     msgElement.className = `message ${msg.sender_id === window.authUserId ? 'sender' : 'receiver'}`;
                     msgElement.textContent = msg.content;
-                    messageList.appendChild(msgElement);
+                    messageList.appendChild(msgElement)
                 });
                 messageList.scrollTop = messageList.scrollHeight;
             } catch (error) {

@@ -87,15 +87,6 @@
                         </x-side-nav-link>
                     </div>
 
-                    <div class="{{ request()->routeIs('message') ? 'bg-gray-200 w-full' : 'w-44' }} flex items-center gap-2 rounded-sm h-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="{{ request()->routeIs('message') ? '#8B5CF6' : ''}}" viewBox="0 0 24 24" stroke-width="1.5" class="ml-10 w-9 h-9">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.068.157 2.148.279 3.238.364.466.037.893.281 1.153.671L12 21l2.652-3.978c.26-.39.687-.634 1.153-.67 1.09-.086 2.17-.208 3.238-.365 1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
-                        </svg>
-                        <x-side-nav-link href="{{ route('message') }}" :active="request()->routeIs('message')" class="text-lg text-black font-medium mt-1 flex items-center w-full">
-                            {{ __('Chats')}}
-                        </x-side-nav-link>
-                    </div>
-
                     <div class="{{ request()->routeIs('product') ? 'bg-gray-200 w-full' : 'w-44' }} flex items-center gap-2 rounded-sm h-12">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ request()->routeIs('product') ? '#8B5CF6' : '#000000'}}" viewBox="0 0 24 24" stroke-width="1.5" class="ml-10 w-9 h-9">
                             <path fill-rule="evenodd" d="M1.5 7.125c0-1.036.84-1.875 1.875-1.875h6c1.036 0 1.875.84 1.875 1.875v3.75c0 1.036-.84 1.875-1.875 1.875h-6A1.875 1.875 0 0 1 1.5 10.875v-3.75Zm12 1.5c0-1.036.84-1.875 1.875-1.875h5.25c1.035 0 1.875.84 1.875 1.875v8.25c0 1.035-.84 1.875-1.875 1.875h-5.25a1.875 1.875 0 0 1-1.875-1.875v-8.25ZM3 16.125c0-1.036.84-1.875 1.875-1.875h5.25c1.036 0 1.875.84 1.875 1.875v2.25c0 1.035-.84 1.875-1.875 1.875h-5.25A1.875 1.875 0 0 1 3 18.375v-2.25Z" clip-rule="evenodd" />
@@ -123,15 +114,29 @@
                 <div class="mx-auto px-2 sm:px-6 lg:px-8">
                     <div class="relative flex items-center justify-between h-16">
                         <div>
-                            <h1 class="text-2xl font-medium">Dashboard</h1>
+                            @if(request()->routeIs('dashboard'))
+                                <h1 class="text-2xl font-medium">Dashboard</h1>
+                            @elseif(request()->routeIs('customer'))
+                                <h1 class="text-2xl font-medium">Customer</h1>
+                            @elseif(request()->routeIs('order'))
+                                <h1 class="text-2xl font-medium">Order List</h1>
+                            @elseif(request()->routeIs('product'))
+                                <h1 class="text-2xl font-medium">Product</h1>
+                            @elseif(request()->requestIs('profile'))
+                                <h1 class="text-2xl font-medium">Profile</h1>
+                            @elseif(request()->routeIs('admin.newOrders'))
+                                <h1 class="text-2xl font-medium">Notification</h1>
+                            @elseif(request()->routeIs('message'))
+                                <h1 class="text-2xl font-medium">Message</h1>
+                            @endif
                         </div>
                         
                         <!-- User Dropdown -->
                         <div class="sm:flex flex items-center justify-center sm:items-center absolute inset-y-0 right-0">
                             <div x-data="{ open: false }" class="relative flex items-center">
                                 <!-- Profile Dropdown -->
-                                <div x-data="{ open: false }" class="relative ms-4 flex flex-row items-center justify-center w-40">
-                                    <div class="flex items-center justify-center rounded-sm h-12" style="width: 36px;">
+                                <div x-data="{ open: false }" class="relative ms-4 flex flex-row items-center justify-evenly w-48">
+                                    <div class="flex items-center justify-center rounded-sm h-12" style="width: 50px;"> 
                                         <x-side-nav-link href="{{ route('admin.newOrders') }}" :active="request()->routeIs('admin.newOrders')" class="text-xl text-black font-medium flex items-center w-full">
                                             <div class="relative flex items-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -141,11 +146,21 @@
                                             </div>
                                         </x-side-nav-link>
                                     </div>
+                                    <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 60px;"> 
+                                        <x-side-nav-link href="{{ route('message') }}" :active="request()->routeIs('message')" class="text-xl text-black font-medium flex items-center w-full">
+                                            <div class="relative flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75H6.912a2.25 2.25 0 0 0-2.15 1.588L2.35 13.177a2.25 2.25 0 0 0-.1.661V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18v-4.162c0-.224-.034-.447-.1-.661L19.24 5.338a2.25 2.25 0 0 0-2.15-1.588H15M2.25 13.5h3.86a2.25 2.25 0 0 1 2.012 1.244l.256.512a2.25 2.25 0 0 0 2.013 1.244h3.218a2.25 2.25 0 0 0 2.013-1.244l.256-.512a2.25 2.25 0 0 1 2.013-1.244h3.859M12 3v8.25m0 0-3-3m3 3 3-3" />
+                                                </svg>
+                                                <span id="message-count" class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full px-2 py-0.5 transform translate-x-1/2 translate-y-1/2" style="display: none;">0</span>
+                                            </div>
+                                        </x-side-nav-link>
+                                    </div>
                                     <button @click="open = !open" class="relative inline-flex items-center px-3 py-2 border border-transparent text-md leading-4 font-lg rounded-md text-black-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                        <div class="flex items-center justify-end w-16">
+                                        <div class="flex items-center justify-end w-20">
                                             <div class="flex">
                                                 @if(Auth::user()->photo)
-                                                <img class="w-9 h-9 rounded-full ml-2 border-solid border-2 border-sky-500" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">
+                                                <img class="w-10 h-10 rounded-full ml-2 border-solid border-2 border-sky-500" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">
                                                 @endif
                                             </div>
                                             <div class="ms-1 mt-1">
@@ -154,7 +169,7 @@
                                                 </svg>
                                             </div>
                                         </div>
-                                    </button>
+                                    </button>        
                                     <!-- Dropdown Menu -->
                                     <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 sm:w-48 sm:top-full sm:mt-1 sm:ml-6 z-50">
                                         <div class="py-1">
@@ -191,6 +206,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const notifElement = document.getElementById('notif-count');
+            const messageElement = document.getElementById('message-count');
 
             async function getCount() {
                 try {
@@ -208,13 +224,36 @@
                     } else if (notifElement) {  
                         notifElement.style.display = 'none';
                     }
-
                 } catch (error) {
                     console.error('Error fetching the count of the notification', error);
                 }
             }
 
+            async function getMessageCount() {
+                try {
+                    const response = await fetch('/admin/unread-messages');
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const data = await response.json();
+
+                    const count = data.unreadMessage;
+
+                    if (messageElement && count > 0) {
+                        messageElement.textContent = count;
+                        messageElement.style.display = 'inline-block';
+                    } else if (messageElement) {
+                        messageElement.style.display = 'none';
+                    }
+                } catch (error) { 
+                    console.error('Error fetching the message count', error);
+                }
+            }
+
             setInterval(getCount, 5000);
+            setInterval(getMessageCount, 3000);
         });
     </script>
     @stack('scripts')

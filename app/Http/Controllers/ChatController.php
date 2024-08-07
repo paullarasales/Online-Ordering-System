@@ -12,6 +12,7 @@ class ChatController extends Controller
     {
         $message = new Message();
         $message->content = $request->input('message');
+        $message->notified = false;
         $message->sender_id = auth()->id();
 
         $sender = auth()->user();
@@ -66,6 +67,16 @@ class ChatController extends Controller
         try {
             $users = User::where('usertype', 'admin')->get();
             return response()->json($users);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
+    public function adminMessageCount()
+    {
+        try {
+            $unreadMessage = Message::where('notified', false)->count();
+            return response()->json(['unreadMessage' => $unreadMessage]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
