@@ -35,6 +35,7 @@ Route::middleware('auth')->group(function (){
     Route::get('/order/status', [UserController::class, 'getOrderStatus'])->name('order.status');
     Route::get('/notification', [UserController::class, 'notification'])->name('notification');
     Route::get('/unread-notification', [UserController::class, 'getCountNotif'])->name('unread-notification');
+    Route::get('/user/messages', [UserController::class, 'messages'])->name('user.messages');
 });
 
 Route::get('/dashboard', [AdminController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard')->middleware('admin');
@@ -66,7 +67,7 @@ Route::put('/products/{id}/save', [ProductController::class, 'update'])->name('p
 
 Route::middleware(['auth'])->group(function () {
    Route::post('/send-message', [ChatController::class, 'sendMessage']);
-   Route::get('/get-messages', [ChanController::class, 'getMessages']);
+   Route::get('/get-messages', [ChatController::class, 'getMessages']);
    Route::get('/get-users', [ChatController::class, 'getUsers']);
    Route::get('/get-admin', [ChatController::class, 'getAdmin']);
 });

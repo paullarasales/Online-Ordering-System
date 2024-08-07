@@ -1,107 +1,208 @@
-<x-app-layout>
-    <x-slot name="header">
-        <div class="flex items-center mb-4">
-            <a href="{{ route('userdashboard') }}" class="group">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mr-2 mb-4 group-hover:stroke-blue-500">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
-                </svg>
-            </a>
-            <h1 class="text-3xl font-bold mb-4">Chat</h1>
-        </div>
-    </x-slot>
 
-    <div class="flex flex-col h-full p-4">
-        <!-- Chat messages container -->
-        <div id="chat_container" class="space-y-4" style="overflow-y: auto; max-height: 80vh;">
-            <!-- Display existing messages -->
-            @foreach($messages as $message)
-                <p class="border p-3 mb-4 {{ $message->sender_id == $adminId ? 'text-left bg-blue-200' : 'text-right bg-gray-200' }}">
-                    {{ $message->message }}
-                    <br>
-                    <span class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($message->created_at)->format('H:i A') }}</span>
-                </p>
-            @endforeach
-        </div>
-        
-        <!-- Input message form -->
-        <form id="message_form" class="mt-auto">
-            @csrf
-            <div class="flex">
-                <input type="hidden" name="recipient_id" value="{{ $adminId }}">
-                <input id="message_input" type="text" name="message" placeholder="Type your message..." class="flex-1 p-2 border rounded-l-md focus:outline-none focus:ring focus:border-blue-300">
-                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-r-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Send</button>
+<x-app-layout>
+    <style>
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            border: 1px solid #e2e8f0; 
+            background-color: #f7fafc; 
+        }
+
+        #message-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .message {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
+
+        .sender {
+            align-self: flex-end;
+            background-color: #d1fae5; 
+            text-align: right;
+        }
+
+        .receiver {
+            align-self: flex-start;
+            background-color: #edf2f7;
+            text-align: left;
+        }
+
+        #message-input-container {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0; 
+            background-color: #ffffff;
+        }
+
+        #message-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0; 
+            border-radius: 0.375rem;
+        }
+
+        #send-button {
+            margin-left: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        #send-button:hover {
+            background-color: #2563eb;
+        }
+
+        #container {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        #sidebar {
+            width: 40%;
+            padding: 1rem;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+        }
+
+        #chat-container-wrapper {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-list-item {
+        padding: 0.5rem;
+        border-radius: 0.375rem;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        }
+
+        .user-list-item:hover {
+            background-color: #e2e8f0;
+        }
+    </style>
+
+    <div id="container">
+        <!-- Sidebar -->
+        <div id="sidebar">
+            <h3 class="text-lg font-semibold mb-4">Customer</h3>
+            <div id="user-list">
+                
             </div>
-        </form>
+        </div>
+
+        <!-- Chat Container -->
+        <div id="chat-container-wrapper">
+            <div id="chat-container">
+                <div id="message-list">
+                </div>
+                <div id="message-input-container">
+                    <input type="text" id="message-input" placeholder="Type a message" class="flex-1 mr-2">
+                    <button id="send-button">Send</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function() {
-            var isScrolledToBottom = true;
-            var pollingInterval;
+        window.authUserId = @json(auth()->id());
+        window.authUserType = @json(auth()->user()->usertype);
+        let currentReceiverId = null;
 
+        async function fetchUserList() {
+            try {
+                const response = await fetch('/get-admin');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const users = await response.json();
+                console.log(users);
+                const userList = document.getElementById('user-list');
 
-            function fetchMessages() {
-                if (isScrolledToBottom) {
-                    $.ajax({
-                        url: '{{ route("chat.messages") }}',
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function(response) {
-                            var sortedMessages = response.sort(function(a, b) {
-                                return new Date(a.created_at) - new Date(b.created_at);
-                            });
-                            updateMessagesUI(sortedMessages);
-                            $("#chat_container").scrollTop($("#chat_container")[0].scrollHeight);
-                        },
-                        error: function(xhr, status, error) {
-                            console.error(error);
-                        }
+                userList.innerHTML = '';
+
+                users.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'user-list-item';
+                    userElement.textContent = user.name;
+                    userElement.dataset.userId = user.id;
+
+                    userElement.addEventListener('click', () => {
+                        currentReceiverId = user.id;
+                        fetchMessages();
                     });
+
+                    userList.appendChild(userElement);
+                });
+            } catch (error) {
+                console.error('Error fetching user list:', error);
+            }
+        }
+
+
+        async function fetchMessages() {
+            if (!currentReceiverId) return;
+
+            try {
+                const response = await fetch(`/get-messages?receiver_id=${currentReceiverId}`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
-            }
+                const messages = await response.json();
+                console.log(messages);
+                const messageList = document.getElementById('message-list');
 
-            function updateMessagesUI(messages) {
-                $('#chat_container').empty();
-                messages.forEach(function(message) {
-                    var isAdminMessage = (message.sender_id == {{ $adminId }});
-                    var messageClass = isAdminMessage ? 'text-left bg-blue-200' : 'text-right bg-gray-200';
-                    var createdAt = new Date(message.created_at);
-                    var formattedDate = createdAt.toLocaleString();
+                messageList.innerHTML = '';
 
-                    $('#chat_container').append('<p class="border p-3 mb-4 ' + messageClass + '">' +
-                        message.message +
-                        '<br>' +
-                        '<span class="text-xs text-gray-500">' + formattedDate + '</span>' +
-                        '</p>');
+                messages.forEach(msg => {
+                    const msgElement = document.createElement('div');
+                    msgElement.className = `message ${msg.sender_id === window.authUserId ? 'sender' : 'receiver'}`;
+                    msgElement.textContent = msg.content;
+                    messageList.appendChild(msgElement);
                 });
+                messageList.scrollTop = messageList.scrollHeight;
+            } catch (error) {
+                console.error('Error fetching messages:', error);
             }
-    
-            pollingInterval = setInterval(fetchMessages, 5000);
+        }
 
 
-            $('#message_form').submit(function(event) {
-                event.preventDefault();
-                var formData = $(this).serialize();
-                $.post('{{ route("chat.send") }}', formData, function(response) {
-                });
-                // Clear the input field
-                $('#message_input').val('');
+        document.addEventListener('DOMContentLoaded', function() {
+            const button = document.getElementById('send-button');
+
+            button.addEventListener('click', async () => {
+                const messageInput = document.getElementById('message-input');
+                const message = messageInput.value;
+
+                if (message.trim() !== '' && currentReceiverId) {
+                    await fetch('/send-message', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        },
+                        body: JSON.stringify({ message, receiver_id: currentReceiverId })
+                    });
+                    messageInput.value = '';
+                    fetchMessages();
+                }
             });
 
-            // Detect if user scrolled to bottom
-            $("#chat_container").scroll(function() {
-                var scrollHeight = $("#chat_container").prop("scrollHeight");
-                var scrollTop = $("#chat_container").prop("scrollTop");
-                var height = $("#chat_container").prop("clientHeight");
-
-                isScrolledToBottom = scrollHeight - scrollTop === height;
-                
-                if (isScrolledToBottom && !pollingInterval) {
-                    // Start polling again if scrolled to bottom
-                    pollingInterval = setInterval(fetchMessages, 5000);
-                }
-            });
+            fetchUserList();
+            setInterval(fetchMessages, 2000);
         });
-    </script>
+    </script> 
 </x-app-layout>

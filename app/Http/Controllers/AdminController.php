@@ -67,20 +67,7 @@ class AdminController extends Controller
     }
 
     public function message() {
-
-        $adminId = User::where('usertype', 'admin')->value('id');
-
-
-        $customerMessages = Message::where('sender_id', '!=', $adminId)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-
-        $adminMessages = Message::where('sender_id', $adminId)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('admin.message', compact('customerMessages', 'adminMessages'));
+        return view('admin.message');
     }
 
     public function checkNewMessages()

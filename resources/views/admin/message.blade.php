@@ -82,11 +82,18 @@
             flex-direction: column;
         }
 
+        #selected-customer {
+            padding: 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #f7fafc;
+        }
+
         .user-list-item {
-        padding: 0.5rem;
-        border-radius: 0.375rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         .user-list-item:hover {
@@ -105,6 +112,9 @@
 
         <!-- Chat Container -->
         <div id="chat-container-wrapper">
+            <div id="selected-customer">
+                Select a customer to start chatting
+            </div>
             <div id="chat-container">
                 <div id="message-list">
                 </div>
@@ -138,6 +148,7 @@
 
                     userElement.addEventListener('click', () => {
                         currentReceiverId = user.id;
+                        document.getElementById('selected-customer').textContent = `Chatting with ${user.name}`;
                         fetchMessages();
                     });
 
@@ -147,7 +158,6 @@
                 console.error('Error fetching user list:', error);
             }
         }
-
 
         async function fetchMessages() {
             if (!currentReceiverId) return;
@@ -174,7 +184,6 @@
                 console.error('Error fetching messages:', error);
             }
         }
-
 
         document.addEventListener('DOMContentLoaded', function() {
             const button = document.getElementById('send-button');
