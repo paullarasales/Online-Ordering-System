@@ -95,16 +95,6 @@
                             {{ __('Products')}}
                         </x-side-nav-link>
                     </div>
-
-                    <div class="{{ request()->routeIs('profile') ? 'bg-gray-200 w-full' : 'w-44' }} flex items-center gap-2 rounded-sm h-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="{{ request()->routeIs('profile') ? '#8B5CF6' : '#000000'}}" viewBox="0 0 24 24" stroke-width="1.5" class="ml-10 w-6 h-6">
-                            <path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd" />
-                        </svg>
-
-                        <x-side-nav-link href="{{ route('profile') }}" :active="request()->routeIs('profile')" class="text-xl text-black font-medium mt-1 flex items-center w-full">
-                            {{ __('Profile')}}
-                        </x-side-nav-link>
-                    </div>
                 </nav>
             </aside>
         <!-- Main -->
@@ -122,7 +112,7 @@
                                 <h1 class="text-2xl font-medium">Order List</h1>
                             @elseif(request()->routeIs('product'))
                                 <h1 class="text-2xl font-medium">Product</h1>
-                            @elseif(request()->requestIs('profile'))
+                            @elseif(request()->routeIs('profile'))
                                 <h1 class="text-2xl font-medium">Profile</h1>
                             @elseif(request()->routeIs('admin.newOrders'))
                                 <h1 class="text-2xl font-medium">Notification</h1>
@@ -252,7 +242,7 @@
                 }
             }
 
-            setInterval(getCount, 5000);
+            getCount();
             setInterval(getMessageCount, 3000);
         });
     </script>

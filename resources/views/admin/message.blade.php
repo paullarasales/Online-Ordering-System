@@ -25,8 +25,9 @@
 
         .sender {
             align-self: flex-end;
-            background-color: #d1fae5; 
+            background-color: #4169E1; 
             text-align: right;
+            color: white;
         }
 
         .receiver {
