@@ -118,6 +118,8 @@
                                 <h1 class="text-2xl font-medium">Notification</h1>
                             @elseif(request()->routeIs('message'))
                                 <h1 class="text-2xl font-medium">Message</h1>
+                            @elseif(request()->routeIs('product-add-view'))
+                                <h1 class="text-2xl font-medium">Add new Product</h1>
                             @endif
                         </div>
                         
@@ -221,7 +223,7 @@
 
             async function getMessageCount() {
                 try {
-                    const response = await fetch('/admin/unread-messages');
+                    const response = await fetch('/unread-messages');
 
                     if (!response.ok) {
                         throw new Error('Network response was not ok');

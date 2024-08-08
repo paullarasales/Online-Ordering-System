@@ -70,7 +70,7 @@ Route::middleware(['auth'])->group(function () {
    Route::get('/get-messages', [ChatController::class, 'getMessages']);
    Route::get('/get-users', [ChatController::class, 'getUsers']);
    Route::get('/get-admin', [ChatController::class, 'getAdmin']);
-   Route::get('/admin/unread-messages', [ChatController::class, 'adminMessageCount']);
+   Route::get('/unread-messages', [ChatController::class, 'adminMessageCount']);
 });
 
 Route::middleware('auth')->group(function () {

@@ -14,6 +14,7 @@ class ChatController extends Controller
         $message->content = $request->input('message');
         $message->notified = false;
         $message->sender_id = auth()->id();
+        $message->sentbyadmin = auth()->user()->isAdmin();
 
         $sender = auth()->user();
         if ($sender->isAdmin()) {
@@ -75,10 +76,23 @@ class ChatController extends Controller
     public function adminMessageCount()
     {
         try {
-            $unreadMessage = Message::where('notified', false)->count();
+            $user = auth()->user();
+    
+            if ($user->isAdmin()) {
+                // Admin counts all unread messages
+                $unreadMessage = Message::where('notified', false)->count();
+            } else {
+                // User counts unread messages from admin
+                $unreadMessage = Message::where('receiver_id', $user->id)
+                                        ->where('sentbyadmin', true) // Only count messages from admin
+                                        ->where('notified', false) // Assuming this is still needed for admin messages
+                                        ->count();
+            }
+    
             return response()->json(['unreadMessage' => $unreadMessage]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+    
 }
