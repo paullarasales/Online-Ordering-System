@@ -14,9 +14,11 @@ use App\Models\Order;
 class AdminController extends Controller
 {
     public function dashboard() {
+        $userCount = User::count();
+        $orderCount = Order::count();
         $orders = Order::with('user')->orderBy('created_at', 'desc')->get();
 
-        return view('admin.dashboard', compact('orders'));
+        return view('admin.dashboard', compact('orders', 'userCount', 'orderCount'));
     }
 
     public function customer() {
