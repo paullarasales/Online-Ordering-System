@@ -13,8 +13,10 @@ class ChatController extends Controller
         $message = new Message();
         $message->content = $request->input('message');
         $message->notified = false;
+        $message->notifiedbyuser = false;
         $message->sender_id = auth()->id();
         $message->sentbyadmin = auth()->user()->isAdmin();
+        $message->sentbyuser = auth()->user()->isUser();
 
         $sender = auth()->user();
         if ($sender->isAdmin()) {
@@ -80,12 +82,15 @@ class ChatController extends Controller
     
             if ($user->isAdmin()) {
                 // Admin counts all unread messages
-                $unreadMessage = Message::where('notified', false)->count();
+                $unreadMessage = Message::where('sentbyuser', true)
+                                        ->where('notified', false)
+                                        ->count();
             } else {
                 // User counts unread messages from admin
                 $unreadMessage = Message::where('receiver_id', $user->id)
                                         ->where('sentbyadmin', true) // Only count messages from admin
-                                        ->where('notified', false) // Assuming this is still needed for admin messages
+                                        ->where('notifiedbyuser', false) // Assuming this is still needed for admin messages
+                                        ->where('notified', false)
                                         ->count();
             }
     
@@ -95,4 +100,20 @@ class ChatController extends Controller
         }
     }
     
+    public function userMessageCount() 
+    {
+        try {
+            $user = auth()->user();
+            $unreadeMessage = 0;
+
+            if($user->isUser()) {
+                $unreadMessage = Message::where('sentbyadmin', true)
+                                        ->where('notifiedbyuser', false)->count();
+            }
+
+            return response()->json(['unreadMessage' => $unreadMessage]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }

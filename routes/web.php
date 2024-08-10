@@ -71,6 +71,7 @@ Route::middleware(['auth'])->group(function () {
    Route::get('/get-users', [ChatController::class, 'getUsers']);
    Route::get('/get-admin', [ChatController::class, 'getAdmin']);
    Route::get('/unread-messages', [ChatController::class, 'adminMessageCount']);
+   Route::get('/user/unread-messages', [ChatController::class, 'userMessageCount']);
 });
 
 Route::middleware('auth')->group(function () {

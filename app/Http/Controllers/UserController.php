@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
+use App\Models\Message;
 
 class UserController extends Controller
 {
@@ -309,7 +310,13 @@ class UserController extends Controller
 
     public function messages()
     {
-        return view('chat.index');
+        $messages = Message::where('notifiedbyuser', false)->get();
+
+        foreach ($messages as $message) {
+            $message->notifiedbyuser = true;
+            $message->save();
+        }
+        return view('chat.index', ['messages' => $messages]);
     }
 
 }

@@ -69,9 +69,10 @@ class AdminController extends Controller
     public function message() {
         $messages = Message::where('notified', false)->get();
         
-        $messageIds = $messages->pluck('id')->toArray();
-        
-        Message::whereIn('id', $messageIds)->update(['notified' => true]);
+        foreach($messages as $message) {
+            $message->notified = true;
+            $message->save();
+        }
         
         return view('admin.message', ['messages' => $messages]);
     }

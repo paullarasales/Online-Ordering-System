@@ -184,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
     //for fetching message count
     async function getMessageCount() {
         try {
-            const response = await fetch('/unread-messages');
+            const response = await fetch('/user/unread-messages');
             if (!response.ok) {
                 throw new Error('Network was not ok');
             }
@@ -206,6 +206,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetchUnreadNotifCount();
     getMessageCount();
+    setInterval(getMessageCount, 5000);
     setInterval(fetchUnreadNotifCount, 5000);
    });
 </script>

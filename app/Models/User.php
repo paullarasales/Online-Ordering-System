@@ -55,6 +55,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->usertype === 'admin';
     }
 
+    public function isUser()
+    {
+        return $this->usertype === 'user';
+    }
+
     public function verification()
     {
         return $this->hasOne(Verification::class);

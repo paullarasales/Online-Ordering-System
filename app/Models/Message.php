@@ -12,6 +12,9 @@ class Message extends Model
     protected $fillable = [
         'content',
         'receiver_id',
-        'sender_id'
+        'sender_id',
+        'notified',
+        'sentbyadmin',
+        'notifiedbyuser'
     ];
 }
