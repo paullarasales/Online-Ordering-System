@@ -186,7 +186,7 @@
             <div class="flex flex-col md:flex-row w-full md:h-full md:gap-2">
                 <div class="flex-1">
                     <div class="mx-auto px-2 sm:px-6 lg:px-8">
-                        <div class="relative py-4 bg-white overflow-hidden shadow sm:rounded-lg">
+                        <div class="relative bg-white overflow-hidden shadow">
                             {{ $slot }}
                         </div>
                     </div>

@@ -1,5 +1,5 @@
 <x-admin-layout>
-    <div class="flex justify-center items-center w-full h-screen">
+    <div class="flex justify-center items-center w-full h-screen bg-white border">
         <div class="w-1/2">
             <div class="flex justify-between mb-4">
                 <h2 class="text-xl font-bold">Users</h2>

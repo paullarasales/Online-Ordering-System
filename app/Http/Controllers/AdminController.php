@@ -14,7 +14,9 @@ use App\Models\Order;
 class AdminController extends Controller
 {
     public function dashboard() {
-        return view('admin.dashboard');
+        $orders = Order::with('user')->orderBy('created_at', 'desc')->get();
+
+        return view('admin.dashboard', compact('orders'));
     }
 
     public function customer() {
