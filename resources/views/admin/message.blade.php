@@ -133,32 +133,51 @@
         let currentReceiverId = null;
 
         async function fetchUserList() {
-            try {
-                const response = await fetch('/get-users');
-                const users = await response.json();
-                console.log(users);
-                const userList = document.getElementById('user-list');
+    try {
+        const response = await fetch('/get-users');
+        const users = await response.json();
+        console.log(users);
+        const userList = document.getElementById('user-list');
 
-                userList.innerHTML = '';
+        userList.innerHTML = '';
 
-                users.forEach(user => {
-                    const userElement = document.createElement('div');
-                    userElement.className = 'user-list-item';
-                    userElement.textContent = user.name;
-                    userElement.dataset.userId = user.id;
+        users.forEach(user => {
+            const userElement = document.createElement('div');
+            userElement.className = 'user-list-item';
+            
+            const userNameElement = document.createElement('span');
+            userNameElement.textContent = user.name;
+            userNameElement.style.fontWeight = user.new_messages_count > 0 ? 'bold' : 'normal';
 
-                    userElement.addEventListener('click', () => {
-                        currentReceiverId = user.id;
-                        document.getElementById('selected-customer').textContent = `Chatting with ${user.name}`;
-                        fetchMessages();
-                    });
+            userElement.appendChild(userNameElement);
+            userElement.dataset.userId = user.id;
 
-                    userList.appendChild(userElement);
+            userElement.addEventListener('click', async () => {
+                currentReceiverId = user.id;
+                document.getElementById('selected-customer').textContent = `Chatting with ${user.name}`;
+                fetchMessages();
+
+                // Mark messages as read
+                await fetch('/mark-messages-as-read', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ receiver_id: user.id })
                 });
-            } catch (error) {
-                console.error('Error fetching user list:', error);
-            }
-        }
+
+                // Update the user list to remove bolding
+                fetchUserList();
+            });
+
+            userList.appendChild(userElement);
+        });
+    } catch (error) {
+        console.error('Error fetching user list:', error);
+    }
+}
+
 
         async function fetchMessages() {
             if (!currentReceiverId) return;
@@ -208,6 +227,7 @@
             });
 
             fetchUserList();
+            setInterval(fetchUserList, 2000);
             setInterval(fetchMessages, 2000);
         });
     </script> 

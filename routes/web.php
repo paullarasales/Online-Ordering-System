@@ -72,6 +72,7 @@ Route::middleware(['auth'])->group(function () {
    Route::get('/get-admin', [ChatController::class, 'getAdmin']);
    Route::get('/unread-messages', [ChatController::class, 'adminMessageCount']);
    Route::get('/user/unread-messages', [ChatController::class, 'userMessageCount']);
+   Route::post('/mark-messages-as-read', [ChatController::class, 'markMessagesAsRead']);
 });
 
 Route::middleware('auth')->group(function () {

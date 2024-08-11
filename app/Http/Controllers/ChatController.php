@@ -53,17 +53,30 @@ class ChatController extends Controller
         return response()->json($messages);
     }
 
-
     public function getUsers()
     {
         try {
-            $users = User::where('usertype', 'user')->get();
+            $adminId = auth()->id();
+
+            $users = User::where('usertype', 'user')->get()->map(function ($user) use ($adminId) {
+                $newMessagesCount = Message::where('sender_id', $user->id)
+                    ->where('receiver_id', $adminId)
+                    ->where('sentbyuser', true)
+                    ->where('openedbyadmin', false)
+                    ->count();
+
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'new_messages_count' => $newMessagesCount,
+                ];
+            });
+
             return response()->json($users);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
-
 
     public function getAdmin()
     {
@@ -81,15 +94,14 @@ class ChatController extends Controller
             $user = auth()->user();
     
             if ($user->isAdmin()) {
-                // Admin counts all unread messages
                 $unreadMessage = Message::where('sentbyuser', true)
                                         ->where('notified', false)
                                         ->count();
             } else {
-                // User counts unread messages from admin
+                
                 $unreadMessage = Message::where('receiver_id', $user->id)
-                                        ->where('sentbyadmin', true) // Only count messages from admin
-                                        ->where('notifiedbyuser', false) // Assuming this is still needed for admin messages
+                                        ->where('sentbyadmin', true)
+                                        ->where('notifiedbyuser', false)
                                         ->where('notified', false)
                                         ->count();
             }
@@ -116,4 +128,23 @@ class ChatController extends Controller
             return response()->json(['error' => $e->getMessage()], 500);
         }
     }
+
+    public function markMessagesAsRead(Request $request)
+    {
+        try {
+            $adminId = auth()->id();
+            $receiverId = $request->input('receiver_id');
+
+            Message::where('sender_id', $receiverId)
+                ->where('receiver_id', $adminId)
+                ->where('sentbyuser', true)
+                ->where('openedbyadmin', false)
+                ->update(['openedbyadmin' => true]);
+
+            return response()->json(['status' => 'Messages marked as read']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
+
 }
