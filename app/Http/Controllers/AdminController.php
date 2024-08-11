@@ -10,16 +10,25 @@ use App\Models\Message;
 use App\Models\User;
 use App\Models\Verification;
 use App\Models\Order;
+use App\Models\OrderItem;
 
 class AdminController extends Controller
 {
     public function dashboard() {
-        $userCount = User::count();
+        $userCount = User::where('usertype', 'user')->count();
         $orderCount = Order::count();
+        
+        $totalSales = OrderItem::join('products', 'order_items.product_id', '=', 'products.id')
+                               ->join('orders', 'order_items.order_id', '=', 'orders.id')
+                               ->where('orders.status', 'delivered')
+                               ->selectRaw('SUM(order_items.quantity * products.price + 60) as total_sales')
+                               ->value('total_sales');
         $orders = Order::with('user')->orderBy('created_at', 'desc')->get();
-
-        return view('admin.dashboard', compact('orders', 'userCount', 'orderCount'));
+    
+        return view('admin.dashboard', compact('orders', 'totalSales', 'orderCount', 'userCount'));
     }
+    
+    
 
     public function customer() {
 

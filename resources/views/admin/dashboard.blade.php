@@ -3,10 +3,10 @@
         <!--Top-->
         <div class="flex flex-row items-start justify-around w-full h-1/5">
             <!--Total Sales -->
-            <div class="flex flex-col justify-center mt-4 items-start p-3 h-5/6 bg-white rounded-md overflow-hidden" style="width: 300px; box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;">
+            <div class="flex flex-col justify-center mt-4 items-start p-3 h-5/6 bg-white rounded-md overflow-hidden" style="width: 340px; box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.06) 0px 1px 2px 0px;">
                 <h1 class="text-lg font-normal text-gray-400">Total Sales</h1>
                 <div class="flex items-center justify-start h-2/3 w-full">
-                    <h1 class="text-2xl font-medium">₱50.302.00</h1>
+                    <h1 class="text-2xl font-medium">₱{{ number_format($totalSales, 2) }}</h1>
                 </div>
                 <div class="flex flex-row w-full h-1/4">
                     <span class="text-green-400"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
