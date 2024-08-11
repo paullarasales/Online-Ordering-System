@@ -45,7 +45,7 @@
             </div>
         </div>
         <!--Bottom-->
-        <h1 class="text-lg font-medium ml-2">Recent Orders</h1>
+        <h1 class="text-lg font-medium ml-5 mt-5">Recent Orders</h1>
         <div class="w-full h-4/5">
             @if ($orders->count() > 0)
                 <div class="overflow-x-auto">

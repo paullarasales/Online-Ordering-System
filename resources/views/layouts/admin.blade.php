@@ -244,7 +244,7 @@
                 }
             }
 
-            getCount();
+            setInterval(getCount, 3000);
             setInterval(getMessageCount, 3000);
         });
     </script>
