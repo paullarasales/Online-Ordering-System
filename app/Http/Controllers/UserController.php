@@ -16,15 +16,15 @@ class UserController extends Controller
     public function index()
     {
         $products = Product::paginate(8);
-        return view('customer.dashboard', compact('products'));
+        return view("customer.dashboard", compact("products"));
     }
 
-     public function notification()
+    public function notification()
     {
         $user = Auth::user();
 
-        $verifications = Verification::where('user_id', $user->id)
-            ->where('notifiedbyuser', false)
+        $verifications = Verification::where("user_id", $user->id)
+            ->where("notifiedbyuser", false)
             ->get();
 
         foreach ($verifications as $verification) {
@@ -32,224 +32,252 @@ class UserController extends Controller
             $verification->save();
         }
 
-        $orders = Order::where('user_id', $user->id)
-            ->where('notifiedbyuser', false)
+        $orders = Order::where("user_id", $user->id)
+            ->where("notifiedbyuser", false)
             ->get();
 
         foreach ($orders as $order) {
             $order->notifiedbyuser = true;
             $order->save();
         }
-        return view('customer.notification', ['verifications' => $verifications, 'orders' => $orders]);
+        return view("customer.notification", [
+            "verifications" => $verifications,
+            "orders" => $orders,
+        ]);
     }
 
-   public function profile()
+    public function profile()
     {
         $user = Auth::user();
-
-        return view('customer.profile', compact('user'));
+        return view("customer.profile", compact("user"));
     }
 
     public function verifyAccountForm()
     {
-
-        $userVerification = Verification::where('user_id', auth()->id())->first();
-        return view('customer.verification', compact('userVerification'));
+        $userVerification = Verification::where(
+            "user_id",
+            auth()->id()
+        )->first();
+        return view("customer.verification", compact("userVerification"));
     }
 
     public function verify(Request $request)
     {
         // dd($request->all());
         $request->validate([
-            'valid_id1' => 'required|image|mimes:jpg,png,jpeg|max:2048',
+            "valid_id1" => "required|image|mimes:jpg,png,jpeg|max:2048",
         ]);
 
         $user = Auth::user();
 
-        $validId = new Verification;
+        $validId = new Verification();
         $validId->user_id = $user->id;
         $validId->notified = false;
-        $validId->status = 'pending';
+        $validId->status = "pending";
         $validId->notifiedbyuser = false;
 
-        $existingVerification = Verification::where('user_id', $user->id)->first();
+        $existingVerification = Verification::where(
+            "user_id",
+            $user->id
+        )->first();
 
         if ($existingVerification && !$existingVerification->verified) {
-            return redirect()->route('verify.message')->with('status', 'Please wait while we verifying your account thankyou');
+            return redirect()
+                ->route("verify.message")
+                ->with(
+                    "status",
+                    "Please wait while we verifying your account thankyou"
+                );
         }
 
-        if ($request->hasFile('valid_id1')) {
-            $file = $request->file('valid_id1');
+        if ($request->hasFile("valid_id1")) {
+            $file = $request->file("valid_id1");
 
-            $filename = time() . '.' . $file->getClientOriginalExtension();
+            $filename = time() . "." . $file->getClientOriginalExtension();
 
-            $path = $file->storeAs('verifications', $filename, 'public');
+            $path = $file->storeAs("verifications", $filename, "public");
 
             $validId->valid_id1 = $path;
         }
 
         $validId->save();
 
-        return redirect()->route('verify.message')->with('success');
+        return redirect()->route("verify.message")->with("success");
     }
 
     public function verifyMessage()
     {
-        return view('customer.verification-message');
+        return view("customer.verification-message");
     }
 
     public function addToCartPage()
     {
         $userId = Auth::id();
-        $cart = Cart::firstOrCreate(['user_id' => $userId]);
-        $cartItems = $cart->items()->with('product')->get();
+        $cart = Cart::firstOrCreate(["user_id" => $userId]);
+        $cartItems = $cart->items()->with("product")->get();
 
-        return view('customer.cart', compact('cartItems'));
+        return view("customer.cart", compact("cartItems"));
     }
 
     public function addToCart($productId)
     {
         $userId = Auth::id();
 
-        $cart = Cart::firstOrCreate(['user_id' => $userId]);
+        $cart = Cart::firstOrCreate(["user_id" => $userId]);
 
-        $verification = Verification::where('user_id', $userId)->first();
+        $verification = Verification::where("user_id", $userId)->first();
 
         if (!$verification || !$verification->verified) {
-            return redirect()->route('verify.form')->with('error', 'Please verify your account first');
+            return redirect()
+                ->route("verify.form")
+                ->with("error", "Please verify your account first");
         }
 
         $cartItems = $cart->items;
 
-        if ($cartItems->contains('product_id', $productId)) {
-            return redirect()->route('cart')->with('success', 'Product is already in the cart');
+        if ($cartItems->contains("product_id", $productId)) {
+            return redirect()
+                ->route("cart")
+                ->with("success", "Product is already in the cart");
         } else {
             $cart->items()->create([
-                'user_id' => $userId,
-                'product_id' => $productId,
-                'quantity' => 1
+                "user_id" => $userId,
+                "product_id" => $productId,
+                "quantity" => 1,
             ]);
 
             $cartItems = $cart->items;
 
-            return redirect()->route('userdashboard')->with('success', 'Product Added Successfully');
+            return redirect()
+                ->route("userdashboard")
+                ->with("success", "Product Added Successfully");
         }
     }
 
     public function updateQuantity(Request $request, $cartItemId)
     {
         $request->validate([
-            'quantity' => 'required|integer|min:1',
+            "quantity" => "required|integer|min:1",
         ]);
 
         try {
             // Find the cart item by ID
             $cartItem = CartItem::findOrFail($cartItemId);
 
-            $newTotalPrice = $cartItem->product->price * $request->input('quantity');
+            $newTotalPrice =
+                $cartItem->product->price * $request->input("quantity");
 
             // Update the quantity
-            $cartItem->quantity = $request->input('quantity');
+            $cartItem->quantity = $request->input("quantity");
             $cartItem->total_price = $newTotalPrice;
             $cartItem->save();
 
-        // Return a success response
-        return response()->json(['message' => 'Quantity updated successfully']);
+            // Return a success response
+            return response()->json([
+                "message" => "Quantity updated successfully",
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['error' => 'Failed to update quantity'], 500);
+            return response()->json(
+                ["error" => "Failed to update quantity"],
+                500
+            );
         }
     }
 
     public function prepareCheckout(Request $request)
     {
-        $cartItems = CartItem::where('user_id', auth()->id())->with('product')->get();
+        $cartItems = CartItem::where("user_id", auth()->id())
+            ->with("product")
+            ->get();
 
         $totalPrice = $cartItems->sum(function ($item) {
             return $item->quantity * $item->product->price;
         });
 
-        $paymentMethod = 'Cash On Delivery';
+        $paymentMethod = "Cash On Delivery";
 
-        return view('customer.confirmation', compact('cartItems', 'totalPrice', 'paymentMethod'));
+        return view(
+            "customer.confirmation",
+            compact("cartItems", "totalPrice", "paymentMethod")
+        );
     }
 
     public function createOrder(Request $request)
     {
         // Fetch cart items from the request
-        $cartItemsData = $request->input('cartItems');
+        $cartItemsData = $request->input("cartItems");
 
         // Create a new order
         $order = new Order();
         $order->user_id = auth()->id();
-        $order->address = $request->input('address');
-        $order->contactno = $request->input('contactno');
-        $order->payment_method = $request->input('payment_method');
+        $order->address = $request->input("address");
+        $order->contactno = $request->input("contactno");
+        $order->payment_method = $request->input("payment_method");
         $order->notified = false;
         $order->notifiedbyuser = false;
         $order->save();
 
         foreach ($cartItemsData as $cartItemId => $cartItemData) {
             $order->items()->create([
-                'product_id' => $cartItemData['product_id'],
-                'quantity' => $cartItemData['quantity'],
+                "product_id" => $cartItemData["product_id"],
+                "quantity" => $cartItemData["quantity"],
             ]);
         }
 
-        CartItem::where('user_id', auth()->id())->delete();
+        CartItem::where("user_id", auth()->id())->delete();
 
-
-        return redirect()->route('thankyou', ['orderId' => $order->id]);
+        return redirect()->route("thankyou", ["orderId" => $order->id]);
     }
 
     public function thankyou($orderId)
     {
-
-        $order = Order::with('items')->find($orderId);
-
+        $order = Order::with("items")->find($orderId);
 
         if ($order) {
-
             foreach ($order->items as $item) {
-
                 $item->product = Product::find($item->product_id);
             }
-            return view('customer.thankyou', compact('order'));
+            return view("customer.thankyou", compact("order"));
         } else {
-
-            return redirect()->route('home')->with('error', 'Order not found.');
+            return redirect()->route("home")->with("error", "Order not found.");
         }
     }
 
-    public function viewOrder() {
-
+    public function viewOrder()
+    {
         $userId = auth()->id();
 
-        $orders = Order::where('user_id', $userId)
-                    ->with('items.product')
-                    ->get();
+        $orders = Order::where("user_id", $userId)
+            ->with("items.product")
+            ->get();
 
-        return view('customer.myorder', compact('orders'));
+        return view("customer.myorder", compact("orders"));
     }
 
-    public function fetchOrderStatus($orderId) {
+    public function fetchOrderStatus($orderId)
+    {
         $order = Order::findOrFail($orderId);
 
         // Calculate total amount
-        $totalAmount = $order->items->sum(function($item) {
+        $totalAmount = $order->items->sum(function ($item) {
             return $item->quantity * $item->product->price;
         });
 
-        return response()->json(['status' => $order->status, 'total_amount' => $totalAmount]);
+        return response()->json([
+            "status" => $order->status,
+            "total_amount" => $totalAmount,
+        ]);
     }
 
-    public function cancelOrder(Request $request, Order $order) {
-        if (strcasecmp($order->status, 'processing') === 0) {
-            $order->status = 'cancelled';
+    public function cancelOrder(Request $request, Order $order)
+    {
+        if (strcasecmp($order->status, "processing") === 0) {
+            $order->status = "cancelled";
             $order->notified = false;
             $order->notifiedbyuser = false;
             $order->save();
         }
-        return response()->json(['status' =>  $order->status]);
+        return response()->json(["status" => $order->status]);
     }
 
     public function getImageStatus()
@@ -257,66 +285,77 @@ class UserController extends Controller
         $user = Auth::user();
         $verification = $user->verification()->latest()->first();
 
-        if(!$verification) {
-            return response()->json(['status' => 'error', 'message' => 'Image not found'], 404);
+        if (!$verification) {
+            return response()->json(
+                ["status" => "error", "message" => "Image not found"],
+                404
+            );
         }
 
-        return response()->json(['status' => $verification->status]);
+        return response()->json(["status" => $verification->status]);
     }
 
-    public function getCountNotif() {
+    public function getCountNotif()
+    {
         $user = Auth::user();
 
-        $unreadCount = Verification::where('user_id', $user->id)
-            ->where('notifiedbyuser', false)
+        $unreadCount = Verification::where("user_id", $user->id)
+            ->where("notifiedbyuser", false)
             ->count();
 
-        $unreadOrderCount = Order::where('user_id', $user->id)
-            ->where('notifiedbyuser', false)
+        $unreadOrderCount = Order::where("user_id", $user->id)
+            ->where("notifiedbyuser", false)
             ->count();
 
-        return response()->json(['unreadCount' => $unreadCount, 'unreadOrderCount' => $unreadOrderCount]);
+        return response()->json([
+            "unreadCount" => $unreadCount,
+            "unreadOrderCount" => $unreadOrderCount,
+        ]);
     }
 
-    public function getOrderStatus() 
+    public function getOrderStatus()
     {
         try {
             $user = Auth::user();
-            $orders = $user->orders()->with('items.product')->get();
-            
+            $orders = $user->orders()->with("items.product")->get();
 
             if ($orders->isEmpty()) {
-                return response()->json(['status' => 'error', 'message' => 'Order not found'], 400);
+                return response()->json(
+                    ["status" => "error", "message" => "Order not found"],
+                    400
+                );
             }
 
-            $ordersData = $orders->map(function($order) {
+            $ordersData = $orders->map(function ($order) {
                 return [
-                    'status' => $order->status,
-                    'products' => $order->items->map(function($item) {
+                    "status" => $order->status,
+                    "products" => $order->items->map(function ($item) {
                         return [
-                            'product_name' => $item->product->product_name
-                        ];  
+                            "product_name" => $item->product->product_name,
+                        ];
                     }),
                 ];
             });
 
-            return response()->json(['orders' => $ordersData]);
+            return response()->json(["orders" => $ordersData]);
         } catch (\Exception $e) {
             // Log the exception message for debugging
-            \Log::error('Error fetching order status: ' . $e->getMessage());
-            return response()->json(['status' => 'error', 'message' => 'An error occurred'], 500);
+            \Log::error("Error fetching order status: " . $e->getMessage());
+            return response()->json(
+                ["status" => "error", "message" => "An error occurred"],
+                500
+            );
         }
     }
 
     public function messages()
     {
-        $messages = Message::where('notifiedbyuser', false)->get();
+        $messages = Message::where("notifiedbyuser", false)->get();
 
         foreach ($messages as $message) {
             $message->notifiedbyuser = true;
             $message->save();
         }
-        return view('chat.index', ['messages' => $messages]);
+        return view("chat.index", ["messages" => $messages]);
     }
-
 }
