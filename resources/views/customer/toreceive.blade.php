@@ -33,7 +33,6 @@
             @endforeach
         </ul>
     </div>
-
     <script>
       async function markAsReceived(orderId) {
         try {
