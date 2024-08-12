@@ -4,8 +4,8 @@
             display: flex;
             flex-direction: column;
             height: 100%;
-            border: 1px solid #e2e8f0; 
-            background-color: #f7fafc; 
+            border: 1px solid #e2e8f0;
+            background-color: #f7fafc;
         }
 
         #message-list {
@@ -25,7 +25,7 @@
 
         .sender {
             align-self: flex-end;
-            background-color: #4169E1; 
+            background-color: #4169E1;
             text-align: right;
             color: white;
         }
@@ -39,14 +39,14 @@
         #message-input-container {
             display: flex;
             padding: 1rem;
-            border-top: 1px solid #e2e8f0; 
+            border-top: 1px solid #e2e8f0;
             background-color: #ffffff;
         }
 
         #message-input {
             flex: 1;
             padding: 0.5rem;
-            border: 1px solid #e2e8f0; 
+            border: 1px solid #e2e8f0;
             border-radius: 0.375rem;
         }
 
@@ -95,10 +95,33 @@
             border-radius: 0.375rem;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            flex-direction: row;
+            gap: 10px;
         }
 
-        .user-list-item:hover {
+        .user-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
             background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        .user-photo-placeholder {
+            background-color: #3b82f6;
+        }
+
+        .user-name {
+            font-weight: normal;
         }
     </style>
 
@@ -107,7 +130,7 @@
         <div id="sidebar">
             <h3 class="text-lg font-semibold mb-4">Customer</h3>
             <div id="user-list">
-                
+
             </div>
         </div>
 
@@ -133,51 +156,76 @@
         let currentReceiverId = null;
 
         async function fetchUserList() {
-    try {
-        const response = await fetch('/get-users');
-        const users = await response.json();
-        console.log(users);
-        const userList = document.getElementById('user-list');
+            try {
+                const response = await fetch('/get-users');
+                const users = await response.json();
+                console.log(users);
+                const userList = document.getElementById('user-list');
 
-        userList.innerHTML = '';
+                userList.innerHTML = '';
 
-        users.forEach(user => {
-            const userElement = document.createElement('div');
-            userElement.className = 'user-list-item';
-            
-            const userNameElement = document.createElement('span');
-            userNameElement.textContent = user.name;
-            userNameElement.style.fontWeight = user.new_messages_count > 0 ? 'bold' : 'normal';
+                users.forEach(user => {
+                    const userElement = document.createElement('div');
+                    userElement.className = 'user-list-item';
 
-            userElement.appendChild(userNameElement);
-            userElement.dataset.userId = user.id;
+                    // Create the photo element
+                    const userPhotoElement = document.createElement('div');
+                    userPhotoElement.className = 'user-photo';
 
-            userElement.addEventListener('click', async () => {
-                currentReceiverId = user.id;
-                document.getElementById('selected-customer').textContent = `Chatting with ${user.name}`;
-                fetchMessages();
+                    if (user.photo) {
+                        // Create an image element if photo URL is available
+                        const imgElement = document.createElement('img');
+                        imgElement.src = user.photo;
+                        imgElement.className = 'user-photo';
+                        imgElement.onerror = function() {
+                            // Fallback to text if image fails to load
+                            this.style.display = 'none'; // Hide the image
+                            userPhotoElement.classList.add('user-photo-placeholder');
+                            userPhotoElement.textContent = user.name.charAt(0); // Display the first letter of the name
+                        };
+                        userPhotoElement.appendChild(imgElement);
+                    } else {
+                        // Use text-based fallback
+                        userPhotoElement.classList.add('user-photo-placeholder');
+                        userPhotoElement.textContent = user.name.charAt(0); // Display the first letter of the name
+                    }
 
-                // Mark messages as read
-                await fetch('/mark-messages-as-read', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                    },
-                    body: JSON.stringify({ receiver_id: user.id })
+                    userElement.appendChild(userPhotoElement);
+
+                    // Create the name element
+                    const userNameElement = document.createElement('span');
+                    userNameElement.textContent = user.name;
+                    userNameElement.className = 'user-name';
+                    userNameElement.style.fontWeight = user.new_messages_count > 0 ? 'bold' : 'normal';
+
+                    userElement.appendChild(userNameElement);
+                    userElement.dataset.userId = user.id;
+
+                    userElement.addEventListener('click', async () => {
+                        currentReceiverId = user.id;
+                        document.getElementById('selected-customer').textContent = `Chatting with ${user.name}`;
+                        fetchMessages();
+
+                        // Mark messages as read
+                        await fetch('/mark-messages-as-read', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            },
+                            body: JSON.stringify({ receiver_id: user.id })
+                        });
+
+                        // Update the user list to remove bolding
+                        fetchUserList();
+                    });
+
+                    userList.appendChild(userElement);
                 });
-
-                // Update the user list to remove bolding
-                fetchUserList();
-            });
-
-            userList.appendChild(userElement);
-        });
-    } catch (error) {
-        console.error('Error fetching user list:', error);
-    }
-}
-
+            } catch (error) {
+                console.error('Error fetching user list:', error);
+            }
+        }
 
         async function fetchMessages() {
             if (!currentReceiverId) return;
@@ -230,5 +278,5 @@
             setInterval(fetchUserList, 2000);
             setInterval(fetchMessages, 2000);
         });
-    </script> 
+    </script>
 </x-admin-layout>

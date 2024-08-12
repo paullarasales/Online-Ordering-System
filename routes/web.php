@@ -88,6 +88,17 @@ Route::middleware("auth")->group(function () {
         ProfileController::class,
         "update",
     ])->name("profile.update");
+    Route::get("/to-receive", [UserController::class, "toReceive"])->name(
+        "to-receive"
+    );
+    Route::get("/to-receive-unread", [
+        UserController::class,
+        "getToReceiveCount",
+    ]);
+    Route::post("/orders/{orderId}/mark-as-received", [
+        UserController::class,
+        "markAsReceived",
+    ]);
 });
 //Admin
 Route::get("/dashboard", [AdminController::class, "dashboard"])

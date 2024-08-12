@@ -214,6 +214,7 @@ class UserController extends Controller
         $order->contactno = $request->input("contactno");
         $order->payment_method = $request->input("payment_method");
         $order->notified = false;
+        $order->markasreceived = false;
         $order->notifiedbyuser = false;
         $order->save();
 
@@ -252,6 +253,51 @@ class UserController extends Controller
             ->get();
 
         return view("customer.myorder", compact("orders"));
+    }
+
+    public function toReceive()
+    {
+        $userId = auth()->id();
+
+        $orders = Order::where("user_id", $userId)
+            ->with("items.product")
+            ->where("status", "on deliver")
+            ->get();
+
+        return view("customer.toreceive", compact("orders"));
+    }
+
+    public function getToReceiveCount()
+    {
+        try {
+            $userId = auth()->id();
+
+            $unreadToReceive = Order::where("user_id", $userId)
+                ->where("status", "on deliver")
+                ->where("markasreceived", false)
+                ->count();
+
+            return response()->json(["unreadToReceive" => $unreadToReceive]);
+        } catch (\Exception $e) {
+            return response()->json(["error" => $e->getMessage()], 500);
+        }
+    }
+
+    public function markAsReceived($orderId)
+    {
+        try {
+            $order = Order::findOrFail($orderId);
+
+            $order->markasreceived = true;
+            $order->status = "delivered";
+            $order->save();
+
+            return response()->json([
+                "success" => "Order marked as received successfully",
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(["error" => $e->getMessage()], 500);
+        }
     }
 
     public function fetchOrderStatus($orderId)

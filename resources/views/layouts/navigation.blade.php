@@ -26,10 +26,10 @@
                 <x-dropdown align="right">
                     <x-slot name="trigger">
                         <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                            <div class="flex items-center justify-center" style="width: 350px;">
+                            <div class="flex items-center justify-center" style="width: 370px;">
                                 <div class="flex items-center justify-evenly flex-row w-full">
                                     <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 45px;">
-                                        <x-side-nav-link href="{{ route('admin.newOrders') }}" :active="request()->routeIs('admin.newOrders')" class="text-xl text-black font-medium flex items-center w-full">
+                                        <x-side-nav-link href="{{ route('notification') }}" :active="request()->routeIs('notification')" class="text-xl text-black font-medium flex items-center w-full">
                                             <div class="relative flex items-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5" />
@@ -48,8 +48,18 @@
                                     <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 45px;">
                                         <x-side-nav-link href="{{ route('view.order') }}" :active="request()->routeIs('view.order')" class="text-xl text-black font-medium mt-1 flex items-center w-full" id="cart-link">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                              <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                                              <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
                                             </svg>
+                                        </x-side-nav-link>
+                                    </div>
+                                    <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 45px;">
+                                        <x-side-nav-link href="{{ route('to-receive') }}" :active="request()->routeIs('to-receive')" class="text-xl text-black font-medium flex items-center w-full">
+                                            <div class="relative flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
+                                                </svg>
+                                                <span id="to-receive-count" class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full px-2 py-0.5 transform translate-x-1/2 translate-y-1/2" style="display: none;">0</span>
+                                            </div>
                                         </x-side-nav-link>
                                     </div>
                                     <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 45px;">
@@ -150,6 +160,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const chatLink = document.getElementById('chat-link');
     const notifElement = document.getElementById('notif-count');
     const messageElement = document.getElementById('message-count');
+    const toReceiveElement = document.getElementById('to-receive-count');
 
     if (cartLink) {
         cartLink.addEventListener('click', function (event) {
@@ -204,7 +215,34 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    setInterval(getMessageCount, 5000);
-    setInterval(fetchUnreadNotifCount, 5000);
+    async function toReceiveCount() {
+      try {
+        const response = await fetch('/to-receive-unread');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        console.log('Fetched to receive order', data);
+        const toReceiveCount = data.unreadToReceive;
+
+        const toReceiveElement = document.getElementById('to-receive-count');
+        if (toReceiveElement) {
+          if (toReceiveCount > 0) {
+            toReceiveElement.textContent = toReceiveCount;
+            toReceiveElement.style.display = 'inline-block';
+          } else {
+            toReceiveElement.style.display = 'none';
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching the to receive order count:', error);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', toReceiveCount);
+
+    setInterval(getMessageCount, 1000);
+    setInterval(fetchUnreadNotifCount, 1000);
+    setInterval(toReceiveCount, 1000);
    });
 </script>
