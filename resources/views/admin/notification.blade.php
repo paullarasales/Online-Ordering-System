@@ -81,7 +81,6 @@
                     console.error('Error fetching new notifications:', error);
                 }
             }
-
             setInterval(fetchNewNotifications, 4000);
         });
     </script>

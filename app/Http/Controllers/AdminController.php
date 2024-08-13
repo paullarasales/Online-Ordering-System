@@ -31,7 +31,10 @@ class AdminController extends Controller
                 "SUM(order_items.quantity * products.price + 60) as total_sales"
             )
             ->value("total_sales");
-        $orders = Order::with("user")->orderBy("created_at", "desc")->get();
+        $orders = Order::with("user")
+            ->orderBy("created_at", "desc")
+            ->limit(6)
+            ->get();
 
         return view(
             "admin.dashboard",
