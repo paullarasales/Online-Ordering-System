@@ -1,6 +1,4 @@
 <x-admin-layout>
-    <h1 class="text-3xl font-bold mb-4">Order Details</h1>
-
     <div class="bg-white shadow overflow-hidden sm:rounded-lg">
         <div class="px-4 py-5 sm:px-6">
             <h3 class="text-lg leading-6 font-medium text-gray-900">Order Information</h3>

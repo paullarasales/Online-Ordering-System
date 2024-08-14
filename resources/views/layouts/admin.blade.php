@@ -120,15 +120,17 @@
                                 <h1 class="text-2xl font-medium">Message</h1>
                             @elseif(request()->routeIs('product-add-view'))
                                 <h1 class="text-2xl font-medium">Add new Product</h1>
+                            @elseif(request()->routeIs('admin.order.details'))
+                                <h1 class="text-2xl font-medium">Order Details</h1>
                             @endif
                         </div>
-                        
+
                         <!-- User Dropdown -->
                         <div class="sm:flex flex items-center justify-center sm:items-center absolute inset-y-0 right-0">
                             <div x-data="{ open: false }" class="relative flex items-center">
                                 <!-- Profile Dropdown -->
                                 <div x-data="{ open: false }" class="relative ms-4 flex flex-row items-center justify-evenly w-48">
-                                    <div class="flex items-center justify-center rounded-sm h-12" style="width: 50px;"> 
+                                    <div class="flex items-center justify-center rounded-sm h-12" style="width: 50px;">
                                         <x-side-nav-link href="{{ route('admin.newOrders') }}" :active="request()->routeIs('admin.newOrders')" class="text-xl text-black font-medium flex items-center w-full">
                                             <div class="relative flex items-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -138,7 +140,7 @@
                                             </div>
                                         </x-side-nav-link>
                                     </div>
-                                    <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 60px;"> 
+                                    <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 60px;">
                                         <x-side-nav-link href="{{ route('message') }}" :active="request()->routeIs('message')" class="text-xl text-black font-medium flex items-center w-full">
                                             <div class="relative flex items-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -161,7 +163,7 @@
                                                 </svg>
                                             </div>
                                         </div>
-                                    </button>        
+                                    </button>
                                     <!-- Dropdown Menu -->
                                     <div x-show="open" @click.away="open = false" class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 sm:w-48 sm:top-full sm:mt-1 sm:ml-6 z-50">
                                         <div class="py-1">
@@ -203,7 +205,7 @@
             async function getCount() {
                 try {
                     const response = await fetch('/admin/unreadnotification');
-                    
+
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
@@ -213,7 +215,7 @@
                     if (notifElement && totalCount > 0) {
                         notifElement.textContent = totalCount;
                         notifElement.style.display = 'inline-block';
-                    } else if (notifElement) {  
+                    } else if (notifElement) {
                         notifElement.style.display = 'none';
                     }
                 } catch (error) {
@@ -239,7 +241,7 @@
                     } else if (messageElement) {
                         messageElement.style.display = 'none';
                     }
-                } catch (error) { 
+                } catch (error) {
                     console.error('Error fetching the message count', error);
                 }
             }
