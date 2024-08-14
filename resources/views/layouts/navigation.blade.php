@@ -42,10 +42,13 @@
                                         </x-side-nav-link>
                                     </div>
                                     <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 45px;">
-                                        <x-side-nav-link href="{{ route('cart') }}" :active="request()->routeIs('cart')" class="text-xl text-black font-medium mt-1 flex items-center w-full" id="cart-link">
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
-                                            </svg>
+                                        <x-side-nav-link href="{{ route('cart') }}" :active="request()->routeIs('cart')" class="text-xl text-black font-medium flex items-center w-full">
+                                            <div class="relative flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                                                </svg>
+                                                <span id="add-to-cart-count" class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full px-2 py-0.5 transform translate-x-1/2 translate-y-1/2" style="display: none;">0</span>
+                                            </div>
                                         </x-side-nav-link>
                                     </div>
                                     <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 45px;">
@@ -164,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const notifElement = document.getElementById('notif-count');
     const messageElement = document.getElementById('message-count');
     const toReceiveElement = document.getElementById('to-receive-count');
+    const cartCountElement = document.getElementById('add-to-cart-count');
 
     if (cartLink) {
         cartLink.addEventListener('click', function (event) {
@@ -242,10 +246,34 @@ document.addEventListener('DOMContentLoaded', function () {
       }
     }
 
-    document.addEventListener('DOMContentLoaded', toReceiveCount);
+    async function getCartCount() {
+        try {
+            const response = await fetch('/uncount-add-to-cart');
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+            console.log('Fetched cart count:', data);
+            const cartCount = data.count;
+
+            if (cartCountElement && cartCount > 0) {
+                cartCountElement.textContent = cartCount;
+                cartCountElement.style.display = 'inline-block';
+            } else if (cartCountElement) {
+                cartCountElement.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Error fetching the cart count:', error);
+        }
+    }
+
+
+    document.addEventListener('DOMContentLoaded', toReceiveCount, getCartCount);
 
     setInterval(getMessageCount, 1000);
     setInterval(fetchUnreadNotifCount, 1000);
     setInterval(toReceiveCount, 1000);
+    setInterval(getCartCount, 1000);
    });
 </script>

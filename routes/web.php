@@ -101,6 +101,10 @@ Route::middleware("auth")->group(function () {
         "markAsReceived",
     ]);
     Route::get("/search", [SearchController::class, "search"])->name("search");
+    Route::get("/uncount-add-to-cart", [
+        UserController::class,
+        "addToCartCount",
+    ]);
 });
 //Admin
 Route::get("/dashboard", [AdminController::class, "dashboard"])
