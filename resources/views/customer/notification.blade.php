@@ -4,7 +4,7 @@
 
         </div>
         <div id="notification" class="m-4 p-4 text-black rounded-md">
-        
+
         </div>
         <script>
             document.addEventListener('DOMContentLoaded', () => {
@@ -58,12 +58,12 @@
                         data.orders.forEach(order => {
                             order.products.forEach(product => {
                                 let statusMessage = `Your order ${product.product_name}`;
-                            
+
                                 switch (order.status) {
                                     case 'Processing':
                                         statusMessage += " is still processing. Please wait. ";
                                         break;
-                                    case 'on deliver':
+                                    case 'On Deliver':
                                         statusMessage += " is currently out of delivery.";
                                         break;
                                     case 'delivered':

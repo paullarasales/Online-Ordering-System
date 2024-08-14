@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProfileUpdate;
+use App\Http\Controllers\SearchController;
 
 Route::get("/", function () {
     return view("landing");
@@ -99,6 +100,7 @@ Route::middleware("auth")->group(function () {
         UserController::class,
         "markAsReceived",
     ]);
+    Route::get("/search", [SearchController::class, "search"])->name("search");
 });
 //Admin
 Route::get("/dashboard", [AdminController::class, "dashboard"])

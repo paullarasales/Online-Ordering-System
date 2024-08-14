@@ -42,10 +42,10 @@
                                 <img src="{{ asset('logo/no-bg.png')}}" alt="" class="h-20 w-20">
                                 <div class="flex flex-col">
                                     <div>
-                                        <h1 class="font-md text-2xl">Twenty Four</h1>
+                                        <h1 class="font-semibold text-2xl tracking-md">Twenty <span class="text-yellow-500">Four<span></h1>
                                     </div>
                                     <div class="ml-4">
-                                        <h1 class="font-md text-2xl">Twenty One</h1>
+                                        <h1 class="font-semibold text-2xl tracking-md"><span class="text-yellow-500">Twenty</span> One</h1>
                                     </div>
                                 </div>
                             </a>
@@ -107,7 +107,7 @@
                             @if(request()->routeIs('dashboard'))
                                 <h1 class="text-2xl font-medium">Dashboard</h1>
                             @elseif(request()->routeIs('customer'))
-                                <h1 class="text-2xl font-medium">Customer</h1>
+                                <h1 class="text-2xl font-medium">Manage Users</h1>
                             @elseif(request()->routeIs('order'))
                                 <h1 class="text-2xl font-medium">Order List</h1>
                             @elseif(request()->routeIs('product'))
@@ -124,7 +124,6 @@
                                 <h1 class="text-2xl font-medium">Order Details</h1>
                             @endif
                         </div>
-
                         <!-- User Dropdown -->
                         <div class="sm:flex flex items-center justify-center sm:items-center absolute inset-y-0 right-0">
                             <div x-data="{ open: false }" class="relative flex items-center">
@@ -245,7 +244,6 @@
                     console.error('Error fetching the message count', error);
                 }
             }
-
             setInterval(getCount, 3000);
             setInterval(getMessageCount, 3000);
         });
