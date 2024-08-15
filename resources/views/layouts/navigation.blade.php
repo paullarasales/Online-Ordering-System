@@ -199,7 +199,6 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    //for fetching message count
     async function getMessageCount() {
         try {
             const response = await fetch('/user/unread-messages');
@@ -267,8 +266,6 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error('Error fetching the cart count:', error);
         }
     }
-
-
     document.addEventListener('DOMContentLoaded', toReceiveCount, getCartCount);
 
     setInterval(getMessageCount, 1000);

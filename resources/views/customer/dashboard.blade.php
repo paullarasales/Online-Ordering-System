@@ -1,11 +1,11 @@
 <x-app-layout>
     <!-- Notification Banner -->
     @if(session('success'))
-        <div class="fixed top-0 right-0 m-4 p-4 bg-green-500 text-white rounded-md">
+        <div id="notification-banner" class="fixed top-0 right-0 m-4 p-4 bg-green-500 text-white rounded-md">
             {{ session('success') }}
         </div>
     @elseif(session('error'))
-        <div class="fixed top-0 right-0 m-4 p-4 bg-red-500 text-white rounded-md">
+        <div id="notification-banner" class="fixed top-0 right-0 m-4 p-4 bg-red-500 text-white rounded-md">
             {{ session('error') }}
         </div>
     @endif
@@ -60,4 +60,18 @@
             {{ $products->links('vendor.pagination.tailwind') }}
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const notificationBanner = document.getElementById('notification-banner');
+
+            if (notificationBanner) {
+                setTimeout(() => {
+                    notificationBanner.style.opacity = '0';
+                    setTimeout(() => {
+                        notificationBanner.style.display = 'none';
+                    }, 5000);
+                }, 3000);
+            }
+        });
+    </script>
 </x-app-layout>

@@ -113,10 +113,22 @@ class UserController extends Controller
     public function addToCartPage()
     {
         $userId = Auth::id();
-        $cart = Cart::firstOrCreate(["user_id" => $userId]);
-        $cartItems = $cart->items()->with("product")->get();
+        $cart = Cart::firstOrCreate(['user_id' => $userId]);
+        $cartItems = $cart->items()->with('product')->get();
 
-        return view("customer.cart", compact("cartItems"));
+        $unnotified = CartItem::where('cart_id', $cart->id)
+                            ->where('notified', false)
+                            ->get();
+
+        foreach ($unnotified as $item) {
+            $item->notified = true;
+            $item->save();
+        }
+
+        return view('customer.cart', [
+            'cartItems' => $cartItems,
+            'unnotified' => $unnotified
+        ]);
     }
 
     public function addToCart($productId)
