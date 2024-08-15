@@ -33,7 +33,7 @@ class AdminController extends Controller
             ->value("total_sales");
         $orders = Order::with("user")
             ->orderBy("created_at", "desc")
-            ->limit(6)
+            ->limit(8)
             ->get();
 
         return view(
