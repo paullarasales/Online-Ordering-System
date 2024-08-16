@@ -183,7 +183,9 @@ Route::get("/admin/unreadnotification", [
     AdminController::class,
     "adminGetCountNotif",
 ])->name("admin.getCountNotif");
-
+Route::get('/admin/fetch-orders-and-verifications', [AdminController::class, 'fetchOrdersAndVerifications']);
+Route::get('/products/filter', [AdminController::class, 'productFilter'])->name('product.filter');
+//Others 
 Route::post("Product-add", [ProductController::class, "addProduct"])
     ->name("products.store")
     ->middleware("admin");

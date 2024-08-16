@@ -122,6 +122,8 @@
                                 <h1 class="text-2xl font-medium">Add new Product</h1>
                             @elseif(request()->routeIs('admin.order.details'))
                                 <h1 class="text-2xl font-medium">Order Details</h1>
+                            @elseif(request()->routeIs('product.filter'))
+                                <h1 class="text-2xl font-medium">Product</h1>
                             @endif
                         </div>
                         <!-- User Dropdown -->

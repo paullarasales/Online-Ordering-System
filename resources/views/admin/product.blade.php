@@ -14,15 +14,18 @@
             </div>
             <!-- Filtration Section -->
             <div class="flex items-center gap-4">
-                <label for="filter" class="text-sm font-medium text-gray-600">Filter by:</label>
-                <select id="filter" name="filter" class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <option value="all">All</option>
-                    <option value="salad">Salad</option>
-                    <option value="all-day-breakfast">All Day Breakfast</option>
-                    <option value="pasta">Pasta</option>
-                    <option value="favorites">All Time Favorites</option>
-                    <option value="sandwich-burger">Sandwich & Burger</option>
-                </select>
+                <form action="{{ route('product.filter' )}}" method="GET">
+                    <label for="filter" class="text-sm font-medium text-gray-600">Filter by:</label>
+                    <select name="filter" id="filter" class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500" onchange="this.form.submit()">
+                        <option value="all">All</option>
+                        <option value="salad">Salad</option>
+                        <option value="all-day-breakfast">All Day Breakfast</option>
+                        <option value="pasta">Pasta</option>
+                        <option value="favorites">All Time Favorites</option>
+                        <option value="sandwich-burger">Sandwich & Burger</option>
+                        <option value="beverages">Beverages</option>
+                    </select>
+                </form>
             </div>
         </div>
         

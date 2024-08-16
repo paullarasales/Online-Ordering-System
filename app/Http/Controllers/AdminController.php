@@ -178,7 +178,7 @@ class AdminController extends Controller
                 "notifiedbyuser" => false,
             ]);
             return redirect()
-                ->back()
+                ->route("customer")
                 ->with("success", "Image verified successfully.");
         } elseif ($request->input("action") === "reject") {
             $image->update([
@@ -268,16 +268,41 @@ class AdminController extends Controller
         );
     }
 
-    public function fetchNewOrders()
+    public function fetchOrdersAndVerifications()
     {
         $newOrders = Order::where("notified", false)->get();
-
         foreach ($newOrders as $order) {
             $order->notified = true;
             $order->save();
         }
 
-        return response()->json(["newOrders" => $newOrders]);
+        $newVerifications = Verification::with("user")
+            ->where("notified", false)
+            ->get();
+        foreach ($newVerifications as $verification) {
+            $verification->notified = true;
+            $verification->save();
+        }
+
+        return response()->json([
+            "newOrders" => $newOrders,
+            "newVerifications" => $newVerifications,
+        ]);
+    }
+
+    public function productFilter(Request $request)
+    {
+        $filter = $request->input('filter', 'all');
+        
+        if ($filter === 'all') {
+            $products = Product::with('category')->get();
+        } else {
+            $products = Product::whereHas('category', function ($query) use ($filter) {
+                $query->where('category_name', $filter);
+            })->with('category')->get();
+        }
+
+        return view('admin.filter', ['products' => $products]); 
     }
 
     public function fetchNewVerifications()
