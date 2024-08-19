@@ -22,7 +22,7 @@
                         <option value="all day breakfast">All Day Breakfast</option>
                         <option value="pasta">Pasta</option>
                         <option value="all time favorites">All Time Favorites</option>
-                        <option value="sandwich-burger">Sandwich & Burger</option>
+                        <option value="sandwich burger">Sandwich & Burger</option>
                         <option value="beverages">Beverages</option>
                     </select>
                 </form>
