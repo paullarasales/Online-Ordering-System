@@ -185,6 +185,7 @@ Route::get("/admin/unreadnotification", [
 ])->name("admin.getCountNotif");
 Route::get('/admin/fetch-orders-and-verifications', [AdminController::class, 'fetchOrdersAndVerifications']);
 Route::get('/products/filter', [AdminController::class, 'productFilter'])->name('product.filter');
+Route::get('/user-accounts', [AdminController::class, 'getUsers']);
 //Others 
 Route::post("Product-add", [ProductController::class, "addProduct"])
     ->name("products.store")

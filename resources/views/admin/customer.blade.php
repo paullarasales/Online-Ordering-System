@@ -14,9 +14,7 @@
                 <table class="table-auto w-full bg-white border border-gray-200 rounded-lg shadow-sm">
                     <thead>
                         <tr class="bg-gray-200 text-gray-600">
-                            <th class="px-4 py-2">Photo</th>
-                            <th class="px-4 py-2">ID</th>
-                            <th class="px-4 py-2">Full Name</th>
+                            <th class="px-4 py-2">Customer</th>
                             <th class="px-4 py-2">Email</th>
                             <th class="px-4 py-2">Email Verified At</th>
                             <th class="px-4 py-2">Verification Status</th>
@@ -25,13 +23,12 @@
                     <tbody>
                         @foreach($verifiedUsers as $customer)
                         <tr class="hover:bg-gray-50">
-                            <td class="border px-4 py-2">
+                            <td class="flex flex-row items-center justify-start gap-2">
                                 <img class="w-10 h-10 rounded-full ml-2 border-solid border-2 border-sky-500"
                                      src="{{ $customer->photo ? asset($customer->photo) : asset('avatar/default.jpeg') }}"
-                                     alt="Profile Image">
+                                alt="Profile Image">
+                                {{ $customer->name }}
                             </td>
-                            <td class="border px-4 py-2">{{ $customer->id }}</td>
-                            <td class="border px-4 py-2">{{ $customer->name }}</td>
                             <td class="border px-4 py-2">{{ $customer->email }}</td>
                             <td class="border px-4 py-2">{{ $customer->email_verified_at }}</td>
                             <td class="border px-4 py-2">
@@ -91,5 +88,22 @@
             document.getElementById('verified-users').classList.add('hidden');
             document.getElementById('not-verified-users').classList.remove('hidden');
         });
+
+        async function getUsers() {
+            try {
+                const response = await fetch('/user-accounts');
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok.')
+                }
+                
+                const data = await response.json();
+                console.log('Fetched users', data);
+            } catch (error) {
+                console.error('Something went wrong when fetching the users', error);
+            }
+        }
+
+        setInterval(getUsers, 3000);
     </script>
 </x-admin-layout>

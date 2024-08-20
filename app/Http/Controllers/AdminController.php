@@ -356,4 +356,14 @@ class AdminController extends Controller
             return response()->json(["error" => "server error"], 500);
         }
     }
+
+    public function getUsers()
+    {
+        try {
+            $users = User::where('usertype', 'user')->get();
+            return response()->json(['users' => $users]);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage(), 500]);
+        }
+    }
 }
