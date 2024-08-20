@@ -161,7 +161,7 @@
     <script>
         window.authUserId = @json(auth()->id());
         window.authUserType = @json(auth()->user()->usertype);
-        let currentReceiverId = null;
+        let currentReceiverId = null
 
         async function fetchUserList() {
             try {
@@ -255,6 +255,7 @@
                     msgElement.textContent = msg.content;
                     messageList.appendChild(msgElement)
                 });
+                messageList.scrollTop = messageList.scrollHeight - messageList.clientHeight;
             } catch (error) {
                 console.error('Error fetching messages:', error);
             }

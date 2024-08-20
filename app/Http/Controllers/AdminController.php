@@ -247,6 +247,7 @@ class AdminController extends Controller
             $order->save();
         }
 
+
         foreach ($newVerifications as $verification) {
             $verification->notified = true;
             $verification->save();

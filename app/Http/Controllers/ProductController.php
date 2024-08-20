@@ -60,7 +60,6 @@ class ProductController extends Controller
             'photo' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Add any validation rules for the image
         ]);
 
-        // Find the product by ID
         $product = Product::findOrFail($id);
 
         // Update product attributes
@@ -74,11 +73,8 @@ class ProductController extends Controller
         if ($request->hasFile('photo')) {
 
             $file = $request->file('photo');
-
             $filename = time() . '.' . $file->getClientOriginalExtension();
-
             $path = $file->storeAs('products', $filename, 'public');
-
             $product->photo = $path;
         }
 
@@ -87,13 +83,10 @@ class ProductController extends Controller
         return redirect()->route('product')->with('success', 'Product updated successfully');
     }
 
-
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
-
         $product->delete();
-
         return redirect()->route('product')->with('success', 'Product successfully deleted');
     }
 }
