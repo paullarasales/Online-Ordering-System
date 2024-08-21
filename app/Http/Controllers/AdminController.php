@@ -247,7 +247,6 @@ class AdminController extends Controller
             $order->save();
         }
 
-
         foreach ($newVerifications as $verification) {
             $verification->notified = true;
             $verification->save();
@@ -293,17 +292,21 @@ class AdminController extends Controller
 
     public function productFilter(Request $request)
     {
-        $filter = $request->input('filter', 'all');
-        
-        if ($filter === 'all') {
-            $products = Product::with('category')->get();
+        $filter = $request->input("filter", "all");
+
+        if ($filter === "all") {
+            $products = Product::with("category")->get();
         } else {
-            $products = Product::whereHas('category', function ($query) use ($filter) {
-                $query->where('category_name', $filter);
-            })->with('category')->get();
+            $products = Product::whereHas("category", function ($query) use (
+                $filter
+            ) {
+                $query->where("category_name", $filter);
+            })
+                ->with("category")
+                ->get();
         }
 
-        return view('admin.filter', ['products' => $products]); 
+        return view("admin.filter", ["products" => $products]);
     }
 
     public function fetchNewVerifications()
@@ -360,10 +363,15 @@ class AdminController extends Controller
     public function getUsers()
     {
         try {
-            $users = User::where('usertype', 'user')->get();
-            return response()->json(['users' => $users]);
+            $users = User::where("usertype", "user")->get();
+            return response()->json(["users" => $users]);
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage(), 500]);
+            return response()->json(["error" => $e->getMessage(), 500]);
         }
+    }
+
+    public function users()
+    {
+        return view("admin.users");
     }
 }

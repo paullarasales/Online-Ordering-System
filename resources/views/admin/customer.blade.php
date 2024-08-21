@@ -2,7 +2,7 @@
     <div class="flex flex-col items-center w-full h-screen p-4 bg-gray-100">
         <div class="w-full max-w-6xl bg-white rounded-lg shadow-xl p-6 h-full">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-normal text-gray-900">Customer Management</h2>
+                <h2 class="text-3xl font-normal text-gray-900">Customer</h2>
                 <div class="space-x-3">
                     <button id="show-verified" class="bg-blue-500 text-white py-2 px-5 rounded-lg shadow hover:bg-blue-600 transition-all">Show Verified</button>
                     <button id="show-not-verified" class="bg-gray-500 text-white py-2 px-5 rounded-lg shadow hover:bg-gray-600 transition-all">Show Not Verified</button>
