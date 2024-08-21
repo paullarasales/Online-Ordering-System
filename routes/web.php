@@ -192,6 +192,7 @@ Route::get("/products/filter", [AdminController::class, "productFilter"])->name(
 );
 Route::get("/user-accounts", [AdminController::class, "getUsers"]);
 Route::get("/users", [AdminController::class, "users"])->name("admin.users");
+Route::get("/user-search", [SearchController::class, 'userSearch'])->name('user.search');
 //Others
 Route::post("Product-add", [ProductController::class, "addProduct"])
     ->name("products.store")
