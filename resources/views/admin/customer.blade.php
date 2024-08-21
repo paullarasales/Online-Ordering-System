@@ -109,11 +109,28 @@
             document.querySelector('input[name="query"]').addEventListener('input', async function () {
                 const query = this.value;
 
-                const response = await fetch(`/user-search?query=${query}`);
-                const data = await response.json();
+                if (query.trim() === "") {
+                    clearTable();
+                    return;
+                }
 
-                document.getElementById('loading-spinner').classList.add('hidden');
-                updateTable(data.results);
+                //show
+                document.getElementById('loading-spinner').classList.remove('hidden');
+                
+                try {
+                    const response = await fetch(`/user-search?query=${query}`);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok.');
+                    }
+
+                    const data = await response.json();
+
+                    updateTable(data.results);
+                } catch (error) {
+                    console.error('Error fetching results:', error);
+                } finally {
+                    document.getElementById('loading-spinner').classList.add('hidden');
+                }
             });
 
             function updateTable(data) {
@@ -147,7 +164,7 @@
 
             function clearTable() {
                 const tableBody = document.querySelector('#verified-users tbody') || document.querySelector('#not-verified-users tbody');
-                table 
+                tableBody.innerHTML = '';
             }
         });
     </script>
