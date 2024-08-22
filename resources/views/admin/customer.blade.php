@@ -10,7 +10,7 @@
             </div>
 
             <div id="verified-users" class="user-section">
-               <!-- Search Bar -->
+                <!-- Search Bar -->
                 <div class="hidden sm:flex sm:items-center sm:ms-6 w-full mb-5">
                     <form action="{{ route('user.search') }}" method="GET" class="relative flex items-center">
                         <input type="text" name="query" class="block px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pl-10 sm:text-sm" placeholder="Search" style="width: 600px;">
@@ -24,13 +24,15 @@
                         </button>
                     </form>
                 </div>
-                <div class="loading-spinner" class="hidden flex justify-center items-center py-5">
+
+                <div class="loading-spinner hidden flex justify-center items-center py-5">
                     <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
                     </svg>
                     <span class="ml-2 text-blue-500">Loading...</span>
                 </div>
+
                 <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
                     <thead>
                         <tr class="bg-gray-100 text-gray-700">
@@ -113,23 +115,21 @@
                     clearTable();
                     return;
                 }
-
-                //show
-                document.getElementById('loading-spinner').classList.remove('hidden');
+                
+                document.querySelector('.loading-spinner').classList.remove('hidden');
                 
                 try {
-                    const response = await fetch(`/user-search?query=${query}`);
+                    const response = await fetch(`/user-search?query=${encodeURIComponent(query)}`);
                     if (!response.ok) {
                         throw new Error('Network response was not ok.');
                     }
 
                     const data = await response.json();
-
                     updateTable(data.results);
                 } catch (error) {
                     console.error('Error fetching results:', error);
                 } finally {
-                    document.getElementById('loading-spinner').classList.add('hidden');
+                    document.querySelector('.loading-spinner').classList.add('hidden');
                 }
             });
 
@@ -144,7 +144,7 @@
 
                 data.forEach(customer => {
                     const row = `
-                        <tr class=hover:bg-gray-50 border-b transition-colors duration-150">
+                        <tr class="hover:bg-gray-50 border-b transition-colors duration-150">
                             <td class="flex items-center gap-4 px-4 py-3">
                                 <img class="w-12 h-12 rounded-full border border-sky-500"
                                     src="${customer.photo ? customer.photo : 'avatar/default.jpeg'}"
@@ -152,7 +152,7 @@
                                 <span class="text-gray-800">${customer.name}</span>
                             </td>
                             <td class="px-4 py-3 text-gray-600">${customer.email}</td>
-                            <td class="px-4 py-3 text-gray-600">${customer.email_verified_at}</td>
+                            <td class="px-4 py-3 text-gray-600">${customer.email_verified_at ? new Date(customer.email_verified_at).toLocaleString() : ''}</td>
                             <td class="px-4 py-3 ${verifiedSectionVisible ? 'text-green-600' : 'text-red-600'}">
                                 ${verifiedSectionVisible ? 'Verified' : 'Not Verified'}
                             </td>
@@ -163,7 +163,7 @@
             }
 
             function clearTable() {
-                const tableBody = document.querySelector('#verified-users tbody') || document.querySelector('#not-verified-users tbody');
+                const tableBody = document.querySelector('#verified-users tbody');
                 tableBody.innerHTML = '';
             }
         });
