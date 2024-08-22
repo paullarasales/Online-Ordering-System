@@ -1,30 +1,32 @@
 <x-admin-layout>
+    <style>
+        .input-wide {
+            width: 800px;
+            height: 2.58rem;
+        }
+    </style>
     <div class="flex flex-col items-center w-full h-screen p-4 bg-gray-100">
         <div class="w-full max-w-6xl bg-white rounded-lg shadow-xl p-6 h-full">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-3xl font-normal text-gray-900">Customer</h2>
-                <div class="space-x-3">
-                    <button id="show-verified" class="bg-blue-500 text-white py-2 px-5 rounded-lg shadow hover:bg-blue-600 transition-all">Show Verified</button>
-                    <button id="show-not-verified" class="bg-gray-500 text-white py-2 px-5 rounded-lg shadow hover:bg-gray-600 transition-all">Show Not Verified</button>
+                <div class="flex space-x-3 items-center">
+                    <form action="{{ route('user.search') }}" method="GET" class="relative flex items-center w-full max-w-lg">
+                        <input type="text" name="query" class="input-wide block px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pl-10 sm:text-sm w-full" placeholder="Type to search customer">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                            </svg>                              
+                        </div>
+                    </form>
+                    <select id="user-status" class="ml-4 py-2 px-4 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="verified">Show Verified</option>
+                        <option value="not-verified">Show Not Verified</option>
+                    </select>
                 </div>
             </div>
 
             <div id="verified-users" class="user-section">
-                <!-- Search Bar -->
-                <div class="hidden sm:flex sm:items-center sm:ms-6 w-full mb-5">
-                    <form action="{{ route('user.search') }}" method="GET" class="relative flex items-center">
-                        <input type="text" name="query" class="block px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pl-10 sm:text-sm" placeholder="Search" style="width: 600px;">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M14.293 11.293a1 1 0 011.414 1.414l-2.5 2.5a1 1 0 01-1.414 0 1 1 0 01-.074-1.327l2.5-2.5zM8 13a5 5 0 100-10 5 5 0 000 10z" clip-rule="evenodd" />
-                            </svg>
-                        </div>
-                        <button type="submit" class="ml-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                            Search
-                        </button>
-                    </form>
-                </div>
-
+                <!-- Loading Spinner -->
                 <div class="loading-spinner hidden flex justify-center items-center py-5">
                     <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -98,14 +100,18 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            document.getElementById('show-verified').addEventListener('click', function () {
-                document.getElementById('verified-users').classList.remove('hidden');
-                document.getElementById('not-verified-users').classList.add('hidden');
-            });
+            const userStatusDropdown = document.getElementById('user-status');
+            const verifiedUsersSection = document.getElementById('verified-users');
+            const notVerifiedUsersSection = document.getElementById('not-verified-users');
 
-            document.getElementById('show-not-verified').addEventListener('click', function () {
-                document.getElementById('verified-users').classList.add('hidden');
-                document.getElementById('not-verified-users').classList.remove('hidden');
+            userStatusDropdown.addEventListener('change', function () {
+                if (this.value === 'verified') {
+                    verifiedUsersSection.classList.remove('hidden');
+                    notVerifiedUsersSection.classList.add('hidden');
+                } else {
+                    verifiedUsersSection.classList.add('hidden');
+                    notVerifiedUsersSection.classList.remove('hidden');
+                }
             });
 
             document.querySelector('input[name="query"]').addEventListener('input', async function () {
@@ -113,6 +119,16 @@
 
                 if (query.trim() === "") {
                     clearTable();
+                    try {
+                        const response = await fetch('/user-search');
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok.');
+                        }
+                        const data = await response.json();
+                        updateTable(data.results);
+                    } catch (error) {
+                        console.error('Error fetching results:', error);
+                    }
                     return;
                 }
                 
@@ -134,7 +150,7 @@
             });
 
             function updateTable(data) {
-                const verifiedSectionVisible = !document.getElementById('verified-users').classList.contains('hidden');
+                const verifiedSectionVisible = !verifiedUsersSection.classList.contains('hidden');
 
                 const tableBody = verifiedSectionVisible 
                     ? document.querySelector('#verified-users tbody')
