@@ -306,7 +306,9 @@ class AdminController extends Controller
                 ->get();
         }
 
-        return view("admin.filter", ["products" => $products]);
+        return response()->json([
+            'products' => $products
+        ]);
     }
 
     public function fetchNewVerifications()

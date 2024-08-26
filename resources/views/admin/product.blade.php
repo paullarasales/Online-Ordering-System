@@ -14,9 +14,9 @@
             </div>
             <!-- Filtration Section -->
             <div class="flex items-center gap-4">
-                <form action="{{ route('product.filter' )}}" method="GET">
+                <form id="filter-form">
                     <label for="filter" class="text-sm font-medium text-gray-600">Filter by:</label>
-                    <select name="filter" id="filter" class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500" onchange="this.form.submit()">
+                    <select name="filter" id="filter" class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500">
                         <option value="all">All</option>
                         <option value="salad">Salad</option>
                         <option value="all day breakfast">All Day Breakfast</option>
@@ -30,7 +30,7 @@
         </div>
         
         <!-- Product Display Section -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @if($products->isEmpty())
                 <div class="col-span-full text-center text-gray-600">No products to display.</div>
             @else
@@ -61,4 +61,66 @@
             {{ $products->links('vendor.pagination.tailwind') }}
         </div>
     </div>
+    @push('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const filterSelect = document.getElementById('filter');
+        const productList = document.getElementById('product-list');
+
+        filterSelect.addEventListener('change', function() {
+            const selectedFilter = this.value;
+            
+            fetch(`{{ route('product.filter') }}?filter=${selectedFilter}`, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateProductList(data.products);
+            })
+            .catch(error => console.error('Error:', error));
+        });
+
+        function updateProductList(products) {
+            productList.innerHTML = '';
+
+            if (products.length === 0) {
+                productList.innerHTML = '<div class="col-span-full text-center text-gray-600">No products to display.</div>';
+            } else {
+                products.forEach(product => {
+                    const productElement = createProductElement(product);
+                    productList.appendChild(productElement);
+                });
+            }
+        }
+
+        function createProductElement(product) {
+            const div = document.createElement('div');
+            div.className = 'bg-white rounded-lg shadow-lg overflow-hidden';
+            div.innerHTML = `
+                <img src="${product.photo}" alt="Product Image" class="w-full h-32 object-cover">
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">${product.product_name}</h3>
+                    <p class="text-sm text-gray-600">Price: ₱${product.price}</p>
+                    <p class="text-sm text-gray-600 mb-2">Description: ${product.description}</p>
+                    <p class="text-sm text-gray-600 mb-4">Stock Quantity: ${product.stockQuantity}</p>
+                    <div class="flex justify-between items-center">
+                        <a href="/admin/product/update/${product.id}" class="text-indigo-600 hover:text-indigo-800">Edit</a>
+                        <form action="/admin/product/${product.id}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600 hover:text-red-800">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
+    });
+    </script>
+    @endpush
 </x-admin-layout>
+
