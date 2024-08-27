@@ -13,20 +13,19 @@
     <!-- Main content -->
     <div class="container mx-auto py-4 max-w-5xl">
         <!-- Filtration Section -->
-        <div class="flex flex-row md:flex-row justify-between items-center mb-4">
-            <h2 class="text-lg font-semibold text-gray-800 md:ml-4 mb-2 md:mb-0">All Products</h2>
-            <!-- Add your filtration options here -->
-            <div class="flex items-center md:mr-4 mb-2 md:mb-0">
-                <label for="filter" class="text-sm font-medium text-gray-600 mr-2">Filter by:</label>
-                <select id="filter" name="filter" class="mt-1 p-2 border-gray-300 rounded-md">
+        <div flex items-center gap-4>
+            <form id="filter-form">
+                <label for="filter" class="text-sm font-medium text-gray-6000">Filter by:</label>
+                <select name="filter" id="filter" class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500">
                     <option value="all">All</option>
                     <option value="salad">Salad</option>
-                    <option value="all-day-breakfast">All Day Breakfast</option>
+                    <option value="all day breakfast">All Day Breakfast</option>
                     <option value="pasta">Pasta</option>
-                    <option value="favorites">All Time Favorites</option>
-                    <option value="sandwich-burger">Sandwich & Burger</option>
+                    <option value="all time favorites">All Time Favorites</option>
+                    <option value="sandwich burger">Sandwich & Burger</option>
+                    <option value="beverages">Beverages</option>
                 </select>
-            </div>
+            </form>
         </div>
 
         <!-- Product Display Section -->
@@ -60,9 +59,65 @@
             {{ $products->links('vendor.pagination.tailwind') }}
         </div>
     </div>
+    @push('scripts')
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const notificationBanner = document.getElementById('notification-banner');
+            const filterSelect = document.getElementById('filter');
+            const productList = document.getElementById('product-list');
+
+            filterSelect.addEventListener('change', function() {
+                const selectedFilter = this.value;
+                
+                fetch(`{{ route('user.productFilter' )}}?filter=${selectedFilter}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    updateProductList(data.products);
+                });
+                .catch(error => console.error('Error:', error));
+            });
+
+            function updateProductList(products) {
+                productList.innerHTML = '';
+
+                if (products.length === 0) {
+                    productList.innetHTML = '<div class="col-span-full text-center text-gray-600">No Products To Display</div>'
+                } else {
+                    products.forEach(product => {
+                        const productElement = creareProductElement(product);
+                        productList.appendChild(productElement);
+                    });
+                }
+            }
+
+            function createProductElement(product) {
+            const div = document.createElement('div');
+            div.className = 'bg-white rounded-lg shadow-lg overflow-hidden';
+            div.innerHTML = `
+                <img src="${product.photo}" alt="Product Image" class="w-full h-32 object-cover">
+                <div class="p-4">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">${product.product_name}</h3>
+                    <p class="text-sm text-gray-600">Price: ₱${product.price}</p>
+                    <p class="text-sm text-gray-600 mb-2">Description: ${product.description}</p>
+                    <p class="text-sm text-gray-600 mb-4">Stock Quantity: ${product.stockQuantity}</p>
+                    <div class="flex justify-between items-center">
+                        <a href="/admin/product/update/${product.id}" class="text-indigo-600 hover:text-indigo-800">Edit</a>
+                        <form action="/admin/product/${product.id}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="text-red-600 hover:text-red-800">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            `;
+            return div;
+        }
 
             if (notificationBanner) {
                 setTimeout(() => {
@@ -74,4 +129,5 @@
             }
         });
     </script>
+    @endpush
 </x-app-layout>

@@ -12,7 +12,9 @@ class SearchController extends Controller
     {
         $query = $request->input("query");
         $results = Product::where("product_name", "LIKE", "%{$query}%")->get();
-        return view("customer.results", ["results" => $results]);
+        // return response()->json(['results' => $results]);
+        return view('customer.results', compact('results'));
+
     }
 
     public function userSearch(Request $request)

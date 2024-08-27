@@ -413,22 +413,6 @@ class UserController extends Controller
         }
     }
 
-    public function productFilter(Request $request)
-    {
-        $filter = $request->input('filter', 'all');
-
-        if ($filter === 'all') {
-            $products = Product::all();
-            return view('customer.filteredProducts', compact('products'));
-        } else {
-            $products = Product::whereHas('category', function ($query) use ($filter) {
-                $query->where('category_nama', $filter);
-            })->with('category')->get();
-        }
-
-        return view('customer.filteredProducts', compact('products'));
-    }
-
     public function messages()
     {
         $messages = Message::where("notifiedbyuser", false)->get();
@@ -450,5 +434,21 @@ class UserController extends Controller
         }
     }
 
+    public function productFilter(Request $request)
+    {
+        $filter = $request->input('filter', 'all');
+
+        if ($filter === 'all') {
+            $products = Product::with("category")->get();
+        } else {
+            $products = Product::whereHas("category", function ($query) use ($filter) {
+                $query->where("category_name", $filter);
+            })->with("category")->get();
+        }
+
+        return response()->json([
+            'products' => $products
+        ]);
+    }
     
 }
