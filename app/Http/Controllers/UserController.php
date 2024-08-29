@@ -434,7 +434,7 @@ class UserController extends Controller
         }
     }
 
-    public function productFilter(Request $request)
+    public function filter(Request $request)
     {
         $filter = $request->input('filter', 'all');
 
@@ -450,5 +450,4 @@ class UserController extends Controller
             'products' => $products
         ]);
     }
-    
 }

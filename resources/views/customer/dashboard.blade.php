@@ -29,7 +29,7 @@
         </div>
 
         <!-- Product Display Section -->
-        <div class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div id="product-list" class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             @if($products->isEmpty())
                 <div class="text-center text-gray-600">No products to display.</div>
             @else
@@ -90,7 +90,7 @@
                     productList.innetHTML = '<div class="col-span-full text-center text-gray-600">No Products To Display</div>'
                 } else {
                     products.forEach(product => {
-                        const productElement = creareProductElement(product);
+                        const productElement = createProductElement(product);
                         productList.appendChild(productElement);
                     });
                 }
@@ -100,21 +100,19 @@
             const div = document.createElement('div');
             div.className = 'bg-white rounded-lg shadow-lg overflow-hidden';
             div.innerHTML = `
-                <img src="${product.photo}" alt="Product Image" class="w-full h-32 object-cover">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">${product.product_name}</h3>
-                    <p class="text-sm text-gray-600">Price: ₱${product.price}</p>
-                    <p class="text-sm text-gray-600 mb-2">Description: ${product.description}</p>
-                    <p class="text-sm text-gray-600 mb-4">Stock Quantity: ${product.stockQuantity}</p>
-                    <div class="flex justify-between items-center">
-                        <a href="/admin/product/update/${product.id}" class="text-indigo-600 hover:text-indigo-800">Edit</a>
-                        <form action="/admin/product/${product.id}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="text-red-600 hover:text-red-800">Delete</button>
-                        </form>
-                    </div>
-                </div>
+                <img src="{{ asset($product->photo) }}" alt="Product Image" class="w-full h-32 md:h-28 object-cover sm:h-32">
+                    <div class="p-4 flex flex-col justify-between flex-grow">
+                        <div class="mb-4">
+                            <h3 class="text-lg font-semibold text-gray-800">{{ $product->product_name }}</h3>
+                                <p class="text-sm text-gray-600">Price: ₱{{ $product->price }}</p>
+                                <p class="text-sm text-gray-600">Description: {{ $product->description }}</p>
+                        </div>
+                            <form action="{{ route('add-to-cart', ['productId' => $product->id]) }}" method="POST" class="mt-auto">
+                                @csrf
+                                <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-md">Add to Cart</button>
+                            </form>
+                        </div>
             `;
             return div;
         }

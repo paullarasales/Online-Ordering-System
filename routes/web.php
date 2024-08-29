@@ -105,7 +105,7 @@ Route::middleware("auth")->group(function () {
         UserController::class,
         "addToCartCount",
     ]);
-    Route::get('/filter/products', [UserController::class, 'productFilter'])->name('user.productFilter');
+    Route::get('/user/filter/products', [UserController::class, 'filter'])->name('user.productFilter');
 });
 //Admin
 Route::get("/dashboard", [AdminController::class, "dashboard"])
