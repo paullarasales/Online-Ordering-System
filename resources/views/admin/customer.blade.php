@@ -8,7 +8,7 @@
     <div class="flex flex-col items-center w-full h-screen p-4 bg-gray-100">
         <div class="w-full max-w-6xl bg-white rounded-lg shadow-xl p-6 h-full">
             <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-normal text-gray-900">Customer</h2>
+                <h2 class="text-3xl font-medium text-gray-900">Customer</h2>
                 <div class="flex space-x-3 items-center">
                     <form action="{{ route('user.search') }}" method="GET" class="relative flex items-center w-full max-w-lg">
                         <input type="text" name="query" class="input-wide block px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pl-10 sm:text-sm w-full" placeholder="Type to search customer">
