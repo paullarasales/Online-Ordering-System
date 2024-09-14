@@ -105,6 +105,7 @@
             const notVerifiedUsersSection = document.getElementById('not-verified-users');
 
             userStatusDropdown.addEventListener('change', function () {
+                clearTable();
                 if (this.value === 'verified') {
                     verifiedUsersSection.classList.remove('hidden');
                     notVerifiedUsersSection.classList.add('hidden');
@@ -116,6 +117,7 @@
 
             document.querySelector('input[name="query"]').addEventListener('input', async function () {
                 const query = this.value;
+                const userStatus = document.getElementById('user-status').value;
 
                 if (query.trim() === "") {
                     clearTable();

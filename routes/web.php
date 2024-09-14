@@ -1,5 +1,3 @@
-
-
 <?php
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -106,6 +104,8 @@ Route::middleware("auth")->group(function () {
         "addToCartCount",
     ]);
     Route::get('/user/filter/products', [UserController::class, 'filter'])->name('user.productFilter');
+    Route::get('/verification/test', [UserController::class, 'verificationTest'])->name('user.verificationTest');
+    Route::get('/user/verification/status', [UserController::class, 'verificationStatus']);
 });
 //Admin
 Route::get("/dashboard", [AdminController::class, "dashboard"])

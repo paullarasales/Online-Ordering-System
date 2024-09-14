@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Message;
@@ -181,15 +182,17 @@ class AdminController extends Controller
                 ->route("customer")
                 ->with("success", "Image verified successfully.");
         } elseif ($request->input("action") === "reject") {
+            if ($image->valid_id1 && Storage::disk('public')->exists($image->valid_id1)) {
+                Storage::disk('public')->delete($image->valid_id1);
+            }
             $image->update([
                 "verified" => false,
                 "status" => "rejected",
                 "notified" => true,
                 "notifiedbyuser" => false,
             ]);
-            dd($image->status);
             return redirect()
-                ->back()
+                ->route("customer")
                 ->with("success", "Image rejected successfully.");
         }
 

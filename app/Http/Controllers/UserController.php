@@ -61,50 +61,93 @@ class UserController extends Controller
         return view("customer.verification", compact("userVerification"));
     }
 
+    public function verificationTest() {
+        return view('customer.verificationTest');
+    }
+
+    public function verificationStatus()
+    {
+        $userVerification = Verification::where("user_id", auth()->id())->first();
+
+        if ($userVerification) {
+            if ($userVerification->status === 'rejected') {
+                return response()->json([
+                    'status' => 'rejected',
+                    'message' => 'Your verification was rejected. Please upload a new ID.'
+                ]);
+            } else if ($userVerification->status === 'verified') {
+                return response()->json([
+                    'status' => 'verified',
+                    'message' => 'Your account is verified'
+                ]);
+            } else if ($userVerification->status === 'pending') {
+                return response()->json([
+                    'status' => 'pending',
+                    'message' => 'Please wait while we verify your account.'
+                ]);
+            } 
+        } else {
+            return response()->json([
+                'status' => 'none',
+                'message' => 'Your account is not verified. Please upload two valid valid IDs.'
+            ]);
+        }
+    }
+
+
     public function verify(Request $request)
     {
-        // dd($request->all());
         $request->validate([
             "valid_id1" => "required|image|mimes:jpg,png,jpeg|max:2048",
         ]);
-
+    
         $user = Auth::user();
 
-        $validId = new Verification();
-        $validId->user_id = $user->id;
-        $validId->notified = false;
-        $validId->status = "pending";
-        $validId->notifiedbyuser = false;
-
-        $existingVerification = Verification::where(
-            "user_id",
-            $user->id
-        )->first();
-
-        if ($existingVerification && !$existingVerification->verified) {
+        $existingVerification = Verification::where("user_id", $user->id)->first();
+    
+        if ($existingVerification && $existingVerification->status === 'pending') {
             return redirect()
                 ->route("verify.message")
-                ->with(
-                    "status",
-                    "Please wait while we verifying your account thankyou"
-                );
+                ->with("status", "You cannot submit another ID until the previous one is reviewed.");
         }
-
-        if ($request->hasFile("valid_id1")) {
-            $file = $request->file("valid_id1");
-
-            $filename = time() . "." . $file->getClientOriginalExtension();
-
-            $path = $file->storeAs("verifications", $filename, "public");
-
-            $validId->valid_id1 = $path;
+    
+        if ($existingVerification && $existingVerification->status === 'rejected') {
+            $existingVerification->status = 'pending';
+            $existingVerification->notified = false;
+            $existingVerification->notifiedbyuser = false;
+    
+            if ($request->hasFile("valid_id1")) {
+                $file = $request->file("valid_id1");
+                $filename = time() . "." . $file->getClientOriginalExtension();
+                $path = $file->storeAs("verifications", $filename, "public");
+                $existingVerification->valid_id1 = $path;
+            }
+    
+            $existingVerification->save();
+    
+            return redirect()->route("verify.message")->with("success", "Verification resubmitted successfully.");
         }
-
-        $validId->save();
-
-        return redirect()->route("verify.message")->with("success");
+    
+        if (!$existingVerification) {
+            $validId = new Verification();
+            $validId->user_id = $user->id;
+            $validId->notified = false;
+            $validId->status = "pending";
+            $validId->notifiedbyuser = false;
+    
+            if ($request->hasFile("valid_id1")) {
+                $file = $request->file("valid_id1");
+                $filename = time() . "." . $file->getClientOriginalExtension();
+                $path = $file->storeAs("verifications", $filename, "public");
+                $validId->valid_id1 = $path;
+            }
+    
+            $validId->save();
+        }
+    
+        return redirect()->route("verify.message")->with("success", "Verification submitted successfully.");
     }
-
+    
     public function verifyMessage()
     {
         return view("customer.verification-message");
