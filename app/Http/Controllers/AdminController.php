@@ -195,7 +195,6 @@ class AdminController extends Controller
                 ->route("customer")
                 ->with("success", "Image rejected successfully.");
         }
-
         return redirect()->back()->with("error", "Invalid action.");
     }
 
@@ -308,7 +307,6 @@ class AdminController extends Controller
                 ->with("category")
                 ->get();
         }
-
         return response()->json([
             'products' => $products
         ]);

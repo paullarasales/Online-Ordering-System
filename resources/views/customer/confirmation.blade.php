@@ -9,6 +9,7 @@
                         <h2 class="text-lg font-semibold">{{ $cartItem->product->product_name }}</h2>
                         <p class="text-gray-600">Quantity: {{ $cartItem->quantity }}</p>
                         <p class="text-gray-600">Price: ₱{{ $cartItem->product->price }}</p>
+                        <p class="text-gray-600">Shipping Fee: ₱60</p>
                     </div>
                     <img class="w-24 h-24 object-cover rounded-lg" src="{{ $cartItem->product->photo }}" alt="{{ $cartItem->product->product_name }} Photo">
                 </li>
@@ -36,7 +37,6 @@
             <label for="payment_method" class="block text-sm font-medium text-gray-700">Payment Method</label>
             <select name="payment_method" id="payment_method" class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
                 <option value="Cash on delivery" selected>Cash on Delivery (COD)</option>
-                <!-- Add other payment methods if needed -->
             </select>
         </div>
 

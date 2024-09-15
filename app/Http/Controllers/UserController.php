@@ -253,7 +253,7 @@ class UserController extends Controller
             ->get();
 
         $totalPrice = $cartItems->sum(function ($item) {
-            return $item->quantity * $item->product->price;
+            return $item->quantity * $item->product->price + 60;
         });
 
         $paymentMethod = "Cash On Delivery";
