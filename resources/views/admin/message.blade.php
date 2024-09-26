@@ -130,7 +130,6 @@
     .user-name {
         font-weight: normal;
     }
- 
     </style>
 
     <div id="container">
