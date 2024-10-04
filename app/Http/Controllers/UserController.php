@@ -45,7 +45,7 @@ class UserController extends Controller
             "orders" => $orders,
         ]);
     }
-
+    
     public function profile()
     {
         $user = Auth::user();
@@ -163,7 +163,7 @@ class UserController extends Controller
             'address.required' => 'The address field is required.',
             'contactno.required' => 'The contact number field is required.',
         ]);
-        
+
         $userId = Auth::id();
         
         if (!$userId) {
@@ -211,49 +211,7 @@ class UserController extends Controller
             'unnotified' => $unnotified
         ]);
     }
-
-    // public function addToCart($productId)
-    // {
-    //     $userId = Auth::id();
-
-    //     // Ensure the user is authenticated
-    //     if (!$userId) {
-    //         return redirect()
-    //             ->route("login")
-    //             ->with("error", "Please log in first");
-    //     }
-
-    //     // Retrieve or create the cart for the user
-    //     $cart = Cart::firstOrCreate(["user_id" => $userId]);
-
-    //     // Check for user verification
-    //     $verification = Verification::where("user_id", $userId)->first();
-    //     if (!$verification || !$verification->verified) {
-    //         return redirect()
-    //             ->route("verify.form")
-    //             ->with("error", "Please verify your account first");
-    //     }
-
-    //     // Check if the product is already in the cart
-    //     $cartItems = $cart->items;
-    //     if ($cartItems->contains("product_id", $productId)) {
-    //         return redirect()
-    //             ->route("cart")
-    //             ->with("success", "Product is already in the cart");
-    //     }
-
-    //     // Add the product to the cart
-    //     $cart->items()->create([
-    //         "user_id" => $userId,
-    //         "product_id" => $productId,
-    //         "quantity" => 1,
-    //     ]);
-
-    //     return redirect()
-    //         ->route("userdashboard")
-    //         ->with("success", "Product Added Successfully");
-    // }
-
+ 
     public function updateQuantity(Request $request, $cartItemId)
     {
         $request->validate([

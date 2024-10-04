@@ -28,7 +28,7 @@
                 </form>
             </div>
         </div>
-        
+
         <!-- Product Display Section -->
         <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             @if($products->isEmpty())
@@ -55,8 +55,8 @@
                 @endforeach
             @endif
         </div>
-        
-        <!-- Pagination Section --> 
+
+        <!-- Pagination Section -->
         <div class="mt-6">
             {{ $products->links('vendor.pagination.tailwind') }}
         </div>
@@ -69,7 +69,7 @@
 
         filterSelect.addEventListener('change', function() {
             const selectedFilter = this.value;
-            
+
             fetch(`{{ route('product.filter') }}?filter=${selectedFilter}`, {
                 method: 'GET',
                 headers: {

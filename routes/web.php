@@ -57,7 +57,7 @@ Route::middleware("auth")->group(function () {
         UserController::class,
         "fetchOrderStatus",
     ])->name("fetchOrderStatus");
-    Route::post("/order/{order}/cancel", [
+    Route::post("/order/{order}/cancel", [ 
         UserController::class,
         "cancelOrder",
     ])->name("order.cancel");

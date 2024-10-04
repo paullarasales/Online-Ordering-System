@@ -5,8 +5,16 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('userdashboard') }}">
-                        <img src="{{ asset('logo/2421.png')}}" alt="" style="height:50px;">
+                    <a href="{{ route('userdashboard') }}" class="flex items-center justify-center flex-row">
+                        <img src="{{ asset('logo/no-bg.png')}}" alt="" class="h-10 w-10">
+                        <div class="flex flex-col">
+                            <div>
+                                <h1 class="font-semibold text-md tracking-md">Twenty <span class="text-yellow-500">Four<span></h1>
+                            </div>
+                            <div class="ml-4">
+                                <h1 class="font-semibold text-md tracking-md"><span class="text-yellow-500">Twenty</span> One</h1>
+                            </div>
+                        </div>
                     </a>
                 </div>
             </div>
