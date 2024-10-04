@@ -17,7 +17,7 @@
                         <h3 class="text-lg font-semibold">{{ optional($item->product)->product_name }}</h3>
                         <p class="text-gray-600">Quantity: {{ $item->quantity }}</p>
                     </div>
-                    <p class="text-gray-600">Price: ₱{{ optional($item->product)->price }}</p>
+                    <p class="text-gray-600 mt-4">Total Price: ₱{{ $totalPrice }}</p>
                 </li>
             @endforeach
         </ul>

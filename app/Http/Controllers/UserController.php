@@ -153,41 +153,43 @@ class UserController extends Controller
         return view("customer.verification-message");
     }
 
-    public function addToCart($productId)
+    public function addToCart(Request $request, $productId)
     {
-        $validatedData = $request->validate([
-            'address' => 'required|string|max:255',
-            'contactno' => 'required|string|max:15',
-            'payment_method' => 'required',
-        ], [
-            'address.required' => 'The address field is required.',
-            'contactno.required' => 'The contact number field is required.',
-        ]);
-
+        if ($request->isCheckout) {
+            $validatedData = $request->validate([
+                'address' => 'required|string|max:255',
+                'contactno' => 'required|string|max:15',
+                'payment_method' => 'required',
+            ], [
+                'address.required' => 'The address field is required.',
+                'contactno.required' => 'The contact number field is required.',
+            ]);
+        }
+    
         $userId = Auth::id();
-        
+    
         if (!$userId) {
             return redirect()->route("login")->with("error", "Please log in first");
         }
-
+    
         $cart = Cart::firstOrCreate(["user_id" => $userId]);
-
+    
         $verification = Verification::where("user_id", $userId)->first();
         if (!$verification || !$verification->verified) {
             return redirect()->route("verify.form")->with("error", "Please verify your account first.");
         }
-        
+    
         $cartItems = $cart->items;
         if ($cartItems->contains("product_id", $productId)) {
             return redirect()->route("cart")->with("success", "Product is already in the cart.");
         }
-
+    
         $cart->items()->create([
             "user_id" => $userId,
             "product_id" => $productId,
             "quantity" => 1,
         ]);
-
+    
         return redirect()->route("userdashboard")->with("success", "Product added successfully");
     }
 
