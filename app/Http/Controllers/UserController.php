@@ -19,6 +19,12 @@ class UserController extends Controller
         return view("customer.dashboard", compact("products"));
     }
 
+    public function testDashboard()
+    {
+        $products = Product::paginate(8);
+        return view("customer.test-dash", compact("products"));
+    }
+
     public function notification()
     {
         $user = Auth::user();
@@ -54,11 +60,11 @@ class UserController extends Controller
 
     public function verifyAccountForm()
     {
-        $userVerification = Verification::where(
-            "user_id",
-            auth()->id()
-        )->first();
-        return view("customer.verification", compact("userVerification"));
+        // $userVerification = Verification::where(
+        //     "user_id",
+        //     auth()->id()
+        // )->first();
+        return view("customer.verification");
     }
 
     public function verificationTest() {
@@ -155,6 +161,7 @@ class UserController extends Controller
 
     public function addToCart(Request $request, $productId)
     {
+
         if ($request->isCheckout) {
             $validatedData = $request->validate([
                 'address' => 'required|string|max:255',
@@ -277,13 +284,6 @@ class UserController extends Controller
         $order->markasreceived = false;
         $order->notifiedbyuser = false;
         $order->save();
-
-        // if ($request->input("address") || $request->input("contactno") === "") {
-        //     return back()->with('Error', 'Please fill out the form.');
-        // } else {
-        //     $order->address = $request->input("address");
-        //     $order->contactno = $request->input("contactno");
-        // }
 
         foreach ($cartItemsData as $cartItemId => $cartItemData) {
             $order->items()->create([

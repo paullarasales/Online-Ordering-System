@@ -7,15 +7,18 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProfileUpdate;
 use App\Http\Controllers\SearchController;
+use App\Models\Product;
 
 Route::get("/", function () {
-    return view("landing");
+    $products = Product::limit(4)->get();
+    return view("landing", compact("products"));
 });
 
 Route::middleware("auth")->group(function () {
     Route::get("user/dashboard", [UserController::class, "index"])->name(
         "userdashboard"
     );
+    Route::get("/user/dash", [UserController::class, "testDashboard"])->name("test.dash");
     Route::get("/verify", [UserController::class, "verifyAccountForm"])->name(
         "verify.form"
     );
