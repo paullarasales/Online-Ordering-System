@@ -21,7 +21,6 @@ class ProductController extends Controller
         $product->product_name = $request->product_name;
         $product->price = $request->price;
         $product->description = $request->description;
-        $product->stockQuantity = $request->stockQuantity;
         $product->category_id = $request->category_id;
 
         // Handle file upload

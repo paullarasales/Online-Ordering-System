@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('address');
             $table->string('payment_method')->default('Cash On Delivery');
-            $table->string('status')->default('Processing');
+            $table->string('status')->default('In-Queue');
             $table->timestamps();
         });
     }

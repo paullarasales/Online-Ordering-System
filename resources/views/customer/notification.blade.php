@@ -60,6 +60,9 @@
                                 let statusMessage = `Your order ${product.product_name}`;
 
                                 switch (order.status) {
+                                    case 'In-Queue':
+                                        statusMessage += " is still in queue, We will notify you later";
+                                        break;
                                     case 'Processing':
                                         statusMessage += " is still processing. Please wait. ";
                                         break;

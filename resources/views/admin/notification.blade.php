@@ -13,7 +13,7 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    @if ($order->status === 'processing')
+                                    @if ($order->status === 'in-queue')
                                         <p class="text-lg font-medium text-gray-900">{{ $order->user->name }} made an order</p>
                                     @else
                                         <p class="text-lg font-medium text-gray-900">{{ $order->user->name }} {{ $order->action }} an order</p>
