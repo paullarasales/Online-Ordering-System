@@ -117,7 +117,7 @@
                             @elseif(request()->routeIs('admin.newOrders'))
                                 <h1 class="text-2xl font-medium">Notification</h1>
                             @elseif(request()->routeIs('message'))
-                                <h1 class="text-2xl font-medium">Message</h1>
+                                <h1 class="text-2xl font-medium">Messages</h1>
                             @elseif(request()->routeIs('product-add-view'))
                                 <h1 class="text-2xl font-medium">Add new Product</h1>
                             @elseif(request()->routeIs('admin.order.details'))

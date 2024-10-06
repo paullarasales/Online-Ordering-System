@@ -11,7 +11,7 @@
                 @forelse ($orders as $order)
                     <div class="mb-8 order-container" data-order-id="{{ $order->id }}">
                         <p>{{ __('Order Date: ') }}{{ $order->created_at->format('Y-m-d') }}</p>
-                        <p>{{ __('Status: ') }}<span class="order-status">{{ ucfirst($order->status) }}</span></p> <!-- Display status -->
+                        <p>{{ __('Status: ') }}<span class="order-status">{{ ucfirst($order->status) }}</span></p>
 
                         <table class="min-w-full leading-normal mt-4">
                             <thead>
@@ -55,8 +55,8 @@
                                 @endforelse
                             </tbody>
                         </table>
-
-                        @if ($order->status === 'Processing')
+                        
+                        @if (in_array(strtolower($order->status), ['processing', 'in-queue']))
                             <button class="cancel-order-btn bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded mt-4">Cancel Order</button>
                         @endif
                     </div>
@@ -71,11 +71,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            function capitalizeFirstLetter(string) {
-                if (!string) return string;
-                return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
-            }
-
             async function fetchOrderStatus() {
                 let orderContainers = document.querySelectorAll('.order-container');
 
@@ -90,17 +85,24 @@
                         }
 
                         const data = await response.json();
-                        container.querySelector('.order-status').textContent = capitalizeFirstLetter(data.status);
+                        const orderStatusElement = container.querySelector('.order-status');
+                        const cancelBtn = container.querySelector('.cancel-order-btn');
 
-                        if (data.status.toLowerCase() === 'processing') {
-                            let cancelBtn = container.querySelector('.cancel-order-btn');
+                        orderStatusElement.textContent = capitalizeFirstLetter(data.status);
+
+                        if (['processing', 'in-queue'].includes(data.status.toLowerCase())) {
                             if (cancelBtn) {
                                 cancelBtn.disabled = false;
                                 cancelBtn.addEventListener('click', async function() {
                                     await cancelOrder(orderId);
                                 });
                             }
+                        } else {
+                            if (cancelBtn) {
+                                cancelBtn.disabled = true;
+                            }
                         }
+
                     } catch (error) {
                         console.error('Error fetching order status:', error);
                     }
@@ -131,7 +133,13 @@
                 }
             }
 
+            function capitalizeFirstLetter(string) {
+                if (!string) return string;
+                return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+            }
+
             fetchOrderStatus();
+
             setInterval(fetchOrderStatus, 5000);
         });
     </script>

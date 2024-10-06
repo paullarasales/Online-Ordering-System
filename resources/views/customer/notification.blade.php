@@ -63,7 +63,7 @@
                                     case 'In-Queue':
                                         statusMessage += " is still in queue, We will notify you later";
                                         break;
-                                    case 'Processing':
+                                    case 'processing':
                                         statusMessage += " is still processing. Please wait. ";
                                         break;
                                     case 'On Deliver':
