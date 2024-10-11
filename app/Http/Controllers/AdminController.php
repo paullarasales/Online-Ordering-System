@@ -376,30 +376,31 @@ class AdminController extends Controller
     public function OrderStatus() {
         try {
             $orders = Order::all();
-
+    
             if ($orders->isEmpty()) {
                 return response()->json([
-                    ["status" => "error", "message" => "Order not found"],
-                    400
-                ]);
+                    "status" => "error",
+                    "message" => "Order not found"
+                ], 400);
             }
-
+    
             $orderStatus = $orders->map(function ($order) {
                 return [
+                    "id" => $order->id, 
                     "status" => $order->status,
                 ];
             });
-
+    
             return response()->json(['orders' => $orderStatus]);
         } catch (\Exception $e) {
             \Log::error("Error fetching order status: " . $e->getMessage());
             return response()->json([
-                [
-                    "status" => "error", "message" => "An error occured"
-                ], 500
-            ]);
+                "status" => "error",
+                "message" => "An error occurred"
+            ], 500);
         }
     }
+    
 
     public function users()
     {

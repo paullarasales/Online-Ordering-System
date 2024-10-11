@@ -22,13 +22,13 @@
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->address }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">{{ $order->payment_method }}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <select name="status" id="status-{{ $order->id }}" data-order-id="{{ $order->id }}" class="status-dropdown" 
+                                <select name="status" id="status-{{ $order->id }}" data-order-id="{{ $order->id }}" class="status-dropdown"
                                         @if($order->status == 'delivered' || $order->status == 'cancelled') disabled @endif>
-                                    <option value="in-queue" {{ $order->status == 'in-queue' ? 'selected' : ''}} class="status">In Queue</option>
-                                    <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }} class="status">Processing</option>
-                                    <option value="On Deliver" {{ $order->status == 'On Deliver' ? 'selected' : '' }} class="status">On Deliver</option>
-                                    <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }} class="status">Delivered</option>
-                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }} class="status">Cancelled</option>
+                                    <option value="in-queue" {{ ($order->status == '' || $order->status == 'in-queue') ? 'selected' : '' }}>In Queue</option>
+                                    <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
+                                    <option value="On Deliver" {{ $order->status == 'On Deliver' ? 'selected' : '' }}>On Deliver</option>
+                                    <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                                    <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
                                 </select>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
@@ -77,6 +77,39 @@
                     });
                 });
             });
+
+            setInterval(function() {
+                fetch("{{ route('admin.order.stats') }}", {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.orders) {
+                        data.orders.forEach(order => {
+                            const statusDropdown = document.getElementById('status-' + order.id);
+                            if (statusDropdown) {
+                                // Debug
+                                console.log("Order ID:", order.id, "Status:", order.status);
+                                
+                                // Set to "In Queue" if order status is null or an empty string
+                                if (!order.status || order.status.trim() === '') {
+                                    console.log("Setting status to 'in-queue' for order ID:", order.id);
+                                    statusDropdown.value = 'in-queue'; // Set it to "In Queue"
+                                } else {
+                                    statusDropdown.value = order.status; // Otherwise, set it to the actual status
+                                }
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching order statuses:', error);
+                });
+            }, 1000); // 1-second interval
         });
     </script>
 </x-admin-layout>

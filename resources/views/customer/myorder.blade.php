@@ -56,9 +56,10 @@
                             </tbody>
                         </table>
                         
-                        @if (in_array(strtolower($order->status), ['processing', 'in-queue']))
+                        @if (in_array(strtolower($order->status), ['processing', 'in-queue','delivered']))
                             <button class="cancel-order-btn bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded mt-4">Cancel Order</button>
                         @endif
+
                     </div>
                 @empty
                     <div class="mb-8">
@@ -90,7 +91,7 @@
 
                         orderStatusElement.textContent = capitalizeFirstLetter(data.status);
 
-                        if (['processing', 'in-queue'].includes(data.status.toLowerCase())) {
+                        if (['processing', 'in-queue', 'delivered'].includes(data.status.toLowerCase())) {
                             if (cancelBtn) {
                                 cancelBtn.disabled = false;
                                 cancelBtn.addEventListener('click', async function() {
@@ -102,7 +103,6 @@
                                 cancelBtn.disabled = true;
                             }
                         }
-
                     } catch (error) {
                         console.error('Error fetching order status:', error);
                     }

@@ -280,6 +280,7 @@ class UserController extends Controller
         $order->address = $request->input("address");
         $order->contactno = $request->input("contactno");
         $order->payment_method = $request->input("payment_method");
+        $order->status = 'in-queue';
         $order->notified = false;
         $order->markasreceived = false;
         $order->notifiedbyuser = false;
@@ -384,6 +385,7 @@ class UserController extends Controller
 
     public function cancelOrder(Request $request, Order $order)
     {
+        $cancellableStatuses = [];
         if (strcasecmp($order->status, "processing") === 0) {
             $order->status = "cancelled";
             $order->notified = false;
