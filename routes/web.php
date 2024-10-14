@@ -145,7 +145,7 @@ Route::get("/admin/profile", [AdminController::class, "profile"])
     ->name("profile");
 Route::post("/profile/update/{id}", [ProfileUpdate::class, "update"])->name(
     "profile.update"
-);
+);   
 Route::get("/admin/view/{userId}", [AdminController::class, "viewUserImages"])
     ->name("admin.view")
     ->middleware("admin");
