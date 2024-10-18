@@ -14,7 +14,6 @@ class SalesController extends Controller
         $currentYear = Carbon::now()->year;
         $currentMonth = Carbon::now()->month;
 
-        // Fetch monthly revenue
         for ($i = 0; $i < 12; $i++) {
             $month = ($currentMonth - $i) <= 0 ? 12 + ($currentMonth - $i) : $currentMonth - $i;
             $year = ($currentMonth - $i) <= 0 ? $currentYear - 1 : $currentYear;
@@ -29,15 +28,16 @@ class SalesController extends Controller
                         return $item->quantity * $item->product->price + 60; // Assuming a fixed shipping fee
                     });
                 }, 0);
-                
+            
             $revenueData[] = [
-                'month' => Carbon::create()->month($month)->format('F Y'), 
+                'month' => $month,
+                'year' => $year,
                 'revenue' => $totalRevenue,
             ];
         }
 
         $revenueData = array_reverse($revenueData);
-
+   
         $mostSoldProducts = Order::with('items.product')
             ->where('status', 'delivered')
             ->whereBetween('created_at', [Carbon::now()->subYear(), Carbon::now()])
@@ -57,7 +57,7 @@ class SalesController extends Controller
                     'product_name' => $items->first()['product_name'],
                     'total_quantity' => $items->sum('quantity'),
                 ];
-            }) 
+            })
             ->sortByDesc('total_quantity')
             ->take(5)
             ->values();
