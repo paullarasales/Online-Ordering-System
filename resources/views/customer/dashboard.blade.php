@@ -10,6 +10,17 @@
         </div>
     @endif
 
+     <!-- Blocked User Modal -->
+     <div id="blocked-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 {{ session('blocked') ? '' : 'hidden' }}">
+        <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
+            <h2 class="text-lg font-semibold text-gray-800">Action Restricted</h2>
+            <p class="text-gray-600">{{ session('blocked') }}</p>
+            <div class="flex justify-end mt-4">
+                <button id="close-modal" class="bg-gray-500 text-white px-4 py-2 rounded-md">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Main content -->
     <div class="container mx-auto py-4 max-w-5xl">
         <!-- Filtration Section -->
@@ -54,38 +65,39 @@
                 @endforeach
             @endif
         </div>
-        <!-- Blocked User Modal -->
-        <div id="blocked-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
-            <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
-                <h2 class="text-lg font-semibold text-gray-800">Action Restricted</h2>
-                <p class="text-gray-600">You can't perform this action because your account is blocked.</p>
-                <div class="flex justify-end mt-4">
-                    <button id="close-modal" class="bg-gray-500 text-white px-4 py-2 rounded-md">Close</button>
-                </div>
-            </div>
-        </div>
+
         <!-- Pagination Section -->
         <div class="pagination">
             {{ $products->links('vendor.pagination.tailwind') }}
         </div>
     </div>
-    @push('scripts')
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const notificationBanner = document.getElementById('notification-banner');
-            const filterSelect = document.getElementById('filter');
-            const productList = document.getElementById('product-list');
+       document.addEventListener('DOMContentLoaded', function () {
+        const notificationBanner = document.getElementById('notification-banner');
+        const blockedModal = document.getElementById('blocked-modal');
+        const closeModal = document.getElementById('close-modal');
 
-            
-            if (notificationBanner) {
+        if (notificationBanner) {
+            console.log('Notification banner found');
+            setTimeout(() => {
+                notificationBanner.style.opacity = '0';
                 setTimeout(() => {
-                    notificationBanner.style.opacity = '0';
-                    setTimeout(() => {
-                        notificationBanner.style.display = 'none';
-                    }, 5000);
-                }, 3000);
-            }
+                    notificationBanner.style.display = 'none';
+                }, 5000);
+            }, 3000);
+        }
+
+        console.log("Blocked modal:", blockedModal);
+        console.log("Close button:", closeModal);
+
+        if (closeModal) {
+            closeModal.addEventListener('click', function() {
+                console.log('Close button clicked');
+                if (blockedModal) {
+                    blockedModal.classList.add('hidden');
+                }
+            });
+        }
         });
     </script>
-    @endpush
 </x-app-layout>

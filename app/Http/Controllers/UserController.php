@@ -162,7 +162,6 @@ class UserController extends Controller
 
     public function addToCart(Request $request, $productId)
     {
-
         if ($request->isCheckout) {
             $validatedData = $request->validate([
                 'address' => 'required|string|max:255',
@@ -179,10 +178,11 @@ class UserController extends Controller
         if (!$userId) {
             return redirect()->route("login")->with("error", "Please log in first");
         }
-
+    
         $user = User::findOrFail($userId);
         if ($user->is_blocked) {
-            return redirect()->route('userdashboard')->with('Error', `You can't perform this action`);
+            // Set a session flash message for the modal
+            return redirect()->route('userdashboard')->with('blocked', 'Your account is blocked. You can\'t perform this action until the penalty is gone.');
         }
     
         $cart = Cart::firstOrCreate(["user_id" => $userId]);
@@ -205,7 +205,7 @@ class UserController extends Controller
     
         return redirect()->route("userdashboard")->with("success", "Product added successfully");
     }
-
+    
     public function addToCartPage()
     {
         $userId = Auth::id();
