@@ -22,7 +22,7 @@
             @csrf
             <div class="mb-4">
                 <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-                <input type="text" name="address" id="address" class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                <input type="text" name="address" id="address" class="mt-1 p-2 block w-full border-gray-300 rounded-md shadow-sm focus:border-blue-500 focus:ring-blue-500" placeholder="House no., Street, Barangay, City/Municipality, Province, ZIP Code">
                 <p class="text-red-500 text-sm mt-1 hidden" id="addressError">Please enter your address.</p>
             </div>
 

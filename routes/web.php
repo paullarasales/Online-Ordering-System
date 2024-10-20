@@ -109,6 +109,11 @@ Route::middleware("auth")->group(function () {
     Route::get('/user/filter/products', [UserController::class, 'filter'])->name('user.productFilter');
     Route::get('/verification/test', [UserController::class, 'verificationTest'])->name('user.verificationTest');
     Route::get('/user/verification/status', [UserController::class, 'verificationStatus']);
+    Route::get('/check-blocked-status', function () {
+        $user = Auth::user();
+        return response()->json(['is_blocked' => $user ? $user->is_blocked : false]);
+    });
+    
 });
 //Admin
 Route::get("/dashboard", [AdminController::class, "dashboard"])
@@ -121,7 +126,7 @@ Route::get("/customer", [AdminController::class, "customer"])
     ->middleware("admin");
 Route::get("/order", [AdminController::class, "order"])
     ->middleware(["auth", "verified"])
-    ->name("order")
+    ->name("admin.orders")
     ->middleware("admin");
 Route::get("/analytic", [AdminController::class, "analytic"])
     ->middleware(["auth", "verified"])
@@ -198,6 +203,10 @@ Route::get("/user-accounts", [AdminController::class, "getUsers"]);
 Route::get("/users", [AdminController::class, "users"])->name("admin.users");
 Route::get("/user-search", [SearchController::class, 'userSearch'])->name('user.search');
 Route::get('/order/stats', [AdminController::class, 'orderStatus'])->name('admin.order.stats');
+Route::get('/orders/filter', [AdminController::class, 'filter'])->name('admin.orders.filter');
+Route::get('/admin/block/{id}', [AdminController::class, 'blockUser'])->name('admin.block');
+
+
 //Others
 Route::post("Product-add", [ProductController::class, "addProduct"])
     ->name("products.store")

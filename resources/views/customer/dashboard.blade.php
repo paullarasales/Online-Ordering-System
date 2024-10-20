@@ -54,6 +54,16 @@
                 @endforeach
             @endif
         </div>
+        <!-- Blocked User Modal -->
+        <div id="blocked-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+            <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
+                <h2 class="text-lg font-semibold text-gray-800">Action Restricted</h2>
+                <p class="text-gray-600">You can't perform this action because your account is blocked.</p>
+                <div class="flex justify-end mt-4">
+                    <button id="close-modal" class="bg-gray-500 text-white px-4 py-2 rounded-md">Close</button>
+                </div>
+            </div>
+        </div>
         <!-- Pagination Section -->
         <div class="pagination">
             {{ $products->links('vendor.pagination.tailwind') }}

@@ -50,6 +50,10 @@ class AdminController extends Controller
             ->with("verification")
             ->get();
 
+            foreach ($customers as $customer) {
+                $customer->checkBlockedStatus(); // Use the method from User model
+            }
+
         $verifiedUsers = $customers->filter(function ($customer) {
             return $customer->verification && $customer->verification->verified;
         });
@@ -94,11 +98,6 @@ class AdminController extends Controller
                 ->route("admin.orders")
                 ->with("error", "Order not found.");
         }
-    }
-
-    public function analytic()
-    {
-        return view("admin.analytics");
     }
 
     public function message()
@@ -292,6 +291,27 @@ class AdminController extends Controller
         ]);
     }
 
+    public function filter(Request $request)
+    {
+        $status = $request->query('status');
+
+        $validStatuses = ['all', 'in-queue', 'processing', 'on-deliver', 'delivered', 'cancelled'];
+        if (!in_array($status, $validStatuses)) {
+            return response()->json(['success' => false, 'message' => 'Invalid status'], 400);
+        }
+
+        try {
+            $orders = $status === 'all' 
+                ? Order::with('user')->get() 
+                : Order::with('user')->where('status', $status)->get();
+
+            return response()->json(['success' => true, 'orders' => $orders, 'status' => $status]);
+        } catch (\Exception $e) {
+            \Log::error('Error fetching orders: ' . $e->getMessage());
+            return response()->json(['success' => false, 'message' => 'Error fetching orders: ' . $e->getMessage()], 500);
+        }
+    }
+
     public function productFilter(Request $request)
     {
         $filter = $request->input("filter", "all");
@@ -401,9 +421,24 @@ class AdminController extends Controller
         }
     }
     
-
     public function users()
     {
         return view("admin.users");
     }
+
+    public function blockUser($userId)
+    {
+        $user = User::findOrFail($userId);
+
+        if ($user) {
+            $user->is_blocked = true;
+            $user->blocked_until = now()->addHour();
+            $user->save();
+
+            return redirect()->back()->with('success', 'User blocked successfully!');
+        }
+        
+        return redirect()->back()->with('error', 'Something went wrong when blocking the user!');
+    }
+
 }

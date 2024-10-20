@@ -10,31 +10,14 @@
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-3xl font-medium text-gray-900">Customer</h2>
                 <div class="flex space-x-3 items-center">
-                    <form action="{{ route('user.search') }}" method="GET" class="relative flex items-center w-full max-w-lg">
-                        <input type="text" name="query" class="input-wide block px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pl-10 sm:text-sm w-full" placeholder="Type to search customer">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                            </svg>                              
-                        </div>
-                    </form>
-                    <select id="user-status" class="ml-4 py-2 px-4 border border-gray-300 rounded-md bg-white shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                        <option value="verified">Show Verified</option>
-                        <option value="not-verified">Show Not Verified</option>
-                    </select>
+                    <input type="text" id="search" placeholder="Search verified users" class="py-2 px-4 border rounded-md">
+                    <button id="search-btn" class="py-2 px-4 bg-green-500 text-white rounded-md">Search</button>
+                    <button id="show-verified" class="py-2 px-4 bg-blue-500 text-white rounded-md">Show Verified</button>
+                    <button id="show-not-verified" class="py-2 px-4 bg-red-500 text-white rounded-md">Show Not Verified</button>
                 </div>
             </div>
 
             <div id="verified-users" class="user-section">
-                <!-- Loading Spinner -->
-                <div class="loading-spinner hidden flex justify-center items-center py-5">
-                    <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
-                    </svg>
-                    <span class="ml-2 text-blue-500">Loading...</span>
-                </div>
-
                 <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
                     <thead>
                         <tr class="bg-gray-100 text-gray-700">
@@ -42,20 +25,32 @@
                             <th class="px-4 py-3 text-left">Email</th>
                             <th class="px-4 py-3 text-left">Email Verified At</th>
                             <th class="px-4 py-3 text-left">Verification Status</th>
+                            <th class="px-4 py-3 text-left">Blocked Until</th> <!-- New Column -->
+                            <th class="px-4 py-3 text-left">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="verified-users-tbody">
                         @foreach($verifiedUsers as $customer)
-                        <tr class="hover:bg-gray-50 border-b transition-colors duration-150">
-                            <td class="flex items-center gap-4 px-4 py-3">
-                                <img class="w-12 h-12 rounded-full border border-sky-500"
-                                     src="{{ $customer->photo ? asset($customer->photo) : asset('avatar/default.jpeg') }}"
-                                     alt="Profile Image">
-                                <span class="text-gray-800">{{ $customer->name }}</span>
+                        <tr>
+                            <td>{{ $customer->name }}</td>
+                            <td>{{ $customer->email }}</td>
+                            <td>{{ $customer->email_verified_at }}</td>
+                            <td>Verified</td>
+                            <td>
+                                @if($customer->is_blocked && $customer->blocked_until)
+                                    <span class="text-red-500">Blocked until: {{ $customer->blocked_until->diffForHumans() }}</span>
+                                @endif
                             </td>
-                            <td class="px-4 py-3 text-gray-600">{{ $customer->email }}</td>
-                            <td class="px-4 py-3 text-gray-600">{{ $customer->email_verified_at }}</td>
-                            <td class="px-4 py-3 text-green-600">Verified</td>
+                            <td class="px-4 py-3">
+                                @if(!$customer->is_blocked)
+                                    <a href="{{ route('admin.block', $customer->id) }}"
+                                       class="bg-red-500 text-white py-2 px-4 rounded shadow hover:bg-red-600 transition-all">
+                                       Block
+                                    </a>
+                                @else
+                                    <span class="text-red-500">Blocked</span>
+                                @endif
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -63,30 +58,23 @@
             </div>
 
             <div id="not-verified-users" class="user-section hidden">
-                <h3 class="text-xl font-normal text-gray-800 mb-5 border-b pb-2">Not Verified Users</h3>
                 <table class="min-w-full bg-white border border-gray-200 rounded-lg shadow-sm">
                     <thead>
                         <tr class="bg-gray-100 text-gray-700">
-                            <th class="px-4 py-3 text-left">Photo</th>
-                            <th class="px-4 py-3 text-left">ID</th>
-                            <th class="px-4 py-3 text-left">Full Name</th>
+                            <th class="px-4 py-3 text-left">Customer</th>
                             <th class="px-4 py-3 text-left">Email</th>
                             <th class="px-4 py-3 text-left">Email Verified At</th>
                             <th class="px-4 py-3 text-left">Verification Status</th>
                             <th class="px-4 py-3 text-left">Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="not-verified-users-tbody">
                         @foreach($notVerifiedUsers as $customer)
-                        <tr class="hover:bg-gray-50 border-b transition-colors duration-150">
-                            <td class="px-4 py-3">
-                                <img src="{{ $customer->photo ? asset('storage/' . $customer->photo) : asset('storage/default-avatar.png') }}" alt="User Photo" class="w-12 h-12 rounded-full object-cover">
-                            </td>
-                            <td class="px-4 py-3 text-gray-600">{{ $customer->id }}</td>
-                            <td class="px-4 py-3 text-gray-800">{{ $customer->name }}</td>
-                            <td class="px-4 py-3 text-gray-600">{{ $customer->email }}</td>
-                            <td class="px-4 py-3 text-gray-600">{{ $customer->email_verified_at }}</td>
-                            <td class="px-4 py-3 text-red-600">Not Verified</td>
+                        <tr>
+                            <td>{{ $customer->name }}</td>
+                            <td>{{ $customer->email }}</td>
+                            <td>{{ $customer->email_verified_at }}</td>
+                            <td>Not Verified</td>
                             <td class="px-4 py-3">
                                 <a href="{{ route('admin.view', $customer->id) }}" class="bg-blue-500 text-white py-2 px-4 rounded-lg shadow hover:bg-blue-600 transition-all">View</a>
                             </td>
@@ -100,90 +88,72 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const userStatusDropdown = document.getElementById('user-status');
             const verifiedUsersSection = document.getElementById('verified-users');
             const notVerifiedUsersSection = document.getElementById('not-verified-users');
+            const searchInput = document.getElementById('search');
+            const searchBtn = document.getElementById('search-btn');
+            const verifiedUsersTbody = document.getElementById('verified-users-tbody');
 
-            userStatusDropdown.addEventListener('change', function () {
-                clearTable();
-                if (this.value === 'verified') {
-                    verifiedUsersSection.classList.remove('hidden');
-                    notVerifiedUsersSection.classList.add('hidden');
-                } else {
-                    verifiedUsersSection.classList.add('hidden');
-                    notVerifiedUsersSection.classList.remove('hidden');
-                }
+            const originalVerifiedUsersHTML = verifiedUsersTbody.innerHTML;
+
+            document.getElementById('show-verified').addEventListener('click', function () {
+                verifiedUsersSection.classList.remove('hidden');
+                notVerifiedUsersSection.classList.add('hidden');
+                verifiedUsersTbody.innerHTML = originalVerifiedUsersHTML;
             });
 
-            document.querySelector('input[name="query"]').addEventListener('input', async function () {
-                const query = this.value;
-                const userStatus = document.getElementById('user-status').value;
+            document.getElementById('show-not-verified').addEventListener('click', function () {
+                verifiedUsersSection.classList.add('hidden');
+                notVerifiedUsersSection.classList.remove('hidden');
+            });
 
-                if (query.trim() === "") {
-                    clearTable();
-                    try {
-                        const response = await fetch('/user-search');
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok.');
-                        }
-                        const data = await response.json();
-                        updateTable(data.results);
-                    } catch (error) {
-                        console.error('Error fetching results:', error);
-                    }
+            searchBtn.addEventListener('click', function () {
+                const query = searchInput.value.trim();
+                if (query === '') {
+                    verifiedUsersTbody.innerHTML = '';
                     return;
                 }
-                
-                document.querySelector('.loading-spinner').classList.remove('hidden');
-                
-                try {
-                    const response = await fetch(`/user-search?query=${encodeURIComponent(query)}`);
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok.');
-                    }
 
-                    const data = await response.json();
-                    updateTable(data.results);
-                } catch (error) {
-                    console.error('Error fetching results:', error);
-                } finally {
-                    document.querySelector('.loading-spinner').classList.add('hidden');
-                }
+                fetch(`/user-search?query=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        verifiedUsersTbody.innerHTML = '';
+                        if (data.results.length === 0) {
+                            verifiedUsersTbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">No results found</td></tr>';
+                        } else {
+                            data.results.forEach(user => {
+                                const row = `
+                                    <tr>
+                                        <td>${user.name}</td>
+                                        <td>${user.email}</td>
+                                        <td>${user.email_verified_at}</td>
+                                        <td>${user.verification_status}</td>
+                                        <td>
+                                            @if($customer->is_blocked && $customer->blocked_until)
+                                                <span class="text-red-500">Blocked until: {{ $customer->blocked_until->diffForHumans() }}</span>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-3">
+                                            @if(!$customer->is_blocked)
+                                                <a href="{{ route('admin.block', $customer->id) }}"
+                                                class="bg-red-500 text-white py-2 px-4 rounded shadow hover:bg-red-600 transition-all">
+                                                Block
+                                                </a>
+                                            @else
+                                                <span class="text-red-500">Blocked</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                `;
+                                verifiedUsersTbody.innerHTML += row;
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        verifiedUsersTbody.innerHTML = '<tr><td colspan="4" class="text-center py-4">An error occurred while searching</td></tr>';
+                    });
             });
-
-            function updateTable(data) {
-                const verifiedSectionVisible = !verifiedUsersSection.classList.contains('hidden');
-
-                const tableBody = verifiedSectionVisible 
-                    ? document.querySelector('#verified-users tbody')
-                    : document.querySelector('#not-verified-users tbody');
-
-                tableBody.innerHTML = '';
-
-                data.forEach(customer => {
-                    const row = `
-                        <tr class="hover:bg-gray-50 border-b transition-colors duration-150">
-                            <td class="flex items-center gap-4 px-4 py-3">
-                                <img class="w-12 h-12 rounded-full border border-sky-500"
-                                    src="${customer.photo ? customer.photo : 'avatar/default.jpeg'}"
-                                    alt="Profile Image">
-                                <span class="text-gray-800">${customer.name}</span>
-                            </td>
-                            <td class="px-4 py-3 text-gray-600">${customer.email}</td>
-                            <td class="px-4 py-3 text-gray-600">${customer.email_verified_at ? new Date(customer.email_verified_at).toLocaleString() : ''}</td>
-                            <td class="px-4 py-3 ${verifiedSectionVisible ? 'text-green-600' : 'text-red-600'}">
-                                ${verifiedSectionVisible ? 'Verified' : 'Not Verified'}
-                            </td>
-                        </tr>
-                    `;
-                    tableBody.insertAdjacentHTML('beforeend', row);
-                });
-            }
-
-            function clearTable() {
-                const tableBody = document.querySelector('#verified-users tbody');
-                tableBody.innerHTML = '';
-            }
         });
     </script>
 </x-admin-layout>

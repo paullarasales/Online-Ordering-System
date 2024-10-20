@@ -78,11 +78,11 @@
                         </x-side-nav-link>
                     </div>
 
-                    <div class="{{ request()->routeIs('order') ? 'bg-gray-200 w-full' : 'w-44' }} flex items-center gap-2 rounded-sm h-12">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="{{ request()->routeIs('order') ? '#8B5CF6' : ''}}" viewBox="0 0 24 24" stroke-width="1.5" class="ml-10 w-9 h-9">
+                    <div class="{{ request()->routeIs('admin.orders') ? 'bg-gray-200 w-full' : 'w-44' }} flex items-center gap-2 rounded-sm h-12">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="{{ request()->routeIs('admin.orders') ? '#8B5CF6' : ''}}" viewBox="0 0 24 24" stroke-width="1.5" class="ml-10 w-9 h-9">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m20.25 7.5-.625 10.632a2.25 2.25 0 0 1-2.247 2.118H6.622a2.25 2.25 0 0 1-2.247-2.118L3.75 7.5M10 11.25h4M3.375 7.5h17.25c.621 0 1.125-.504 1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125Z" />
                         </svg>
-                        <x-side-nav-link href="{{ route('order') }}" :active="request()->routeIs('order')" class="text-lg text-black font-medium mt-1 flex items-center w-full">
+                        <x-side-nav-link href="{{ route('admin.orders') }}" :active="request()->routeIs('admin.orders')" class="text-lg text-black font-medium mt-1 flex items-center w-full">
                             {{ __('Order List')}}
                         </x-side-nav-link>
                     </div>
@@ -108,7 +108,7 @@
                                 <h1 class="text-2xl font-medium">Dashboard</h1>
                             @elseif(request()->routeIs('customer'))
                                 <h1 class="text-2xl font-medium">Manage Users</h1>
-                            @elseif(request()->routeIs('order'))
+                            @elseif(request()->routeIs('admin.orders'))
                                 <h1 class="text-2xl font-medium">Order List</h1>
                             @elseif(request()->routeIs('product'))
                                 <h1 class="text-2xl font-medium">Product</h1>
@@ -189,9 +189,9 @@
             <div class="flex flex-col md:flex-row w-full md:h-full md:gap-2">
                 <div class="flex-1">
                     <div class="mx-auto px-2 sm:px-6 lg:px-8">
-                        <div class="relative bg-white overflow-hidden shadow">
+                        <div class="relative bg-white overflow-hidden shadow flex flex-col h-full">
                             {{ $slot }}
-                        </div>
+                        </div>                                               
                     </div>
                 </div>
             </div>

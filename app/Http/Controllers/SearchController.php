@@ -22,7 +22,20 @@ class SearchController extends Controller
         $query = $request->input("query");
         $results = User::where("name", "LIKE", "%{$query}%")
                     ->where('usertype', 'user')
-                    ->get();
+                    ->with('verification')
+                    ->get()
+                    ->map(function($user) {
+                        return [
+                            'name' => $user->name,
+                            'email' => $user->email,
+                            'email_verified_at' => $user->email_verified_at,
+                            'verification_status' => $user->verification->status ?? 'verified', 
+                            'id' => $user->id
+                        ];
+                    });
+
         return response()->json(['results' => $results]);
     }
+
+
 }

@@ -24,7 +24,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'photo',
-        'verified'
+        'verified',
+        'is_blocked',
     ];
 
     /**
@@ -47,6 +48,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'blocked_until' => 'datetime', 
         ];
     }
 
@@ -74,4 +76,19 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Message::class);
     }
+
+    public function checkBlockedStatus()
+    {
+        if ($this->is_blocked && $this->blocked_until) {
+            if (now()->isAfter($this->blocked_until)) {
+                $this->is_blocked = false;
+                $this->blocked_until = null; 
+                $this->save();
+            } else {
+                $timeLeft = $this->blocked_until->diffForHumans();
+            }
+        }
+    }
+
+
 }

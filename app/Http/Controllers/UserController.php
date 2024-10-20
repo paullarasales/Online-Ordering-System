@@ -10,6 +10,7 @@ use App\Models\Cart;
 use App\Models\CartItem;
 use App\Models\Order;
 use App\Models\Message;
+use App\Models\User;
 
 class UserController extends Controller
 {
@@ -177,6 +178,11 @@ class UserController extends Controller
     
         if (!$userId) {
             return redirect()->route("login")->with("error", "Please log in first");
+        }
+
+        $user = User::findOrFail($userId);
+        if ($user->is_blocked) {
+            return redirect()->route('userdashboard')->with('Error', `You can't perform this action`);
         }
     
         $cart = Cart::firstOrCreate(["user_id" => $userId]);
@@ -500,4 +506,17 @@ class UserController extends Controller
             'products' => $products
         ]);
     }
+
+    public function checkBlockedStatus()
+    {
+        $userId = Auth::id();
+        
+        if ($userId) {
+            $user = User::findOrFail($userId);
+            return response()->json(['is_blocked' => $user->is_blocked]);
+        }
+
+        return response()->json(['is_blocked' => false]);
+    }
+
 }
