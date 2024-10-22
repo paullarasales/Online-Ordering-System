@@ -335,7 +335,7 @@ class UserController extends Controller
 
         $orders = Order::where("user_id", $userId)
             ->with("items.product")
-            ->where("status", "on deliver")
+            ->where("status", "on-deliver")
             ->get();
 
         return view("customer.toreceive", compact("orders"));
@@ -347,7 +347,8 @@ class UserController extends Controller
             $userId = auth()->id();
 
             $unreadToReceive = Order::where("user_id", $userId)
-                ->where("status", "on deliver")
+                ->where("status", "on-deliver")
+                ->where("notifiedbyuser", false)
                 ->where("markasreceived", false)
                 ->count();
 

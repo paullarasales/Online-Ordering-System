@@ -1,4 +1,3 @@
-
 <x-app-layout>
     <style>
         #chat-container {
@@ -84,10 +83,10 @@
         }
 
         .user-list-item {
-        padding: 0.5rem;
-        border-radius: 0.375rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         .user-list-item:hover {
@@ -97,18 +96,17 @@
 
     <div id="container">
         <!-- Sidebar -->
-        <div id="sidebar">
-            <h3 class="text-lg font-semibold mb-4">Customer</h3>
-            <div id="user-list">
-                
+        @if (auth()->user()->usertype !== 'admin')
+            <div id="sidebar">
+                <h3 class="text-lg font-semibold mb-4">Customer</h3>
+                <div id="user-list"></div>
             </div>
-        </div>
+        @endif
 
         <!-- Chat Container -->
-        <div id="chat-container-wrapper">
+        <div id="chat-container-wrapper" style="{{ auth()->user()->usertype === 'admin' ? 'width: 100%;' : '' }}">
             <div id="chat-container">
-                <div id="message-list">
-                </div>
+                <div id="message-list"></div>
                 <div id="message-input-container">
                     <input type="text" id="message-input" placeholder="Type a message" class="flex-1 mr-2">
                     <button id="send-button">Send</button>
@@ -152,7 +150,6 @@
             }
         }
 
-
         async function fetchMessages() {
             if (!currentReceiverId) return;
 
@@ -179,7 +176,6 @@
             }
         }
 
-
         document.addEventListener('DOMContentLoaded', function() {
             const button = document.getElementById('send-button');
 
@@ -204,5 +200,5 @@
             fetchUserList();
             setInterval(fetchMessages, 2000);
         });
-    </script> 
+    </script>
 </x-app-layout>
