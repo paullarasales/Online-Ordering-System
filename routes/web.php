@@ -205,7 +205,7 @@ Route::get("/user-search", [SearchController::class, 'userSearch'])->name('user.
 Route::get('/order/stats', [AdminController::class, 'orderStatus'])->name('admin.order.stats');
 Route::get('/orders/filter', [AdminController::class, 'filter'])->name('admin.orders.filter');
 Route::get('/admin/block/{id}', [AdminController::class, 'blockUser'])->name('admin.block');
-
+Route::post('/order/{id}/send-receipt', [AdminController::class, 'sendReceipt'])->name('send-receipt');
 
 //Others
 Route::post("Product-add", [ProductController::class, "addProduct"])

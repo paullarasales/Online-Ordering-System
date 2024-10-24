@@ -1,72 +1,86 @@
 <x-app-layout>
-    <div class="max-w-2xl mx-auto px-4 py-8">
-        <div class="flex items-center mb-4">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+        <div class="flex items-center mb-8">
             <a href="{{ route('userdashboard') }}" class="group">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-10 h-10 mr-2 mb-4 group-hover:stroke-blue-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-8 mr-4 group-hover:stroke-blue-500">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18" />
                 </svg>
             </a>
-            <h1 class="text-3xl font-bold mb-4">My Cart</h1>
+            <h1 class="text-4xl font-extrabold">My Cart</h1>
         </div>
-        
+
         @php 
             $totalPrice = 0; 
         @endphp
+
         @if ($cartItems->count() > 0)
             <form action="{{ route('checkout') }}" method="POST">
                 @csrf
-                <ul class="divide-y divide-gray-200">
+                <ul class="divide-y divide-gray-300 mb-6">
                     @foreach ($cartItems as $cartItem)
                         @php
-                            // Calculate price for each item
                             $itemPrice = $cartItem->product->price * $cartItem->quantity;
-                            // Accumulate total price
                             $totalPrice += $itemPrice;
                         @endphp
-                        <li class="flex items-center py-4">
+                        <li class="flex items-center py-6">
+                            <!-- Image -->
+                            <img class="w-24 h-24 object-cover rounded-md mr-6" src="{{ $cartItem->product->photo }}" alt="{{ $cartItem->product->product_name }} Photo">
+
+                            <!-- Product Info -->
                             <div class="flex-1">
-                                <h2 class="text-lg font-semibold">{{ $cartItem->product->product_name }}</h2>
-                                <p class="text-gray-600">
-                                    Quantity: 
-                                    <button type="button" class="text-gray-600" onclick="updateQuantity({{ $cartItem->id }}, -1)">-</button>
-                                    <span id="quantity_{{ $cartItem->id }}">{{ $cartItem->quantity }}</span>
-                                    <button type="button" class="text-gray-600" onclick="updateQuantity({{ $cartItem->id }}, 1)">+</button>
-                                </p>
-                                <p class="text-gray-600">Price: ₱<span id="price_{{ $cartItem->id }}">{{ $itemPrice }}</span></p>
+                                <h2 class="text-xl font-semibold text-gray-800">{{ $cartItem->product->product_name }}</h2>
+                                
+                                <!-- Quantity and price -->
+                                <div class="flex items-center mt-2">
+                                    <p class="text-gray-600 mr-4">Quantity:</p>
+                                    <div class="flex items-center border border-gray-300 rounded-md">
+                                        <button type="button" class="px-3 py-1" onclick="updateQuantity({{ $cartItem->id }}, -1)">-</button>
+                                        <span id="quantity_{{ $cartItem->id }}" class="px-3 py-1">{{ $cartItem->quantity }}</span>
+                                        <button type="button" class="px-3 py-1" onclick="updateQuantity({{ $cartItem->id }}, 1)">+</button>
+                                    </div>
+                                </div>
+                                <p class="text-gray-600 mt-2">Price: ₱<span id="price_{{ $cartItem->id }}">{{ $itemPrice }}</span></p>
                             </div>
-                            <img class="w-24 h-24 object-cover rounded-lg" src="{{ $cartItem->product->photo }}" alt="{{ $cartItem->product->product_name }} Photo">
+
+                            <!-- Remove Button -->
+                            <button type="button" class="text-red-600 hover:text-red-800 ml-6" onclick="removeFromCart({{ $cartItem->id }})">
+                                Remove
+                            </button>
                         </li>
                     @endforeach
                 </ul>
-                <!-- Display total price -->
-                <p class="text-gray-600 mt-4">Total Price: ₱<span id="total_price">{{ $totalPrice }}</span></p>
-                <button type="submit" class="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Checkout</button>
+
+                <!-- Total Price -->
+                <div class="flex justify-between items-center border-t border-gray-300 pt-6">
+                    <p class="text-xl font-semibold text-gray-800">Total Price: ₱<span id="total_price">{{ $totalPrice }}</span></p>
+                    <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-md hover:bg-blue-600">Proceed to Checkout</button>
+                </div>
             </form>
         @else
-            <p class="text-gray-600">Your cart is empty.</p>
+            <p class="text-gray-600 text-center">Your cart is empty.</p>
         @endif
     </div>
 
     <script>
         function updatePrice() {
             let totalPrice = 0;
-            let cartItems = document.querySelectorAll('[id^=quantity_]');
-    
-            cartItems.forEach(function(cartItem) {
-                let quantity = parseInt(cartItem.innerText);
-                let cartItemId = cartItem.id.split('_')[1];
-                let price = parseFloat(document.getElementById('price_' + cartItemId).innerText);
-                totalPrice += quantity * price;
+            document.querySelectorAll('[id^=quantity_]').forEach(cartItem => {
+                const quantity = parseInt(cartItem.innerText);
+                const cartItemId = cartItem.id.split('_')[1];
+                const pricePerItem = parseFloat(document.getElementById('price_' + cartItemId).dataset.unitPrice);
+                const newPrice = quantity * pricePerItem;
+                document.getElementById('price_' + cartItemId).innerText = newPrice.toFixed(2);
+                totalPrice += newPrice;
             });
-    
             document.getElementById('total_price').innerText = totalPrice.toFixed(2);
         }
-    
+
         function updateQuantity(cartItemId, change) {
-            var quantityElement = document.getElementById('quantity_' + cartItemId);
-            var quantity = parseInt(quantityElement.innerText) + change;
-    
-            // Send AJAX request
+            const quantityElement = document.getElementById('quantity_' + cartItemId);
+            let quantity = parseInt(quantityElement.innerText) + change;
+            if (quantity < 1) {
+                quantity = 1; // Prevents going below 1
+            }
             fetch("{{ url('/updateQuantity/cart') }}/" + cartItemId, {
                 method: 'POST',
                 headers: {
@@ -75,17 +89,26 @@
                 },
                 body: JSON.stringify({ quantity: quantity })
             })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Failed to update quantity');
-                }
-            })
+            .then(response => response.json())
             .then(data => {
-                // Update UI with new quantity
                 quantityElement.innerText = quantity;
                 updatePrice();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        function removeFromCart(cartItemId) {
+            fetch("{{ url('/removeFromCart') }}/" + cartItemId, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                location.reload(); // Reload the page after removal
             })
             .catch(error => {
                 console.error('Error:', error);

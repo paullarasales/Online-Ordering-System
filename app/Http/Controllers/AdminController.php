@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Message;
@@ -439,6 +440,19 @@ class AdminController extends Controller
         }
         
         return redirect()->back()->with('error', 'Something went wrong when blocking the user!');
+    }
+
+    public function sendReceipt(Request $request, $id)
+    {
+        if ($request->has('send_receipt')) {
+            $order = Order::findOrFail($id);
+
+            Mail::to($order->user->email)->send(new \App\Mail\ReceiptMail($order));
+
+            return back()->with('success', 'Receipt sent successfully');
+        }
+
+        return back()->with('error', 'Receipt sending failed');
     }
 
 }

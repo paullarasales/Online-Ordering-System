@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="max-w-7xl mx-auto px-4 py-8">
-        <h1 class="text-3xl font-bold mb-8 text-center">Confirm Order</h1>
+        <h1 class="text-3xl font-bold mb-8 text-start">Confirm Order</h1>
 
         <div class="flex justify-between space-x-8">
             <div class="w-1/2">
@@ -32,7 +32,7 @@
                     <div class="flex justify-between mt-6">
                         <a href="{{ route('userdashboard') }}" class="px-4 py-2 bg-white text-black border rounded hover:bg-gray-200">Back</a>
 
-                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Confirm Order</button>
+                        <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Confirm Order</button>
                     </div>
                 </form>
             </div>

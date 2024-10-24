@@ -1,70 +1,46 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-2xl text-gray-800 leading-tight">
             {{ __('My Orders') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white overflow-hidden shadow-xl sm:rounded-lg p-6">
+            <div class="bg-white shadow-md sm:rounded-lg p-6">
                 @forelse ($orders as $order)
-                    <div class="mb-8 order-container" data-order-id="{{ $order->id }}">
-                        <p>{{ __('Order Date: ') }}{{ $order->created_at->format('Y-m-d') }}</p>
-                        <p>{{ __('Status: ') }}<span class="order-status">{{ ucfirst($order->status) }}</span></p>
-
-                        <table class="min-w-full leading-normal mt-4">
+                    <div class="mb-8 p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-lg transition duration-200">
+                        <div class="flex justify-between items-center mb-4">
+                            <p class="text-gray-600">Order Date: <span class="font-semibold">{{ $order->created_at->format('Y-m-d') }}</span></p>
+                            <span class="inline-block bg-blue-100 text-blue-700 text-sm px-3 py-1 rounded-full">{{ ucfirst($order->status) }}</span>
+                        </div>
+                        <table class="min-w-full leading-normal mb-4">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Product
-                                    </th>
-                                    <th scope="col" class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        
-                                    </th>
-                                    <th scope="col" class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Quantity
-                                    </th>
-                                    <th scope="col" class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                                        Total
-                                    </th>
+                                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product</th>
+                                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100"></th>
+                                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantity</th>
+                                    <th class="px-5 py-3 border-b-2 border-gray-200 bg-gray-100 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @forelse ($order->items as $item)
+                                @foreach ($order->items as $item)
                                     <tr>
-                                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {{ $item->product->product_name }}
-                                        </td>
-                                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            <img src="{{ asset($item->product->photo) }}" alt="{{ $item->product->product_name }}" class="w-16 h-16">
-                                        </td>
-                                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            {{ $item->quantity }}
-                                        </td>
-                                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            ₱{{ number_format($item->quantity * $item->product->price, 2) }}
-                                        </td>
+                                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $item->product->product_name }}</td>
+                                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm"><img src="{{ asset($item->product->photo) }}" class="w-16 h-16 rounded-lg" alt="{{ $item->product->product_name }}"></td>
+                                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">{{ $item->quantity }}</td>
+                                        <td class="px-5 py-5 border-b border-gray-200 bg-white text-sm">₱{{ number_format($item->quantity * $item->product->price, 2) }}</td>
                                     </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="4" class="px-5 py-5 border-b border-gray-200 bg-white text-sm">
-                                            No items found for this order.
-                                        </td>
-                                    </tr>
-                                @endforelse
+                                @endforeach
                             </tbody>
                         </table>
-                        
-                        @if (in_array(strtolower($order->status), ['processing', 'in-queue','delivered']))
-                            <button class="cancel-order-btn bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded mt-4">Cancel Order</button>
-                        @endif
 
+                        @if (in_array(strtolower($order->status), ['processing', 'in-queue']))
+                            <button class="cancel-order-btn bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded mt-2 transition duration-200">Cancel Order</button>
+                        @endif
                     </div>
                 @empty
-                    <div class="mb-8">
-                        <p>{{ __('You have no orders.') }}</p>
-                    </div>
+                    <p class="text-gray-500">You have no orders.</p>
                 @endforelse
             </div>
         </div>
@@ -91,7 +67,12 @@
 
                         orderStatusElement.textContent = capitalizeFirstLetter(data.status);
 
-                        if (['processing', 'in-queue', 'delivered'].includes(data.status.toLowerCase())) {
+                        if (data.status.toLowerCase() === 'delivered') {
+                            container.remove();
+                            continue;
+                        }
+
+                        if (['processing', 'in-queue'].includes(data.status.toLowerCase())) {
                             if (cancelBtn) {
                                 cancelBtn.disabled = false;
                                 cancelBtn.addEventListener('click', async function() {
@@ -101,6 +82,7 @@
                         } else {
                             if (cancelBtn) {
                                 cancelBtn.disabled = true;
+                                cancelBtn.style.display = 'none';
                             }
                         }
                     } catch (error) {
