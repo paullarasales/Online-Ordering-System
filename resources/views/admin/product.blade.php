@@ -1,22 +1,21 @@
 <x-admin-layout>
-    <div class="container mx-auto py-4 max-w-5xl">
+    <div class="container mx-auto p-3 max-w-7xl">
         <!-- Header Section -->
-        <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4">
+        <div class="flex justify-between items-center mb-6">
             <!-- Add Product Button -->
-            <div class="mb-4 md:mb-0 flex items-center gap-2">
-                <a href="{{ route('product-add-view') }}" class="flex items-center bg-indigo-600 text-white py-2 px-4 rounded-md shadow hover:bg-indigo-700 transition duration-150">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 mr-2">
-                        <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
-                        <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
-                    </svg>
-                    {{ __('Add Product') }}
-                </a>
-            </div>
-            <!-- Filtration Section -->
-            <div class="flex items-center gap-4">
+            <a href="{{ route('product-add-view') }}" class="bg-indigo-600 text-white py-2 px-4 rounded-md shadow hover:bg-indigo-700 transition duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 inline mr-2">
+                    <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-8.4 8.4a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32l8.4-8.4Z" />
+                    <path d="M5.25 5.25a3 3 0 0 0-3 3v10.5a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3V13.5a.75.75 0 0 0-1.5 0v5.25a1.5 1.5 0 0 1-1.5 1.5H5.25a1.5 1.5 0 0 1-1.5-1.5V8.25a1.5 1.5 0 0 1 1.5-1.5h5.25a.75.75 0 0 0 0-1.5H5.25Z" />
+                </svg>
+                {{ __('Add Product') }}
+            </a>
+
+            <!-- Filter Section -->
+            <div>
                 <form id="filter-form">
-                    <label for="filter" class="text-sm font-medium text-gray-600">Filter by:</label>
-                    <select name="filter" id="filter" class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500">
+                    <label for="filter" class="mr-2 text-sm font-medium text-gray-700">Filter by:</label>
+                    <select id="filter" name="filter" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500">
                         <option value="all">All</option>
                         <option value="salad">Salad</option>
                         <option value="all day breakfast">All Day Breakfast</option>
@@ -29,31 +28,46 @@
             </div>
         </div>
 
-        <!-- Product Display Section -->
-        <div id="product-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            @if($products->isEmpty())
-                <div class="col-span-full text-center text-gray-600">No products to display.</div>
-            @else
-                @foreach($products as $product)
-                <div class="relative bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300">
-                    <img src="{{ asset($product->photo) }}" alt="Product Image" class="w-full h-64 object-cover transition-transform duration-300 hover:scale-105">
-                    
-                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80 transition-opacity duration-300 hover:opacity-90">
-                        <div class="absolute bottom-0 left-0 right-0 p-4 text-white">
-                            <h3 class="text-xl font-semibold">{{ $product->product_name }}</h3>
-                            <div class="flex justify-between items-center mt-3">
-                                <a href="{{ route('update-view', $product->id) }}" class="text-indigo-400 hover:text-indigo-200 transition-colors duration-300">Edit</a>
+        <!-- Product Table Section -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="py-4 px-4 text-left text-sm font-semibold text-gray-700">Product</th>
+                        <th class="py-4 px-4 text-left text-sm font-semibold text-gray-700">Category</th>
+                        <th class="py-4 px-4 text-left text-sm font-semibold text-gray-700">Price</th>
+                        <th class="py-4 px-4 text-left text-sm font-semibold text-gray-700">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if($products->isEmpty())
+                        <tr>
+                            <td colspan="4" class="text-center py-4 text-gray-600">No products to display.</td>
+                        </tr>
+                    @else
+                        @foreach($products as $product)
+                        <tr class="border-b hover:bg-gray-50">
+                            <td class="py-4 px-4 text-gray-700">
+                                <div class="flex items-center">
+                                    <img src="{{ asset($product->photo) }}" alt="Product Image" class="w-16 h-16 object-cover rounded-md mr-4">
+                                    <span class="text-gray-700 font-semibold">{{ $product->product_name }}</span>
+                                </div>
+                            </td>
+                            <td class="py-4 px-4 text-gray-700 font-semibold">{{ $product->category->category_name }}</td>
+                            <td class="py-4 px-4 text-gray-700 font-semibold">₱{{ number_format($product->price, 2) }}</td>
+                            <td class="py-4 px-4 flex space-x-2 flex mt-5">
+                                <a href="{{ route('update-view', $product->id) }}" class="text-indigo-600 hover:text-indigo-800">Edit</a>
                                 <form action="{{ route('product.destroy', $product->id) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="text-red-400 hover:text-red-200 transition-colors duration-300">Delete</button>
+                                    <button type="submit" class="text-red-600 hover:text-red-800">Delete</button>
                                 </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>                                
-                @endforeach
-            @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    @endif
+                </tbody>
+            </table>
         </div>
 
         <!-- Pagination Section -->
@@ -61,66 +75,67 @@
             {{ $products->links('vendor.pagination.tailwind') }}
         </div>
     </div>
+
     @push('scripts')
     <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const filterSelect = document.getElementById('filter');
-        const productList = document.getElementById('product-list');
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterSelect = document.getElementById('filter');
+            filterSelect.addEventListener('change', function() {
+                const selectedFilter = this.value;
 
-        filterSelect.addEventListener('change', function() {
-            const selectedFilter = this.value;
+                fetch(`{{ route('product.filter') }}?filter=${selectedFilter}`, {
+                    method: 'GET',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update product list dynamically
+                    updateProductTable(data.products);
+                })
+                .catch(error => console.error('Error:', error));
+            });
 
-            fetch(`{{ route('product.filter') }}?filter=${selectedFilter}`, {
-                method: 'GET',
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest',
-                    'Accept': 'application/json',
-                },
-            })
-            .then(response => response.json())
-            .then(data => {
-                updateProductList(data.products);
-            })
-            .catch(error => console.error('Error:', error));
-        });
+            function updateProductTable(products) {
+                const tbody = document.querySelector('tbody');
+                tbody.innerHTML = '';
 
-        function updateProductList(products) {
-            productList.innerHTML = '';
-
-            if (products.length === 0) {
-                productList.innerHTML = '<div class="col-span-full text-center text-gray-600">No products to display.</div>';
-            } else {
-                products.forEach(product => {
-                    const productElement = createProductElement(product);
-                    productList.appendChild(productElement);
-                });
+                if (products.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-600">No products to display.</td></tr>';
+                } else {
+                    products.forEach(product => {
+                        const row = createProductRow(product);
+                        tbody.appendChild(row);
+                    });
+                }
             }
-        }
 
-        function createProductElement(product) {
-            const div = document.createElement('div');
-            div.className = 'bg-white rounded-lg shadow-lg overflow-hidden';
-            div.innerHTML = `
-                <img src="${product.photo}" alt="Product Image" class="w-full h-32 object-cover">
-                <div class="p-4">
-                    <h3 class="text-lg font-semibold text-gray-800 mb-2">${product.product_name}</h3>
-                    <p class="text-sm text-gray-600">Price: ₱${product.price}</p>
-                    <p class="text-sm text-gray-600 mb-2">Description: ${product.description}</p>
-                    <p class="text-sm text-gray-600 mb-4">Stock Quantity: ${product.stockQuantity}</p>
-                    <div class="flex justify-between items-center">
+            function createProductRow(product) {
+                const tr = document.createElement('tr');
+                tr.className = 'border-b hover:bg-gray-50';
+                tr.innerHTML = `
+                    <td class="py-4 px-4 text-gray-700">
+                        <div class="flex items-center">
+                            <img src="${product.photo}" alt="Product Image" class="w-16 h-16 object-cover rounded-md mr-4">
+                            <span>${product.product_name}</span>
+                        </div>
+                    </td>
+                    <td class="py-4 px-4 text-gray-700">${product.category_name}</td>
+                    <td class="py-4 px-4 text-gray-700">₱${product.price.toFixed(2)}</td>
+                    <td class="py-4 px-4 flex space-x-2">
                         <a href="/admin/product/update/${product.id}" class="text-indigo-600 hover:text-indigo-800">Edit</a>
                         <form action="/admin/product/${product.id}" method="POST">
-                            @csrf
-                            @method('DELETE')
+                            <input type="hidden" name="_method" value="DELETE">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
                             <button type="submit" class="text-red-600 hover:text-red-800">Delete</button>
                         </form>
-                    </div>
-                </div>
-            `;
-            return div;
-        }
-    });
+                    </td>
+                `;
+                return tr;
+            }
+        });
     </script>
     @endpush
 </x-admin-layout>
-

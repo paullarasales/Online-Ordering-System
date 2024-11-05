@@ -33,7 +33,7 @@
 <body class="font-poppins antialiased">
     <div class="relative min-h-screen md:flex" x-data="{ open: true }">
         <!-- Sidebar -->
-         <aside :class="{ '-translate-x-full': !open }" class="z-10 bg-white text-black w-64 px-2 py-4 absolute inset-y-0 left-0 md:relative transform md:translate-x-0 transition ease-in-out duration-200">
+         <aside :class="{ '-translate-x-full': !open }" class="z-10 text-black w-64 px-2 py-4 absolute inset-y-0 left-0 md:relative transform md:translate-x-0 transition ease-in-out duration-200">
                 <!-- Logo -->
                 <div class="flex items-center justify-between">
                     <div class="flex flex-row items-start space-y-2 w-full">

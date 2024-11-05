@@ -15,37 +15,16 @@ Route::get("/", function () {
 });
 
 Route::middleware("auth")->group(function () {
-    Route::get("user/dashboard", [UserController::class, "index"])->name(
-        "userdashboard"
-    );
+    Route::get("user/dashboard", [UserController::class, "index"])->name("userdashboard");
     Route::get("/user/dash", [UserController::class, "testDashboard"])->name("test.dash");
-    Route::get("/verify", [UserController::class, "verifyAccountForm"])->name(
-        "verify.form"
-    );
-    Route::post("/verify/upload", [UserController::class, "verify"])->name(
-        "verify.upload"
-    );
-    Route::get("/verify/message", [
-        UserController::class,
-        "verifyMessage",
-    ])->name("verify.message");
-    Route::get("/add-to-cart", [UserController::class, "addToCartPage"])->name(
-        "cart"
-    );
-    Route::match(["get", "post"], "/add-to-cart/{productId}", [
-        UserController::class,
-        "addToCart",
-    ])->name("add-to-cart");
-    Route::post("/checkout", [UserController::class, "prepareCheckout"])->name(
-        "checkout"
-    );
-    Route::post("/create-order", [UserController::class, "createOrder"])->name(
-        "createOrder"
-    );
-    Route::post("/updateQuantity/cart/{cartItemId}", [
-        UserController::class,
-        "updateQuantity",
-    ])->name("updateQuantity");
+    Route::get("/verify", [UserController::class, "verifyAccountForm"])->name("verify.form");
+    Route::post("/verify/upload", [UserController::class, "verify"])->name("verify.upload");
+    Route::get("/verify/message", [UserController::class,"verifyMessage",])->name("verify.message");
+    Route::get("/add-to-cart", [UserController::class, "addToCartPage"])->name("cart");
+    Route::match(["get", "post"], "/add-to-cart/{productId}", [UserController::class, "addToCart"])->name("add-to-cart");
+    Route::post("/checkout", [UserController::class, "prepareCheckout"])->name("checkout");
+    Route::post("/create-order", [UserController::class, "createOrder"])->name("createOrder");
+    Route::post("/updateQuantity/cart/{cartItemId}", [UserController::class,"updateQuantity",])->name("updateQuantity");
     Route::get("/thankyou/{orderId}", [
         UserController::class,
         "thankyou",
