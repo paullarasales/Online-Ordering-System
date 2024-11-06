@@ -5,7 +5,9 @@
             flex-direction: column;
             height: 100%;
             border: 1px solid #e2e8f0; 
-            background-color: #f7fafc; 
+            background-color: #f7fafc;
+            width: 400px; /* Set a fixed width */
+            margin: 20px auto; /* Center chat on the page */
         }
 
         #message-list {
@@ -14,6 +16,8 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            padding: 10px;
+            height: 300px; /* Set a fixed height for the message list */
         }
 
         .message {
@@ -37,7 +41,7 @@
 
         #message-input-container {
             display: flex;
-            padding: 1rem;
+            padding: 0.5rem;
             border-top: 1px solid #e2e8f0; 
             background-color: #ffffff;
         }
@@ -47,108 +51,40 @@
             padding: 0.5rem;
             border: 1px solid #e2e8f0; 
             border-radius: 0.375rem;
+            font-size: 14px; /* Smaller font */
         }
 
         #send-button {
-            margin-left: 0.5rem;
             padding: 0.5rem 1rem;
             background-color: #3b82f6;
             color: white;
             border-radius: 0.375rem;
             border: none;
             cursor: pointer;
+            font-size: 14px; /* Smaller button font */
+            margin-left: 0.5rem;
         }
 
         #send-button:hover {
             background-color: #2563eb;
         }
-
-        #container {
-            display: flex;
-            height: 100vh;
-            width: 100%;
-        }
-
-        #sidebar {
-            width: 40%;
-            padding: 1rem;
-            border-right: 1px solid #e2e8f0;
-            overflow-y: auto;
-        }
-
-        #chat-container-wrapper {
-            width: 60%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .user-list-item {
-            padding: 0.5rem;
-            border-radius: 0.375rem;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        .user-list-item:hover {
-            background-color: #e2e8f0;
-        }
     </style>
 
-    <div id="container">
-        <!-- Sidebar -->
-        @if (auth()->user()->usertype !== 'admin')
-            <div id="sidebar">
-                <h3 class="text-lg font-semibold mb-4">Customer</h3>
-                <div id="user-list"></div>
-            </div>
-        @endif
-
-        <!-- Chat Container -->
-        <div id="chat-container-wrapper" style="{{ auth()->user()->usertype === 'admin' ? 'width: 100%;' : '' }}">
-            <div id="chat-container">
-                <div id="message-list"></div>
-                <div id="message-input-container">
-                    <input type="text" id="message-input" placeholder="Type a message" class="flex-1 mr-2">
-                    <button id="send-button">Send</button>
-                </div>
-            </div>
+    <div id="chat-container">
+        <div id="message-list"></div>
+        <div id="message-input-container">
+            <input type="text" id="message-input" placeholder="Type a message" class="flex-1 mr-2">
+            <button id="send-button">Send</button>
         </div>
     </div>
 
     <script>
         window.authUserId = @json(auth()->id());
         window.authUserType = @json(auth()->user()->usertype);
-        let currentReceiverId = null;
 
-        async function fetchUserList() {
-            try {
-                const response = await fetch('/get-admin');
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const users = await response.json();
-                console.log(users);
-                const userList = document.getElementById('user-list');
-
-                userList.innerHTML = '';
-
-                users.forEach(user => {
-                    const userElement = document.createElement('div');
-                    userElement.className = 'user-list-item';
-                    userElement.textContent = user.name;
-                    userElement.dataset.userId = user.id;
-
-                    userElement.addEventListener('click', () => {
-                        currentReceiverId = user.id;
-                        fetchMessages();
-                    });
-
-                    userList.appendChild(userElement);
-                });
-            } catch (error) {
-                console.error('Error fetching user list:', error);
-            }
-        }
+        // Assuming the admin's user ID is known and fixed
+        const adminUserId = 1; // Replace with your actual admin ID
+        let currentReceiverId = adminUserId; // Directly set it to the admin
 
         async function fetchMessages() {
             if (!currentReceiverId) return;
@@ -197,8 +133,8 @@
                 }
             });
 
-            fetchUserList();
-            setInterval(fetchMessages, 2000);
+            fetchMessages(); // Fetch messages on load
+            setInterval(fetchMessages, 2000); // Poll for new messages
         });
     </script>
 </x-app-layout>

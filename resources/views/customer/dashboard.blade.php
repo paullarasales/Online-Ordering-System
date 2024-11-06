@@ -23,22 +23,6 @@
 
     <!-- Main content -->
     <div class="container mx-auto py-4 max-w-5xl">
-        <!-- Filtration Section -->
-        <div flex items-center gap-4>
-            <form id="filter-form">
-                <label for="filter" class="text-sm font-medium text-gray-6000">Filter by:</label>
-                <select name="filter" id="filter" class="p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500">
-                    <option value="all">All</option>
-                    <option value="salad">Salad</option>
-                    <option value="all day breakfast">All Day Breakfast</option>
-                    <option value="pasta">Pasta</option>
-                    <option value="all time favorites">All Time Favorites</option>
-                    <option value="sandwich burger">Sandwich & Burger</option>
-                    <option value="beverages">Beverages</option>
-                </select>
-            </form>
-        </div>
-
         <!-- Product Display Section -->
         <div id="product-list" class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
             @if($products->isEmpty())

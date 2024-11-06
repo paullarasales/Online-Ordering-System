@@ -1,135 +1,135 @@
 <x-admin-layout>
     <style>
         #container {
-        display: flex;
-        height: 100vh;
-        width: 100%;
-    }
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
 
-    #sidebar {
-        width: 40%;
-        padding: 1rem;
-        border-right: 1px solid #e2e8f0;
-        overflow-y: auto;
-    }
+        #sidebar {
+            width: 40%;
+            padding: 1rem;
+            border-right: 1px solid #e2e8f0;
+            overflow-y: auto;
+        }
 
-    #chat-container-wrapper {
-        width: 60%;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
+        #chat-container-wrapper {
+            width: 60%;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
 
-    #chat-container {
-        display: flex;
-        flex-direction: column;
-        flex: 1;
-        border: 1px solid #e2e8f0;
-        background-color: #f7fafc;
-        overflow-y: auto;
-    }
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            border: 1px solid #e2e8f0;
+            background-color: #f7fafc;
+            overflow-y: auto;
+        }
 
-    #message-list {
-        flex: 1;
-        overflow-y: auto;
-        display: flex;
-        flex-direction: column;
-        padding: 1rem;
-        gap: 5px;
-    }
+        #message-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            padding: 1rem;
+            gap: 5px;
+        }
 
-    #message-input-container {
-        display: flex;
-        padding: 1rem;
-        border-top: 1px solid #e2e8f0;
-        background-color: #ffffff;
-        position: sticky; /* Keeps the input container fixed */
-        bottom: 0;
-        width: 100%;
-        z-index: 10; /* Ensures it stays on top of the messages */
-    }
+        #message-input-container {
+            display: flex;
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+            background-color: #ffffff;
+            position: sticky; /* Keeps the input container fixed */
+            bottom: 0;
+            width: 100%;
+            z-index: 10; /* Ensures it stays on top of the messages */
+        }
 
-    .message {
-        padding: 0.5rem;
-        border-radius: 0.375rem;
-        max-width: 70%;
-        word-wrap: break-word;
-    }
+        .message {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            max-width: 70%;
+            word-wrap: break-word;
+        }
 
-    .sender {
-        align-self: flex-end;
-        background-color: #4169E1;
-        text-align: right;
-        color: white;
-    }
+        .sender {
+            align-self: flex-end;
+            background-color: #4169E1;
+            text-align: right;
+            color: white;
+        }
 
-    .receiver {
-        align-self: flex-start;
-        background-color: #edf2f7;
-        text-align: left;
-    }
+        .receiver {
+            align-self: flex-start;
+            background-color: #edf2f7;
+            text-align: left;
+        }
 
-    #message-input {
-        flex: 1;
-        padding: 0.5rem;
-        border: 1px solid #e2e8f0;
-        border-radius: 0.375rem;
-    }
+        #message-input {
+            flex: 1;
+            padding: 0.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+        }
 
-    #send-button {
-        margin-left: 0.5rem;
-        padding: 0.5rem 1rem;
-        background-color: #3b82f6;
-        color: white;
-        border-radius: 0.375rem;
-        border: none;
-        cursor: pointer;
-    }
+        #send-button {
+            margin-left: 0.5rem;
+            padding: 0.5rem 1rem;
+            background-color: #3b82f6;
+            color: white;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+        }
 
-    #send-button:hover {
-        background-color: #2563eb;
-    }
+        #send-button:hover {
+            background-color: #2563eb;
+        }
 
-    #selected-customer {
-        padding: 1rem;
-        font-weight: 600;
-        border-bottom: 1px solid #e2e8f0;
-        background-color: #f7fafc;
-    }
+        #selected-customer {
+            padding: 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #f7fafc;
+        }
 
-    .user-list-item {
-        padding: 0.5rem;
-        border-radius: 0.375rem;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: start;
-        flex-direction: row;
-        gap: 10px;
-    }
+        .user-list-item {
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: start;
+            flex-direction: row;
+            gap: 10px;
+        }
 
-    .user-photo {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        object-fit: cover;
-        background-color: #e2e8f0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        color: #ffffff;
-        font-weight: bold;
-    }
+        .user-photo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            background-color: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #ffffff;
+            font-weight: bold;
+        }
 
-    .user-photo-placeholder {
-        background-color: #3b82f6;
-    }
+        .user-photo-placeholder {
+            background-color: #3b82f6;
+        }
 
-    .user-name {
-        font-weight: normal;
-    }
+        .user-name {
+            font-weight: normal;
+        }
     </style>
 
     <div id="container">
@@ -137,7 +137,6 @@
         <div id="sidebar">
             <h3 class="text-lg font-semibold mb-4">Customer</h3>
             <div id="user-list">
-
             </div>
         </div>
 
@@ -149,7 +148,7 @@
             <div id="chat-container">
                 <div id="message-list">
                 </div>
-                <div id="message-input-container">
+                <div id="message-input-container" style="display: none;">
                     <input type="text" id="message-input" placeholder="Type a message" class="flex-1 mr-2">
                     <button id="send-button">Send</button>
                 </div>
@@ -212,6 +211,9 @@
                         currentReceiverId = user.id;
                         document.getElementById('selected-customer').textContent = `Chatting with ${user.name}`;
                         fetchMessages();
+
+                        // Show message input and send button
+                        document.getElementById('message-input-container').style.display = 'flex';
 
                         // Mark messages as read
                         await fetch('/mark-messages-as-read', {

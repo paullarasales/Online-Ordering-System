@@ -1,6 +1,5 @@
 <x-admin-layout>
     <div class="container mx-auto py-6 px-4 bg-gray-100 rounded-lg shadow-lg">
-
         <div class="flex space-x-2 mb-4">
             <button class="filter-btn p-2 bg-blue-500 text-white rounded hover:bg-blue-700" data-status="all">All</button>
             <button class="filter-btn p-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" data-status="in-queue">In Queue</button>
@@ -15,21 +14,21 @@
                 <table class="min-w-full divide-y divide-gray-200 bg-white rounded-lg shadow-lg">
                     <thead class="bg-gray-50">
                         <tr>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Order ID</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Customer Name</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Payment Method</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-4 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Order ID</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer Name</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Payment Method</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200" id="order-table-body">
                         @foreach ($orders as $order)
                             <tr class="hover:bg-gray-100 transition ease-in-out duration-150">
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{{ $order->id }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $order->user->name }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{{ $order->payment_method }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-md font-medium text-gray-800">{{ $order->id }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-md text-gray-800">{{ $order->user->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap text-md text-gray-800">{{ $order->payment_method }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <select name="status" id="status-{{ $order->id }}" data-order-id="{{ $order->id }}" class="status-dropdown p-2 rounded-md border border-gray-300 text-sm" @if($order->status == 'delivered' || $order->status == 'cancelled') disabled @endif>
+                                    <select name="status" id="status-{{ $order->id }}" data-order-id="{{ $order->id }}" class="status-dropdown p-2 w-32 rounded-md border border-gray-300 text-md" @if($order->status == 'delivered' || $order->status == 'cancelled') disabled @endif>
                                         <option value="in-queue" {{ ($order->status == 'in-queue') ? 'selected' : '' }}>In Queue</option>
                                         <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
                                         <option value="on-deliver" {{ $order->status == 'on-deliver' ? 'selected' : '' }}>On Deliver</option>
@@ -38,7 +37,7 @@
                                     </select>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="{{ route('admin.order.details', $order->id) }}" class="text-blue-600 hover:text-blue-800 text-sm font-semibold transition duration-150 ease-in-out">View Details</a>
+                                    <a href="{{ route('admin.order.details', $order->id) }}" class="text-blue-600 hover:text-blue-800 text-md font-semibold transition duration-150 ease-in-out">View Details</a>
                                 </td>
                             </tr>
                         @endforeach
@@ -100,8 +99,7 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${order.user.name}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${order.payment_method}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <select name="status" id="status-${order.id}" data-order-id="${order.id}" class="status-dropdown p-2 rounded-md border border-gray-300 text-sm"
-                                            ${order.status === 'delivered' || order.status === 'cancelled' ? 'disabled' : ''}>
+                                    <select name="status" id="status-${order.id}" data-order-id="${order.id}" class="status-dropdown p-2 rounded-md border border-gray-300 text-sm" ${order.status === 'delivered' || order.status === 'cancelled' ? 'disabled' : ''}>
                                         <option value="in-queue" ${order.status === 'in-queue' ? 'selected' : ''}>In Queue</option>
                                         <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
                                         <option value="on-deliver" ${order.status === 'on-deliver' ? 'selected' : ''}>On Deliver</option>
@@ -119,7 +117,45 @@
                 } else {
                     orderTableBody.innerHTML = '<tr><td colspan="5" class="text-center px-6 py-4 text-gray-600">No orders found</td></tr>';
                 }
+
+                attachStatusChangeListeners();
             }
+
+            function attachStatusChangeListeners() {
+                const statusDropdowns = document.querySelectorAll('.status-dropdown');
+                statusDropdowns.forEach(dropdown => {
+                    dropdown.addEventListener('change', function () {
+                        const orderId = this.dataset.orderId;
+                        const newStatus = this.value;
+                        updateOrderStatus(orderId, newStatus);
+                    });
+                });
+            }
+
+            function updateOrderStatus(orderId, status) {
+                fetch("{{ route('admin.orders.updateStatus') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    },
+                    body: JSON.stringify({ order_id: orderId, status: status }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Order status updated successfully');
+                    } else {
+                        alert('Failed to update order status: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating order status: ', error);
+                    alert('An error occurred while updating the order status');
+                });
+            }
+
+            attachStatusChangeListeners();
         });
     </script>
 </x-admin-layout>

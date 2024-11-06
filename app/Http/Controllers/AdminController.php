@@ -13,9 +13,37 @@ use App\Models\User;
 use App\Models\Verification;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Carbon\Carbon;
 
 class AdminController extends Controller
 {
+    private function getLastMonthSales()
+    {
+        return OrderItem::join("products", "order_items.product_id", "=", "products.id")
+            ->join("orders", "order_items.order_id", "=", "orders.id")
+            ->where("orders.status", "delivered")
+            ->whereMonth("orders.created_at", Carbon::now()->subMonth()->month)
+            ->whereYear("orders.created_at", Carbon::now()->subMonth()->year)
+            ->selectRaw("SUM(order_items.quantity * products.price + 60) as total_sales")
+            ->value("total_sales");
+    }
+
+    private function getLastMonthOrders()
+    {
+        return Order::whereMonth("created_at", Carbon::now()->subMonth()->month)
+            ->whereYear("created_at", Carbon::now()->subMonth()->year)
+            ->where('status', 'delivered')
+            ->count();
+    }
+
+    private function getLastMonthCustomers() 
+    {
+        return User::where("usertype", "user")
+            ->whereYear("created_at", Carbon::now()->subMonth()->month)
+            ->whereYear("created_at", Carbon::now()->subMonth()->year)
+            ->count();
+    }
+
     public function dashboard()
     {
         $userCount = User::where("usertype", "user")->count();
@@ -33,6 +61,15 @@ class AdminController extends Controller
                 "SUM(order_items.quantity * products.price + 60) as total_sales"
             )
             ->value("total_sales");
+        
+        $lastMonthSales = $this->getLastMonthSales();
+        $lastMonthOrders = $this->getLastMonthOrders();
+        $lastMonthCustomers = $this->getLastMonthCustomers();
+
+        $salesChange = $totalSales - $lastMonthSales;
+        $orderChange = $orderCount - $lastMonthOrders;
+        $customerChange = $userCount - $lastMonthCustomers;
+        
         $orders = Order::with("user")
             ->orderBy("created_at", "desc")
             ->limit(15)
@@ -40,7 +77,7 @@ class AdminController extends Controller
 
         return view(
             "admin.dashboard",
-            compact("orders", "totalSales", "orderCount", "userCount")
+            compact("orders", "totalSales", "orderCount", "userCount", "salesChange", "orderChange", "customerChange", "lastMonthSales", "lastMonthOrders", "lastMonthCustomers")
         );
     }
 
@@ -315,23 +352,28 @@ class AdminController extends Controller
 
     public function productFilter(Request $request)
     {
-        $filter = $request->input("filter", "all");
-
-        if ($filter === "all") {
-            $products = Product::with("category")->get();
-        } else {
-            $products = Product::whereHas("category", function ($query) use (
-                $filter
-            ) {
-                $query->where("category_name", $filter);
+        $filter = $request->input('filter');
+        $products = Product::with('category')
+            ->when($filter && $filter !== 'all', function ($query) use ($filter) {
+                $query->whereHas('category', function ($q) use ($filter) {
+                    $q->where('category_name', $filter);
+                });
             })
-                ->with("category")
-                ->get();
-        }
+            ->paginate(10);
+
         return response()->json([
-            'products' => $products
+            'products' => $products->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'product_name' => $product->product_name,
+                    'price' => $product->price,
+                    'photo' => asset($product->photo),
+                    'category_name' => $product->category->category_name,
+                ];
+            }),
         ]);
     }
+
 
     public function fetchNewVerifications()
     {

@@ -29,29 +29,28 @@ class UserController extends Controller
     public function notification()
     {
         $user = Auth::user();
-
+    
         $verifications = Verification::where("user_id", $user->id)
             ->where("notifiedbyuser", false)
+            ->orderBy('created_at', 'desc')
             ->get();
-
-        foreach ($verifications as $verification) {
-            $verification->notifiedbyuser = true;
-            $verification->save();
-        }
-
+    
         $orders = Order::where("user_id", $user->id)
             ->where("notifiedbyuser", false)
+            ->orderBy('created_at', 'desc')
             ->get();
+    
+        $notifications = $orders->merge($verifications);
 
-        foreach ($orders as $order) {
-            $order->notifiedbyuser = true;
-            $order->save();
+        foreach ($notifications as $notification) {
+            $notification->notifiedbyuser = true;
+            $notification->save();
         }
-        return view("customer.notification", [
-            "verifications" => $verifications,
-            "orders" => $orders,
-        ]);
+    
+        return view("customer.notification", compact("notifications"));
     }
+    
+
     
     public function profile()
     {

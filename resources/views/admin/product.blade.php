@@ -16,13 +16,13 @@
                 <form id="filter-form">
                     <label for="filter" class="mr-2 text-sm font-medium text-gray-700">Filter by:</label>
                     <select id="filter" name="filter" class="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-indigo-500">
-                        <option value="all">All</option>
-                        <option value="salad">Salad</option>
-                        <option value="all day breakfast">All Day Breakfast</option>
-                        <option value="pasta">Pasta</option>
-                        <option value="all time favorites">All Time Favorites</option>
-                        <option value="sandwich burger">Sandwich & Burger</option>
-                        <option value="beverages">Beverages</option>
+                        <option value="all" class="font-semibold">All</option>
+                        <option value="salad" class="font-semibold">Salad</option>
+                        <option value="all day breakfast" class="font-semibold">All Day Breakfast</option>
+                        <option value="pasta" class="font-semibold">Pasta</option>
+                        <option value="all time favorites" class="font-semibold">All Time Favorites</option>
+                        <option value="sandwich burger" class="font-semibold">Sandwich & Burger</option>
+                        <option value="beverages" class="font-semibold">Beverages</option>
                     </select>
                 </form>
             </div>
@@ -83,7 +83,9 @@
             filterSelect.addEventListener('change', function() {
                 const selectedFilter = this.value;
 
-                fetch(`{{ route('product.filter') }}?filter=${selectedFilter}`, {
+                const url = selectedFilter === 'All' ? '{{ route('product') }}' : `{{ route('product.filter') }}?filter=${selectedFilter}`;
+
+                fetch(url, {
                     method: 'GET',
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
@@ -122,8 +124,8 @@
                             <span>${product.product_name}</span>
                         </div>
                     </td>
-                    <td class="py-4 px-4 text-gray-700">${product.category_name}</td>
-                    <td class="py-4 px-4 text-gray-700">₱${product.price.toFixed(2)}</td>
+                    <td class="py-4 px-4 text-gray-700 font-semibold">${product.category_name}</td>
+                    <td class="py-4 px-4 text-gray-700 font-semibold">₱${product.price.toFixed(2)}</td>
                     <td class="py-4 px-4 flex space-x-2">
                         <a href="/admin/product/update/${product.id}" class="text-indigo-600 hover:text-indigo-800">Edit</a>
                         <form action="/admin/product/${product.id}" method="POST">
