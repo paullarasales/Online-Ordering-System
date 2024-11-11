@@ -28,7 +28,7 @@ class SalesController extends Controller
                         return $item->quantity * $item->product->price + 60; // Assuming a fixed shipping fee
                     });
                 }, 0);
-            
+
             $revenueData[] = [
                 'month' => $month,
                 'year' => $year,
@@ -37,7 +37,7 @@ class SalesController extends Controller
         }
 
         $revenueData = array_reverse($revenueData);
-   
+
         $mostSoldProducts = Order::with('items.product')
             ->where('status', 'delivered')
             ->whereBetween('created_at', [Carbon::now()->subYear(), Carbon::now()])
@@ -88,9 +88,10 @@ class SalesController extends Controller
                     'total_quantity' => $group->sum('total_quantity'),
                 ];
             })
-            ->values()
             ->sortByDesc('total_quantity')
-            ->take(10);
+            ->take(10)
+            ->values()
+            ->toArray();
 
         return response()->json([
             'most_sold_products' => $mostSoldProducts,

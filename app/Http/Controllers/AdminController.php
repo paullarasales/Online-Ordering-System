@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
+use App\Http\Controllers\SalesController;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Message;
@@ -31,7 +32,7 @@ class AdminController extends Controller
     private function getLastMonthOrders()
     {
         return Order::whereMonth("created_at", Carbon::now()->subMonth()->month)
-            ->whereYear("created_at", Carbon::now()->subMonth()->year)
+            ->whereMonth("created_at", Carbon::now()->subMonth()->year)
             ->where('status', 'delivered')
             ->count();
     }
@@ -48,6 +49,7 @@ class AdminController extends Controller
     {
         $userCount = User::where("usertype", "user")->count();
         $orderCount = Order::count();
+        $salesController = new SalesController();
 
         $totalSales = OrderItem::join(
             "products",
@@ -61,7 +63,7 @@ class AdminController extends Controller
                 "SUM(order_items.quantity * products.price + 60) as total_sales"
             )
             ->value("total_sales");
-        
+
         $lastMonthSales = $this->getLastMonthSales();
         $lastMonthOrders = $this->getLastMonthOrders();
         $lastMonthCustomers = $this->getLastMonthCustomers();
@@ -69,7 +71,24 @@ class AdminController extends Controller
         $salesChange = $totalSales - $lastMonthSales;
         $orderChange = $orderCount - $lastMonthOrders;
         $customerChange = $userCount - $lastMonthCustomers;
-        
+
+        $salesData = [];
+        $salesMonths = [];
+        for ($i = 0; $i < 12; $i++) {
+            $month = Carbon::now()->subMonths($i)->format('M');
+            $salesMonths[] = $month;
+
+            $monthlySales = OrderItem::join("products", "order_items.product_id", "=", "products.id")
+                ->join("orders", "order_items.order_id", "=", "orders.id")
+                ->where("orders.status", "delivered")
+                ->whereMonth("orders.created_at", Carbon::now()->subMonths($i)->month)
+                ->whereYear("orders.created_at", Carbon::now()->subMonths($i)->year)
+                ->selectRaw("SUM(order_items.quantity * products.price + 60) as total_sales")
+                ->value("total_sales");
+
+            $salesData[] = $monthlySales ?? 0;
+        }
+
         $orders = Order::with("user")
             ->orderBy("created_at", "desc")
             ->limit(15)
@@ -77,9 +96,10 @@ class AdminController extends Controller
 
         return view(
             "admin.dashboard",
-            compact("orders", "totalSales", "orderCount", "userCount", "salesChange", "orderChange", "customerChange", "lastMonthSales", "lastMonthOrders", "lastMonthCustomers")
+            compact("orders", "totalSales", "orderCount", "userCount", "salesChange", "orderChange", "customerChange", "lastMonthSales", "lastMonthOrders", "lastMonthCustomers", "salesData", "salesMonths")
         );
     }
+
 
     public function customer()
     {
