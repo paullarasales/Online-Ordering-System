@@ -50,7 +50,7 @@
             </div>
         </div>
         <!-- Recent Orders Section -->
-        <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6"> <!-- Reduced margin bottom -->
+        <div class="bg-white shadow-lg rounded-lg overflow-hidden mb-6 mt-5"> <!-- Reduced margin bottom -->
             <div class="flex justify-between items-center p-4 bg-gray-100 border-b">
                 <h2 class="text-xl font-semibold text-gray-800">Recent Orders</h2>
                 <button class="text-sm text-yellow-500 hover:underline">View all</button>

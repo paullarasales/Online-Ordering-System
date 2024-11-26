@@ -23,7 +23,6 @@
                         </div>
                         
                         <div class="space-y-4">
-                            <!-- Loop through all products in the order and display their image and details -->
                             @foreach ($order->items as $item)
                                 <div class="flex bg-gray-100 p-4 rounded-lg shadow-sm hover:shadow-md transition">
                                     <img src="{{ $item->product->photo }}" alt="{{ $item->product->name }}" class="w-24 h-24 object-cover rounded-md">
@@ -36,7 +35,6 @@
                             @endforeach
                         </div>
                         
-                        <!-- Total Price Section -->
                         <div class="mt-6 flex items-center justify-between bg-gray-50 p-4 rounded-lg shadow-sm">
                             <p class="text-lg font-semibold text-gray-800">Total Price: ₱{{ number_format($totalPrice, 2) }}</p>
                         </div>
