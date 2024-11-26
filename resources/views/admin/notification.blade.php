@@ -14,12 +14,10 @@
                                 </div>
                                 <div class="ml-4">
                                     @if ($order->status === 'Processing')
-                                        <p class="text-lg font-medium text-gray-900">Order ID: {{ $order->id }} from {{ $order->user->name }} is currently being processed.</p>
+                                        <p class="text-lg font-medium text-gray-900">{{ $order->user->name }} made an order.</p>
                                     @else
-                                        <p class="text-lg font-medium text-gray-900">{{ $order->user->name }} {{ $order->action }} an order</p>
-                                    @endif
-                                    <p class="text-sm text-gray-600">Order ID: {{ $order->id }}</p>
-                                    <p class="text-sm text-gray-500">{{ $order->status }}</p>
+                                        <p class="text-lg font-medium text-gray-900">{{ $order->user->name }} made an order.</p>
+                                    @endif 
                                 </div>
                             </div>
                         @endforeach
