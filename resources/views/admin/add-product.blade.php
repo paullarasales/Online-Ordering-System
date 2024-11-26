@@ -19,7 +19,10 @@
                             <label for="description" class="block text-sm font-medium text-gray-600">Description</label>
                             <textarea id="description" name="description" rows="3" placeholder="Enter product description" class="mt-1 p-3 block w-full border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 transition"></textarea>
                         </div>
-                        <!-- Dropdown for selecting category -->
+                        <div class="mb-4">
+                            <label for="stockQuantity" class="block text-sm font-medium text-gray-600">Stock Quantity</label>
+                            <input type="number" id="stockQuantity" name="stockQuantity" placeholder="Enter Quantity" class="mt-1 p-3 block w-full border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 transition">
+                        </div>
                         <div class="mb-4">
                             <label for="category" class="block text-sm font-medium text-gray-600">Category</label>
                             <select id="category" name="category_id" class="mt-1 p-3 block w-full border border-gray-300 rounded-lg focus:border-blue-500 focus:ring focus:ring-blue-200 transition">

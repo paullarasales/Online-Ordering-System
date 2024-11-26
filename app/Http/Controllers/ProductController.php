@@ -54,7 +54,6 @@ class ProductController extends Controller
             'product_name' => 'required',
             'price' => 'required|numeric',
             'description' => 'required',
-            'stockQuantity' => 'required|numeric',
             'category_id' => 'required',
             'photo' => 'image|mimes:jpeg,png,jpg,gif|max:2048', // Add any validation rules for the image
         ]);
@@ -65,7 +64,6 @@ class ProductController extends Controller
         $product->product_name = $validatedData['product_name'];
         $product->price = $validatedData['price'];
         $product->description = $validatedData['description'];
-        $product->stockQuantity = $validatedData['stockQuantity'];
         $product->category_id = $validatedData['category_id'];
 
         // Handle image upload if provided

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Verification;
 use App\Models\Product;
 use App\Models\Cart;
@@ -299,6 +300,8 @@ class UserController extends Controller
         }
 
         CartItem::where("user_id", auth()->id())->delete();
+
+        Mail::to($order->user->email)->send(new \App\Mail\ReceiptMail($order));
 
         return redirect()->route("thankyou", ["orderId" => $order->id]);
     }

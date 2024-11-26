@@ -32,7 +32,7 @@
                     <div class="flex justify-between mt-6">
                         <a href="{{ route('userdashboard') }}" class="px-4 py-2 bg-white text-black border rounded hover:bg-gray-200">Back</a>
 
-                        <button type="submit" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Confirm Order</button>
+                        <button type="button" id="showAgreement" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600">Confirm Order</button>
                     </div>
                 </form>
             </div>
@@ -60,28 +60,47 @@
         </div>
     </div>
 
+    <!-- Agreement Modal -->
+    <div id="agreementModal" class="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded shadow-md w-1/3">
+            <h2 class="text-xl font-semibold mb-4">Terms and Agreement</h2>
+            <p class="text-gray-600 mb-4">
+                By confirming this order, you agree to accept and receive your order upon delivery.
+                Failure to do so may result in penalties or restrictions on future orders.
+            </p>
+            <div class="flex items-center mb-4">
+                <input type="checkbox" id="agreeTerms" class="mr-2">
+                <label for="agreeTerms" class="text-sm text-gray-700">I agree to the terms and conditions.</label>
+            </div>
+            <div class="flex justify-end space-x-4">
+                <button type="button" id="closeModal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                <button type="submit" id="submitOrder" class="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600" disabled>Confirm</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        document.getElementById('orderForm').addEventListener('submit', function(event) {
-            document.getElementById('addressError').classList.add('hidden');
-            document.getElementById('contactError').classList.add('hidden');
-            
-            let isValid = true;
+        const modal = document.getElementById('agreementModal');
+        const showAgreementBtn = document.getElementById('showAgreement');
+        const closeModalBtn = document.getElementById('closeModal');
+        const agreeTerms = document.getElementById('agreeTerms');
+        const submitOrderBtn = document.getElementById('submitOrder');
+        const orderForm = document.getElementById('orderForm');
 
-            const address = document.getElementById('address').value.trim();
-            if (!address) {
-                document.getElementById('addressError').classList.remove('hidden');
-                isValid = false;
-            }
+        showAgreementBtn.addEventListener('click', () => {
+            modal.classList.remove('hidden');
+        });
 
-            const contactno = document.getElementById('contactno').value.trim();
-            if (!contactno) {
-                document.getElementById('contactError').classList.remove('hidden');
-                isValid = false;
-            }
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.add('hidden');
+        });
 
-            if (!isValid) {
-                event.preventDefault();
-            }
+        agreeTerms.addEventListener('change', () => {
+            submitOrderBtn.disabled = !agreeTerms.checked;
+        });
+
+        submitOrderBtn.addEventListener('click', () => {
+            orderForm.submit();
         });
     </script>
 </x-app-layout>

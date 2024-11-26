@@ -20,10 +20,6 @@
                             <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
                             <textarea id="description" name="description" rows="3" class="mt-1 p-2 block w-full border-gray-300 rounded-md">{{ $product->description }}</textarea>
                         </div>
-                        <div class="mb-4">
-                            <label for="stockQuantity" class="block text-sm font-medium text-gray-700">Stock Quantity</label>
-                            <input type="number" id="stockQuantity" name="stockQuantity" value="{{ $product->stockQuantity }}" class="mt-1 p-2 block w-full border-gray-300 rounded-md">
-                        </div>
                         <!-- Dropdown for selecting category -->
                         <div class="mb-4">
                             <label for="category" class="block text-sm font-medium text-gray-700">Category</label>
