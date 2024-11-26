@@ -39,7 +39,7 @@
                                         <button type="button" class="px-3 py-1" onclick="updateQuantity({{ $cartItem->id }}, 1)">+</button>
                                     </div>
                                 </div>
-                                <p class="text-gray-600 mt-2">Price: ₱<span id="price_{{ $cartItem->id }}">{{ $itemPrice }}</span></p>
+                                <p class="text-gray-600 mt-2">Price: ₱<span id="price_{{ $cartItem->id }}" data-unit-price="{{ $cartItem->product->price }}">{{ $itemPrice }}</span></p>
                             </div>
 
                             <!-- Remove Button -->
@@ -68,6 +68,13 @@
                 const quantity = parseInt(cartItem.innerText);
                 const cartItemId = cartItem.id.split('_')[1];
                 const pricePerItem = parseFloat(document.getElementById('price_' + cartItemId).dataset.unitPrice);
+
+                // Ensure valid data for quantity and price
+                if (isNaN(quantity) || isNaN(pricePerItem)) {
+                    console.error('Invalid quantity or price');
+                    return;
+                }
+
                 const newPrice = quantity * pricePerItem;
                 document.getElementById('price_' + cartItemId).innerText = newPrice.toFixed(2);
                 totalPrice += newPrice;
@@ -81,6 +88,7 @@
             if (quantity < 1) {
                 quantity = 1; // Prevents going below 1
             }
+
             fetch("{{ url('/updateQuantity/cart') }}/" + cartItemId, {
                 method: 'POST',
                 headers: {
