@@ -20,7 +20,7 @@ class ReceiptMail extends Mailable
      */
     public function __construct($order)
     {
-        $this->order = $order;
+        $this->order = $order;  
     }
 
     /**
