@@ -15,7 +15,9 @@ Route::get("/", function () {
 });
 
 Route::middleware("auth")->group(function () {
-    Route::get("user/dashboard", [UserController::class, "index"])->name("userdashboard");
+    Route::get("user/dashboard", [UserController::class, "index"])
+    ->middleware(["auth", "verified"])
+    ->name("userdashboard");
     Route::get("/user/dash", [UserController::class, "testDashboard"])->name("test.dash");
     Route::get("/verify", [UserController::class, "verifyAccountForm"])->name("verify.form");
     Route::post("/verify/upload", [UserController::class, "verify"])->name("verify.upload");
