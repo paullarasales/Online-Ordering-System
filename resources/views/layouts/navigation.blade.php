@@ -83,16 +83,6 @@
                                             </div>
                                         </x-side-nav-link>
                                     </div>
-                                    <!-- <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 45px;">
-                                        <x-side-nav-link href="{{ route('user.messages') }}" :active="request()->routeIs('user.messages')" class="text-xl text-black font-medium flex items-center w-full">
-                                            <div class="relative flex items-center">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
-                                                    <path fill-rule="evenodd" d="M5.337 21.718a6.707 6.707 0 0 1-.533-.074.75.75 0 0 1-.44-1.223 3.73 3.73 0 0 0 .814-1.686c.023-.115-.022-.317-.254-.543C3.274 16.587 2.25 14.41 2.25 12c0-5.03 4.428-9 9.75-9s9.75 3.97 9.75 9c0 5.03-4.428 9-9.75 9-.833 0-1.643-.097-2.417-.279a6.721 6.721 0 0 1-4.246.997Z" clip-rule="evenodd" />
-                                                </svg>  
-                                                <span id="message-count" class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full px-2 py-0.5 transform translate-x-1/2 translate-y-1/2" style="display: none;">0</span>
-                                            </div>
-                                        </x-side-nav-link>
-                                    </div> -->
                                     <div class="flex items-center justify-center rounded-sm h-12" style="width: 70px;">
                                         @if(Auth::user()->photo)
                                                <img class="w-full h-full object-cover rounded-full" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">
