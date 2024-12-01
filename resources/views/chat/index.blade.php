@@ -95,7 +95,7 @@
                     throw new Error('Network response was not ok');
                 }
                 const messages = await response.json();
-                console.log(messages);
+                console.log("This it the messages", messages);
                 const messageList = document.getElementById('message-list');
 
                 messageList.innerHTML = '';

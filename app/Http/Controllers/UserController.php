@@ -522,4 +522,16 @@ class UserController extends Controller
         return response()->json(['is_blocked' => false]);
     }
 
+
+    public function updateNotifiedStatus(Request $request)
+    {
+        $userId = auth()->id(); 
+        
+        Message::where('receiver_id', $userId)
+              ->where('notifiedbyuser', false) 
+              ->update(['notifiedbyuser' => true]);
+
+        return response()->json(['status' => 'success']);
+    }
+
 }

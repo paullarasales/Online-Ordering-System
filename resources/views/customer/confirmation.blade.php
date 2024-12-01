@@ -66,7 +66,7 @@
             <h2 class="text-xl font-semibold mb-4">Terms and Agreement</h2>
             <p class="text-gray-600 mb-4">
                 By confirming this order, you agree to accept and receive your order upon delivery.
-                Failure to do so may result in penalties or restrictions on future orders.
+                Failure to do so may result in penalties or restrictions on future orders. Multa Kakantutin ng rider.
             </p>
             <div class="flex items-center mb-4">
                 <input type="checkbox" id="agreeTerms" class="mr-2">

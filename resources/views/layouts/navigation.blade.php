@@ -6,32 +6,39 @@
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
                     <a href="{{ route('userdashboard') }}" class="flex items-center justify-center flex-row">
-                        <img src="{{ asset('logo/no-bg.png')}}" alt="" class="h-10 w-10">
+                        <img src="{{ asset('logo/no-bg.png')}}" alt="" class="h-12 w-12">
                         <div class="flex flex-col">
                             <div>
-                                <h1 class="font-semibold text-md tracking-md">Twenty <span class="text-yellow-500">Four<span></h1>
+                                <h1 class="font-bold text-lg tracking-md">Twenty <span class="text-yellow-500">Four<span></h1>
                             </div>
                             <div class="ml-4">
-                                <h1 class="font-semibold text-md tracking-md"><span class="text-yellow-500">Twenty</span> One</h1>
+                                <h1 class="font-bold text-lg tracking-md"><span class="text-yellow-500">Twenty</span> One</h1>
                             </div>
                         </div>
                     </a>
                 </div>
             </div>
-            <!-- Search Bar -->
-            <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <form action="{{ route('search') }}" method="GET" class="relative flex items-center">
-                    <input type="text" name="query" class="block px-4 py-2 border border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500 pl-10 sm:text-sm" placeholder="Search" style="width: 600px;">
-                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M14.293 11.293a1 1 0 011.414 1.414l-2.5 2.5a1 1 0 01-1.414 0 1 1 0 01-.074-1.327l2.5-2.5zM8 13a5 5 0 100-10 5 5 0 000 10z" clip-rule="evenodd" />
-                        </svg>
-                    </div>
-                    <button type="submit" class="ml-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                        Search
-                    </button>
-                </form>
-            </div>
+             <!-- Search Bar -->
+             <form action="{{ route('search') }}" method="GET" class="hidden sm:flex items-center space-x-2 w-full max-w-md">
+                <div class="relative w-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"  class="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+
+                    <input 
+                        type="text" 
+                        name="query" 
+                        class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400 text-sm"
+                        placeholder="Search for products, categories..." 
+                        aria-label="Search">
+                </div>
+                <button 
+                    type="submit" 
+                    class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-sm">
+                    Search
+                </button>
+            </form>
+
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 <x-dropdown align="right">
@@ -76,7 +83,7 @@
                                             </div>
                                         </x-side-nav-link>
                                     </div>
-                                    <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 45px;">
+                                    <!-- <div class="flex items-center justify-center rounded-sm h-12 ml-5" style="width: 45px;">
                                         <x-side-nav-link href="{{ route('user.messages') }}" :active="request()->routeIs('user.messages')" class="text-xl text-black font-medium flex items-center w-full">
                                             <div class="relative flex items-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-6">
@@ -85,7 +92,7 @@
                                                 <span id="message-count" class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full px-2 py-0.5 transform translate-x-1/2 translate-y-1/2" style="display: none;">0</span>
                                             </div>
                                         </x-side-nav-link>
-                                    </div>
+                                    </div> -->
                                     <div class="flex items-center justify-center rounded-sm h-12" style="width: 70px;">
                                         @if(Auth::user()->photo)
                                                <img class="w-full h-full object-cover rounded-full" src="{{ asset(Auth::user()->photo) }}" alt="Profile Image">

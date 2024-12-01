@@ -21,7 +21,6 @@
                                 </div>
                             </div>
                         @endforeach
-
                         @foreach ($newVerifications->reverse() as $verification)
                             <div class="flex items-center p-4 border rounded-lg bg-white shadow-sm hover:bg-gray-50 transition-colors">
                                 <div class="flex-shrink-0">

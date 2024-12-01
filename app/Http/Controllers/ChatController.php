@@ -157,4 +157,23 @@ class ChatController extends Controller
             return response()->json(["error" => $e->getMessage()], 500);
         }
     }
+
+    public function markMessagesAsReadUser(Request $request)
+    {
+        try {
+            $userId = auth()->id();
+    
+            if (!$userId) {
+                return response()->json(['error' => 'User not authenticated'], 401);
+            }
+    
+            Message::where('user_id', $userId)
+                ->where('notifiedbyuser', false)
+                ->update(['notifiedbyuser' => true]);
+    
+            return response()->json(['status' => 'Messages marked as read']);
+        } catch (\Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
+    }
 }

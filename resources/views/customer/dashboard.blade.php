@@ -10,17 +10,6 @@
         </div>
     @endif
 
-     <!-- Blocked User Modal -->
-     <div id="blocked-modal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 {{ session('blocked') ? '' : 'hidden' }}">
-        <div class="bg-white rounded-lg p-6 max-w-md mx-auto">
-            <h2 class="text-lg font-semibold text-gray-800">Action Restricted</h2>
-            <p class="text-gray-600">{{ session('blocked') }}</p>
-            <div class="flex justify-end mt-4">
-                <button id="close-modal" class="bg-gray-500 text-white px-4 py-2 rounded-md">Close</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Main content -->
     <div class="container mx-auto py-4 max-w-5xl">
         <!-- Product Display Section -->
@@ -54,34 +43,231 @@
         <div class="pagination">
             {{ $products->links('vendor.pagination.tailwind') }}
         </div>
+
+        <!-- Chat Box -->
+        <div id="chat-container" class="fixed bottom-10 right-10 w-96 h-80 hidden flex-col bg-white border border-gray-300 shadow-lg">
+            <div id="message-list" class="flex-1 overflow-y-auto p-4">
+                <!-- Message -->
+            </div>
+            <div id="message-input-container" class="flex p-2 border-t border-gray-200 bg-gray-100">
+                <input type="text" id="message-input" placeholder="Type a message" class="flex-1 p-2 border rounded-md">
+                <button id="send-button" class="ml-2 bg-blue-500 text-white px-4 py-2 rounded-md">Send</button>
+            </div>
+        </div>
+
+        <button id="toggle-chat" class="fixed bottom-10 right-10 bg-blue-500 text-white px-4 py-2 rounded-md relative">
+            Chat
+            <span id="message-count" class="absolute top-0 right-0 bg-red-600 text-white text-xs rounded-full px-2 py-0.5 transform translate-x-1/2 translate-y-1/2" style="display: none;">0</span>
+        </button>
+
+
     </div>
+
+     <style>
+    /* Positioning and Animation for Chat Button */
+    #toggle-chat {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    #toggle-chat:hover {
+        transform: scale(1.1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    #toggle-chat:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.6); /* Focus outline */
+    }
+
+    /* Chat container positioning */
+    #chat-container {
+        position: fixed;
+        right: 20px;
+        bottom: 80px; /* Initially set bottom above the button */
+        width: 380px;
+        height: 320px;
+        display: none; /* Hidden by default */
+        z-index: 999; /* Just below the button */
+        transition: bottom 0.3s ease; /* Smooth transition when toggling */
+    }
+
+    /* Mobile responsiveness for chat button */
+    @media (max-width: 640px) {
+        #toggle-chat {
+            right: 10px;
+            bottom: 10px;
+            padding: 10px 15px; /* Smaller padding for mobile */
+        }
+
+        #chat-container {
+            right: 10px;
+            bottom: 70px; 
+            width: 90%;
+            max-width: 400px;
+        }
+    }
+    
+        /* General styling for messages */
+    #message-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        overflow-y: auto; /* Enable scrolling if messages overflow */
+        max-height: calc(100% - 60px); /* Adjust to make space for the input area */
+    }
+    
+    .message {
+        max-width: 75%;
+        padding: 8px 15px;
+        border-radius: 10px;
+        margin-bottom: 5px;
+        word-wrap: break-word;
+        white-space: pre-wrap; /* Ensure long words wrap */
+    }
+    
+    /* Styling for sender's messages */
+    .message.sender {
+        background-color: #DCF8C6;
+        align-self: flex-end; /* Align the sender's messages to the right */
+        text-align: right;
+    }
+    
+    /* Styling for receiver's messages */
+    .message.receiver {
+        background-color: #ECECEC;
+        align-self: flex-start; /* Align the receiver's messages to the left */
+        text-align: left;
+    }
+    
+    #message-count {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background-color: #e53e3e; /* Red color for the badge */
+        color: white;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 50%;
+        display: none; /* Hidden by default */
+    }
+
+</style>
+
+
+
+
+
     <script>
-       document.addEventListener('DOMContentLoaded', function () {
-        const notificationBanner = document.getElementById('notification-banner');
-        const blockedModal = document.getElementById('blocked-modal');
-        const closeModal = document.getElementById('close-modal');
-
-        if (notificationBanner) {
-            console.log('Notification banner found');
-            setTimeout(() => {
-                notificationBanner.style.opacity = '0';
-                setTimeout(() => {
-                    notificationBanner.style.display = 'none';
-                }, 5000);
-            }, 3000);
-        }
-
-        console.log("Blocked modal:", blockedModal);
-        console.log("Close button:", closeModal);
-
-        if (closeModal) {
-            closeModal.addEventListener('click', function() {
-                console.log('Close button clicked');
-                if (blockedModal) {
-                    blockedModal.classList.add('hidden');
-                }
-            });
-        }
+    window.authUserId = {{ auth()->id() }};
+    document.addEventListener('DOMContentLoaded', function() {
+        const chatContainer = document.getElementById('chat-container');
+        const toggleChatButton = document.getElementById('toggle-chat');
+        const sendButton = document.getElementById('send-button');
+        const messageInput = document.getElementById('message-input');
+        const messageList = document.getElementById('message-list');
+         const messageElement = document.getElementById('message-count');
+        
+        let isScrolledToBottom = true;
+        
+        messageList.addEventListener('scroll', () => {
+            const atBottom = messageList.scrollHeight - messageList.clientHeight <= messageList.scrollTop + 1;
+            isScrolledToBottom = atBottom;
         });
-    </script>
+        
+
+        toggleChatButton.addEventListener('click', async () => {
+            if (chatContainer.style.display === 'none' || chatContainer.style.display === '') {
+                chatContainer.style.display = 'flex'; 
+                chatContainer.style.bottom = '80px'; 
+                
+                fetch('/update-notified-status', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({
+                        notifiedbyuser: true 
+                    })
+                })
+                .then(response => response.json())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
+            } else {
+                chatContainer.style.display = 'none';
+            }
+        });
+
+
+        sendButton.addEventListener('click', async () => {
+            const message = messageInput.value.trim();
+            if (message) {
+                await fetch('/send-message', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    body: JSON.stringify({ message, receiver_id: 1 }) 
+                });
+                messageInput.value = '';
+                fetchMessages();
+            }
+        });
+
+        async function fetchMessages() {
+            const response = await fetch(`/get-messages?receiver_id=1`);
+            if (response.ok) {
+                const messages = await response.json();
+                messageList.innerHTML = ''; // Clear the existing messages
+                messages.forEach(msg => {
+                    const msgElement = document.createElement('div');
+                    // Set the correct class based on the sender_id
+                    msgElement.className = `message ${msg.sender_id === window.authUserId ? 'sender' : 'receiver'}`;
+                    msgElement.textContent = msg.content; // Add message content
+                    messageList.appendChild(msgElement);
+                });
+                if (isScrolledToBottom) {
+                    messageList.scrollTop = messageList.scrollHeight;
+                }
+            }
+        }
+        
+        async function getMessageCount() {
+            try {
+                const response = await fetch('/user/unread-messages');
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+    
+                const data = await response.json();
+                console.log('Fetched count:', data);
+                const countMessage = data.unreadMessage;
+    
+                if (messageElement && countMessage > 0) {
+                    messageElement.textContent = countMessage;
+                    messageElement.style.display = 'inline-block';
+                } else if (messageElement) {
+                    messageElement.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error fetching unread messages:', error);
+            }
+        }
+        
+    
+        // Periodically check for new messages
+        setInterval(getMessageCount, 5000); // Adjust interval as needed
+
+
+        fetchMessages();
+        setInterval(fetchMessages, 2000);
+    });
+</script>
+
 </x-app-layout>

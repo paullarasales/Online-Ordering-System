@@ -92,7 +92,8 @@ Route::middleware("auth")->group(function () {
         $user = Auth::user();
         return response()->json(['is_blocked' => $user ? $user->is_blocked : false]);
     });
-    
+    Route::post('/update-notified-status', [UserController::class, 'updateNotifiedStatus']);
+
 });
 //Admin
 Route::get("/dashboard", [AdminController::class, "dashboard"])
@@ -220,6 +221,7 @@ Route::middleware(["auth"])->group(function () {
         ChatController::class,
         "markMessagesAsRead",
     ]);
+    Route::post('/mark-messages-as-read-user', [ChatController::class, 'markMessagesAsReadUser']);
 });
 
 Route::middleware("auth")->group(function () {
