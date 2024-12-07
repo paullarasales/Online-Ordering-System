@@ -281,11 +281,17 @@ class UserController extends Controller
         // Fetch cart items from the request
         $cartItemsData = $request->input("cartItems");
 
+        $user = auth()->user();
+
+        if (!$user->address && !$user->contact_number) {
+            return redirect()->back()->withErrors(['message' => 'Please update your address and contact number in your profile before placing an order.']);
+        }
+
         // Create a new order
         $order = new Order();
         $order->user_id = auth()->id();
-        $order->address = $request->input("address");
-        $order->contactno = $request->input("contactno");
+        $order->address = $user->address;
+        $order->contactno = $user->contact_number;
         $order->payment_method = $request->input("payment_method");
         $order->status = 'in-queue';
         $order->notified = false;

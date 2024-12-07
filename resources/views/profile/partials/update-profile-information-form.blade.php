@@ -58,6 +58,31 @@
             <x-input-error class="mt-2" :messages="$errors->get('photo')" />
         </div>
 
+        <div>
+            <x-input-label for="address" :value="__('Address')" />
+            <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $user->address)" required autofocus autocomplete="address" />
+            <x-input-error class="mt-2" :messages="$errors->get('address')" />
+        </div>
+
+        <div class="flex items-center">
+            <span class="text-gray-500 bg-gray-100 px-3 py-2 rounded-l-md">+63</span>
+            <x-text-input 
+                id="contact_number" 
+                name="contact_number" 
+                type="text" 
+                class="mt-1 block w-full rounded-r-md" 
+                :value="old('contact_number', substr($user->contact_number, 3))" 
+                required 
+                maxlength="10" 
+                autofocus 
+                autocomplete="contact_number" 
+            />
+        </div>
+        <x-input-error class="mt-2" :messages="$errors->get('contact_number')" />
+
+
+
+
         <div class="flex items-center mt-6">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
             
