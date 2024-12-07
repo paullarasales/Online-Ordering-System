@@ -189,7 +189,8 @@ class UserController extends Controller
     
         $verification = Verification::where("user_id", $userId)->first();
         if (!$verification || !$verification->verified) {
-            return redirect()->route("verify.form")->with("error", "Please verify your account first.");
+            return back()->withErrors('Please verify your account first thankyou.');
+            // return redirect()->route("verify.form")->with("error", "Please verify your account first.");
         }
     
         $cartItems = $cart->items;

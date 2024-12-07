@@ -1,12 +1,12 @@
 <x-admin-layout>
     <div class="container mx-auto py-6 px-4 bg-gray-100 rounded-lg shadow-lg">
         <div class="flex space-x-2 mb-4">
-            <button class="filter-btn p-2 bg-blue-500 text-white rounded hover:bg-blue-700" data-status="all">All</button>
-            <button class="filter-btn p-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" data-status="in-queue">In Queue</button>
-            <button class="filter-btn p-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" data-status="processing">Processing</button>
-            <button class="filter-btn p-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" data-status="on-deliver">On Deliver</button>
-            <button class="filter-btn p-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" data-status="delivered">Delivered</button>
-            <button class="filter-btn p-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400" data-status="cancelled">Cancelled</button>
+            <button class="filter-btn p-2 bg-gray-300 text-white rounded hover:bg-blue-700" data-status="all">All</button>
+            <button class="filter-btn p-2 bg-yellow-300 text-gray-700 rounded hover:bg-gray-400" data-status="in-queue">In Queue</button>
+            <button class="filter-btn p-2 bg-blue-400 text-gray-700 rounded hover:bg-gray-400" data-status="processing">Processing</button>
+            <button class="filter-btn p-2 bg-orange-400 text-gray-700 rounded hover:bg-gray-400" data-status="on-deliver">On Deliver</button>
+            <button class="filter-btn p-2 bg-green-400 text-gray-700 rounded hover:bg-gray-400" data-status="delivered">Delivered</button>
+            <button class="filter-btn p-2 bg-red-400 text-gray-700 rounded hover:bg-gray-400" data-status="cancelled">Cancelled</button>
         </div>
 
         @if ($orders->count() > 0)
