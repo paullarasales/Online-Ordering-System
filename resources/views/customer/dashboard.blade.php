@@ -4,9 +4,11 @@
         <div id="notification-banner" class="fixed top-0 right-0 m-4 p-4 bg-green-500 text-white rounded-md">
             {{ session('success') }}
         </div>
-    @elseif(session('error'))
+    @elseif($errors->any())
         <div id="notification-banner" class="fixed top-0 right-0 m-4 p-4 bg-red-500 text-white rounded-md">
-            {{ session('error') }}
+            @foreach($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
         </div>
     @endif
 
@@ -38,6 +40,17 @@
                 @endforeach
             @endif
         </div>
+
+        <!-- Verification ID Modal -->
+        <div id="verification-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-96 text-center">
+                <h2 class="text-lg font-bold mb-4">Verification Required</h2>
+                <p class="text-gray-700 mb-6">Please upload a verification ID to continue.</p>
+                <a href="{{ route('verify.form') }}" class="bg-blue-500 text-white px-4 py-2 rounded-lg">Upload Now</a>
+                <button id="close-modal" class="ml-4 bg-gray-300 px-4 py-2 rounded-lg">Close</button>
+            </div>
+        </div>
+
 
         <!-- Pagination Section -->
         <div class="pagination">
@@ -170,7 +183,17 @@
         const sendButton = document.getElementById('send-button');
         const messageInput = document.getElementById('message-input');
         const messageList = document.getElementById('message-list');
-         const messageElement = document.getElementById('message-count');
+        const messageElement = document.getElementById('message-count');
+        const verificationModal = document.getElementById('verification-modal');
+        const closeModalButton = document.getElementById('close-modal');
+
+        // @if(session('upload_verification'))
+        //     verificationModal.classList.remove('hidden');
+        // @endif
+
+        closeModalButton.addEventListener('click', () => {
+            verificationModal.classList.add('hidden');
+        });
         
         let isScrolledToBottom = true;
         

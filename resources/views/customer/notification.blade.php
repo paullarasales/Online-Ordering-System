@@ -53,37 +53,44 @@
                         const response = await fetch('/order/status');
                         const data = await response.json();
 
-                        console.log(data);
+                        console.log("Order data", data);
 
                         let notificationHtml = '';
 
                         if (data.orders && data.orders.length > 0) {
                             data.orders.forEach(order => {
+                                let status = order.status.charAt(0).toUpperCase() + order.status.slice(1);
+                                let statusMessage = `<strong>${status}</strong>`;
+                                const createdAt = new Date(order.created_at); 
+                                const options = { day: '2-digit', month: 'long', year: 'numeric' }; 
+                                const formattedDate = createdAt.toLocaleDateString('en-GB', options); 
+                                let createdAtMessage = `<span>${formattedDate}</span>`;
                                 order.products.forEach(product => {
-                                    let statusMessage = `<strong>${product.product_name}</strong>`;
+                                    let productStatusMessage = `<strong>${product.product_name}</strong>`;
 
                                     switch (order.status) {
                                         case 'in-queue':
-                                            statusMessage += " is still in queue. We will notify you later.";
+                                            productStatusMessage += " is still in queue. We will notify you later.";
                                             break;
                                         case 'processing':
-                                            statusMessage += " is currently being processed. Please wait.";
+                                            productStatusMessage += " is currently being processed. Please wait.";
                                             break;
                                         case 'on-deliver':
-                                            statusMessage += " is out for delivery.";
+                                            productStatusMessage += " is out for delivery.";
                                             break;
                                         case 'delivered':
-                                            statusMessage += " has been successfully delivered. Enjoy!";
+                                            productStatusMessage += " has been successfully delivered. Enjoy!";
                                             break;
                                         case 'cancelled':
-                                            statusMessage += " has been cancelled.";
+                                            productStatusMessage += " has been cancelled.";
                                             break;
                                     }
 
                                     notificationHtml += `
-                                        <div class="border-t border-gray-200 py-4 flex items-start">
-                                            <span class="text-blue-500 text-2xl mr-2">&#128230;</span>
+                                        <div class="border-t border-gray-200 py-4 flex flex-col items-start">
                                             <p>${statusMessage}</p>
+                                            <p><span class="text-blue-500 text-2xl mr-2">&#128230;</span>${productStatusMessage}</p>
+                                            <p>${createdAtMessage}</p>
                                         </div>
                                     `;
                                 });

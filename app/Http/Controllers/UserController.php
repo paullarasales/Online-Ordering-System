@@ -170,42 +170,42 @@ class UserController extends Controller
             ], [
                 'address.required' => 'The address field is required.',
                 'contactno.required' => 'The contact number field is required.',
+                'payment_method.required' => 'Please select a payment method.',
             ]);
         }
     
         $userId = Auth::id();
     
         if (!$userId) {
-            return redirect()->route("login")->with("error", "Please log in first");
+            return redirect()->route("login")->with("error", "Please log in first.");
         }
     
-        $user = User::findOrFail($userId);
+        $user = User::with('verification')->findOrFail($userId);
         if ($user->is_blocked) {
-            // Set a session flash message for the modal
-            return redirect()->route('userdashboard')->with('blocked', 'Your account is blocked. You can\'t perform this action until the penalty is gone.');
+            return redirect()->route('userdashboard')->with('blocked', 'Your account is blocked. You cannot perform this action.');
         }
     
-        $cart = Cart::firstOrCreate(["user_id" => $userId]);
-    
-        $verification = Verification::where("user_id", $userId)->first();
+        $verification = $user->verification;
         if (!$verification || !$verification->verified) {
-            return back()->withErrors('Please verify your account first thankyou.');
-            // return redirect()->route("verify.form")->with("error", "Please verify your account first.");
+            return back()->with('upload_verification', true);
         }
     
-        $cartItems = $cart->items;
-        if ($cartItems->contains("product_id", $productId)) {
+        $cart = Cart::firstOrCreate(['user_id' => $userId]);
+    
+        $cartItemExists = $cart->items()->where('product_id', $productId)->exists();
+        if ($cartItemExists) {
             return redirect()->route("cart")->with("success", "Product is already in the cart.");
         }
     
         $cart->items()->create([
-            "user_id" => $userId,
-            "product_id" => $productId,
-            "quantity" => 1,
+            'user_id' => $userId,
+            'product_id' => $productId,
+            'quantity' => 1,
         ]);
     
-        return redirect()->route("userdashboard")->with("success", "Product added successfully");
+        return redirect()->route("userdashboard")->with("success", "Product added successfully.");
     }
+    
     
     public function addToCartPage()
     {
@@ -460,6 +460,7 @@ class UserController extends Controller
             $ordersData = $orders->map(function ($order) {
                 return [
                     "status" => $order->status,
+                    "created_at" => $order->created_at,
                     "products" => $order->items->map(function ($item) {
                         return [
                             "product_name" => $item->product->product_name,
