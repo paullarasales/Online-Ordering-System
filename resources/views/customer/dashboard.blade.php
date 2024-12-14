@@ -183,9 +183,10 @@
             const verificationModal = document.getElementById('verification-modal');
             const closeModalButton = document.getElementById('close-modal');
 
-            // @if(session('upload_verification'))
-            //     verificationModal.classList.remove('hidden');
-            // @endif
+            // Check the session value and show the modal
+            @if(session('upload_verification'))
+                verificationModal.classList.remove('hidden');
+            @endif
 
             closeModalButton.addEventListener('click', () => {
                 verificationModal.classList.add('hidden');

@@ -173,39 +173,38 @@ class UserController extends Controller
                 'payment_method.required' => 'Please select a payment method.',
             ]);
         }
-    
+
         $userId = Auth::id();
-    
+
         if (!$userId) {
             return redirect()->route("login")->with("error", "Please log in first.");
         }
-    
+
         $user = User::with('verification')->findOrFail($userId);
         if ($user->is_blocked) {
             return redirect()->route('userdashboard')->with('blocked', 'Your account is blocked. You cannot perform this action.');
         }
-    
+
         $verification = $user->verification;
         if (!$verification || !$verification->verified) {
-            return back()->with('upload_verification', true);
+            return redirect()->route('userdashboard')->with('upload_verification', true);
         }
-    
+
         $cart = Cart::firstOrCreate(['user_id' => $userId]);
-    
+
         $cartItemExists = $cart->items()->where('product_id', $productId)->exists();
         if ($cartItemExists) {
             return redirect()->route("cart")->with("success", "Product is already in the cart.");
         }
-    
+
         $cart->items()->create([
             'user_id' => $userId,
             'product_id' => $productId,
             'quantity' => 1,
         ]);
-    
+
         return redirect()->route("userdashboard")->with("success", "Product added successfully.");
     }
-    
     
     public function addToCartPage()
     {
