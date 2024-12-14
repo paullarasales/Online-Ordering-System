@@ -36,13 +36,14 @@
                         <th class="py-4 px-4 text-left text-sm font-semibold text-gray-700">Product</th>
                         <th class="py-4 px-4 text-left text-sm font-semibold text-gray-700">Category</th>
                         <th class="py-4 px-4 text-left text-sm font-semibold text-gray-700">Price</th>
+                        <th class="py-4 px-4 text-left text-sm font-semibold text-gray-700">Available</th>
                         <th class="py-4 px-4 text-left text-sm font-semibold text-gray-700">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @if($products->isEmpty())
                         <tr>
-                            <td colspan="4" class="text-center py-4 text-gray-600">No products to display.</td>
+                            <td colspan="5" class="text-center py-4 text-gray-600">No products to display.</td>
                         </tr>
                     @else
                         @foreach($products as $product)
@@ -55,23 +56,33 @@
                             </td>
                             <td class="py-4 px-4 text-gray-700 font-semibold">{{ $product->category->category_name }}</td>
                             <td class="py-4 px-4 text-gray-700 font-semibold">₱{{ number_format($product->price, 2) }}</td>
-                            <td class="py-4 px-4 flex space-x-2 mt-5">
-                            <button class="w-20 h-10 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                <a href="{{ route('update-view', $product->id) }}" class="w-full h-full flex items-center justify-center">
-                                    Edit
-                                </a>
-                            </button>
-                            <form action="{{ route('product.destroy', $product->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="w-10 h-10 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9L14.4 18m-4.788 0L9.26 9M9.26 9H14.74M19.072 5.79c.342.052.682.107 1.022.166m-1.022-.166L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>
+                            <td class="py-4 px-4 text-gray-700 font-semibold">
+                                <div class="flex justify-center">
+                                    <form action="{{ route('product.update.availability', $product->id) }}" method="POST">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="w-20 h-10 {{ $product->availability ? 'bg-green-500' : 'bg-gray-500' }} text-white rounded hover:bg-green-600">
+                                            {{ $product->availability ? 'Available' : 'Not Available' }}
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                            <td class="py-4 px-4 flex space-x-2 mt-3">
+                                <button class="w-20 h-10 bg-blue-500 text-white rounded hover:bg-blue-600">
+                                    <a href="{{ route('update-view', $product->id) }}" class="w-full h-full flex items-center justify-center">
+                                        Edit
+                                    </a>
                                 </button>
-                            </form>
-                        </td>
-
+                                <form action="{{ route('product.destroy', $product->id) }}" method="POST">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="w-10 h-10 bg-red-500 text-white rounded hover:bg-red-600 flex items-center justify-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9L14.4 18m-4.788 0L9.26 9M9.26 9H14.74M19.072 5.79c.342.052.682.107 1.022.166m-1.022-.166L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </td>
                         </tr>
                         @endforeach
                     @endif
@@ -92,7 +103,7 @@
             filterSelect.addEventListener('change', function() {
                 const selectedFilter = this.value;
 
-                const url = selectedFilter === 'All' ? '{{ route('product') }}' : `{{ route('product.filter') }}?filter=${selectedFilter}`;
+                const url = selectedFilter === 'all' ? '{{ route('product') }}' : `{{ route('product.filter') }}?filter=${selectedFilter}`;
 
                 fetch(url, {
                     method: 'GET',
@@ -114,7 +125,7 @@
                 tbody.innerHTML = '';
 
                 if (products.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-gray-600">No products to display.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-gray-600">No products to display.</td></tr>';
                 } else {
                     products.forEach(product => {
                         const row = createProductRow(product);
@@ -135,6 +146,15 @@
                     </td>
                     <td class="py-4 px-4 text-gray-700 font-semibold">${product.category_name}</td>
                     <td class="py-4 px-4 text-gray-700 font-semibold">₱${product.price.toFixed(2)}</td>
+                    <td class="py-4 px-4 text-gray-700 font-semibold">
+                        <form action="/admin/product/${product.id}/availability" method="POST">
+                            <input type="hidden" name="_method" value="PATCH">
+                            <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="w-20 h-10 ${product.availability ? 'bg-green-500' : 'bg-gray-500'} text-white rounded hover:bg-green-600">
+                                ${product.availability ? 'Available' : 'Not Available'}
+                            </button>
+                        </form>
+                    </td>
                     <td class="py-4 px-4 flex space-x-2">
                         <a href="/admin/product/update/${product.id}" class="text-indigo-600 hover:text-indigo-800">Edit</a>
                         <form action="/admin/product/${product.id}" method="POST">

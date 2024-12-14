@@ -80,6 +80,15 @@ class ProductController extends Controller
         return redirect()->route('product')->with('success', 'Product updated successfully');
     }
 
+    public function updateAvailability(Request $request, $id) 
+    {
+        $product = Product::findOrFail($id);
+        $product->availability = !$product->availability;
+        $product->save();
+
+        return redirect()->route('product')->with('success', 'Product availability updated successfully.');
+    }
+
     public function destroy($id)
     {
         $product = Product::findOrFail($id);

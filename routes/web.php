@@ -189,6 +189,7 @@ Route::get('/orders/filter', [AdminController::class, 'filter'])->name('admin.or
 Route::get('/admin/block/{id}', [AdminController::class, 'blockUser'])->name('admin.block');
 Route::post('/order/{id}/send-receipt', [AdminController::class, 'sendReceipt'])->name('send-receipt');
 
+
 //Others
 Route::post("Product-add", [ProductController::class, "addProduct"])
     ->name("products.store")
@@ -205,6 +206,7 @@ Route::delete("Product-delete/{id}/detete", [
 Route::put("/products/{id}/save", [ProductController::class, "update"])
     ->name("product.update")
     ->middleware("admin");
+Route::patch('/admin/product/{id}/availability', [ProductController::class, 'updateAvailability'])->name('product.update.availability');
 
 Route::middleware(["auth"])->group(function () {
     Route::post("/send-message", [ChatController::class, "sendMessage"]);
