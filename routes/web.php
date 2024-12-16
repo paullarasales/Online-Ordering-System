@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\ProfileUpdate;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SalesController;
 use App\Models\Product;
 
 Route::get("/", function () {
@@ -104,7 +105,7 @@ Route::get("/dashboard", [AdminController::class, "dashboard"])
     ->middleware("admin");
 Route::get("/customer", [AdminController::class, "customer"])
     ->middleware(["auth", "verified"])
-    ->name("customer")
+    ->name("customer")  
     ->middleware("admin");
 Route::get("/order", [AdminController::class, "order"])
     ->middleware(["auth", "verified"])
@@ -188,6 +189,8 @@ Route::get('/order/stats', [AdminController::class, 'orderStatus'])->name('admin
 Route::get('/orders/filter', [AdminController::class, 'filter'])->name('admin.orders.filter');
 Route::get('/admin/block/{id}', [AdminController::class, 'blockUser'])->name('admin.block');
 Route::post('/order/{id}/send-receipt', [AdminController::class, 'sendReceipt'])->name('send-receipt');
+Route::get('/admin/report', [AdminController::class, 'reports'])->name('admin.reports');
+Route::get('/get-total-sales', [SalesController::class, 'getTotalSales']);
 
 
 //Others

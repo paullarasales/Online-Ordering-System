@@ -517,4 +517,49 @@ class AdminController extends Controller
         return back()->with('error', 'Receipt sending failed');
     }
 
+    public function reports(Request $request)
+{
+    // Get start date and end date from the request, or use default values
+    $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date'))->startOfDay() : null;
+    $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : null;
+
+    // Query for sales
+    $query = OrderItem::join("products", "order_items.product_id", "=", "products.id")
+        ->join("orders", "order_items.order_id", "=", "orders.id")
+        ->where("orders.status", "delivered");
+
+    // Apply the date filters if they are provided
+    if ($startDate && $endDate) {
+        $query->whereBetween("orders.created_at", [$startDate, $endDate]);
+    }
+
+    // Calculate total sales
+    $totalSales = $query->selectRaw("SUM(order_items.quantity * products.price + 60) as total_sales")
+        ->value("total_sales");
+
+    // If no sales, set to 0
+    $totalSales = $totalSales ?? 0;
+
+    // Get the sales per day for the selected date range
+    $salesPerDay = [];
+    if ($startDate && $endDate) {
+        $salesPerDayQuery = $query->selectRaw("DATE(orders.created_at) as date, SUM(order_items.quantity * products.price + 60) as daily_sales")
+            ->groupBy('date')
+            ->orderBy('date', 'asc')
+            ->get();
+
+        // Prepare sales data in array format for Chart.js
+        foreach ($salesPerDayQuery as $data) {
+            $salesPerDay[] = [
+                'date' => $data->date,
+                'sales' => $data->daily_sales ?? 0
+            ];
+        }
+    }
+
+    // Return the view with the result
+    return view('admin.report', compact('totalSales', 'salesPerDay', 'startDate', 'endDate'));
+}
+
+
 }
