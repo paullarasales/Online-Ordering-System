@@ -190,6 +190,7 @@ Route::get('/orders/filter', [AdminController::class, 'filter'])->name('admin.or
 Route::get('/admin/block/{id}', [AdminController::class, 'blockUser'])->name('admin.block');
 Route::post('/order/{id}/send-receipt', [AdminController::class, 'sendReceipt'])->name('send-receipt');
 Route::get('/admin/report', [AdminController::class, 'reports'])->name('admin.reports');
+Route::get('/admin/reports/download', [AdminController::class, 'downloadReport'])->name('admin.reports.download');
 Route::get('/get-total-sales', [SalesController::class, 'getTotalSales']);
 
 
