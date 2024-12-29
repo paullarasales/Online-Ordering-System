@@ -58,16 +58,32 @@
                         let notificationHtml = '';
 
                         if (data.orders && data.orders.length > 0) {
-                            data.orders.forEach(order => {
-                                let status = order.status.charAt(0).toUpperCase() + order.status.slice(1);
-                                let statusMessage = `<strong>${status}</strong>`;
-                                const createdAt = new Date(order.created_at); 
-                                const options = { day: '2-digit', month: 'long', year: 'numeric' }; 
-                                const formattedDate = createdAt.toLocaleDateString('en-GB', options); 
-                                let createdAtMessage = `<span>${formattedDate}</span>`;
+                            // Group orders by order ID and sort in descending order
+                            const groupedOrders = data.orders.sort((a, b) => b.order_id - a.order_id);
+
+                            groupedOrders.forEach(order => {
+                                const createdAt = new Date(order.created_at); // Parse created_at
+                                const options = {
+                                    day: '2-digit',
+                                    month: 'long',
+                                    year: 'numeric',
+                                    hour: '2-digit',
+                                    minute: '2-digit',
+                                };
+                                const formattedDate = createdAt.toLocaleDateString('en-GB', options);
+
+                                notificationHtml += `
+                                    <div class="border-t border-gray-200 py-4">
+                                        <h2 class="text-lg font-semibold text-gray-700 flex items-center">
+                                            <span class="text-blue-500 text-2xl mr-2">&#128230;</span> <!-- Box Icon -->
+                                            Order ID: ${order.order_id}
+                                        </h2>
+                                        <p class="text-sm text-gray-500">${formattedDate}</p>
+                                        <a href="{{ route('view.order') }}" class="text-blue-500 underline mt-2">View Order</a>
+                                `;
+
                                 order.products.forEach(product => {
                                     let productStatusMessage = `<strong>${product.product_name}</strong>`;
-
                                     switch (order.status) {
                                         case 'in-queue':
                                             productStatusMessage += " is still in queue. We will notify you later.";
@@ -87,13 +103,13 @@
                                     }
 
                                     notificationHtml += `
-                                        <div class="border-t border-gray-200 py-4 flex flex-col items-start">
-                                            <p>${statusMessage}</p>
-                                            <p><span class="text-blue-500 text-2xl mr-2">&#128230;</span>${productStatusMessage}</p>
-                                            <p>${createdAtMessage}</p>
+                                        <div class="py-2 flex flex-col items-start">
+                                            <p>${productStatusMessage}</p>
                                         </div>
                                     `;
                                 });
+
+                                notificationHtml += '</div>';
                             });
                         } else {
                             notificationHtml = `
@@ -106,9 +122,10 @@
 
                         notificationOrderHtml.innerHTML = notificationHtml;
                     } catch (error) {
-                        console.log('Error fetching order status', error);
+                        console.error('Error fetching order status:', error);
                     }
                 }
+
 
                 OrderNotif();
                 Notif();

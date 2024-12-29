@@ -332,6 +332,7 @@ class UserController extends Controller
 
         $orders = Order::where("user_id", $userId)
             ->with("items.product")
+            ->orderBy("created_at", "desc")
             ->get();
 
         return view("customer.myorder", compact("orders"));
@@ -458,6 +459,7 @@ class UserController extends Controller
 
             $ordersData = $orders->map(function ($order) {
                 return [
+                    "order_id" => $order->id,
                     "status" => $order->status,
                     "created_at" => $order->created_at,
                     "products" => $order->items->map(function ($item) {

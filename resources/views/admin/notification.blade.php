@@ -13,11 +13,9 @@
                                     </svg>
                                 </div>
                                 <div class="ml-4">
-                                    @if ($order->status === 'Processing')
-                                        <p class="text-lg font-medium text-gray-900">{{ $order->user->name }} made an order.</p>
-                                    @else
-                                        <p class="text-lg font-medium text-gray-900">{{ $order->user->name }} made an order.</p>
-                                    @endif 
+                                    <p class="text-lg font-medium text-gray-900">{{ $order->user->name }} made an order.</p>
+                                    <p class="text-sm text-gray-500">{{ $order->created_at->format('F j, Y, g:i a') }}</p>
+                                    <a href="{{ route('admin.order.details', $order->id) }}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">View Details</a>
                                 </div>
                             </div>
                         @endforeach
@@ -30,6 +28,7 @@
                                 </div>
                                 <div class="ml-4">
                                     <p class="text-lg font-medium text-gray-900">{{ $verification->user->name }} submitted a verification request.</p>
+                                    <p class="text-sm text-gray-500">{{ $verification->created_at->format('F j, Y, g:i a') }}</p>
                                 </div>
                             </div>
                         @endforeach
@@ -77,6 +76,8 @@
                                         @elseif ($notification->status === 'canceled')
                                             <p class="text-lg font-medium text-gray-900">Order ID: {{ $notification->id }} from {{ $notification->user->name }} has been canceled.</p>
                                         @endif
+                                        <p class="text-sm text-gray-500">{{ $notification->created_at->format('F j, Y, g:i a') }}</p>
+                                        <a href="{{ route('admin.order.details', $notification->id) }}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">View Details</a>
                                     </div>
                                 </div>
                             @elseif ($notification->type === 'verification')
@@ -88,6 +89,7 @@
                                     </div>
                                     <div class="ml-4">
                                         <p class="text-lg font-medium text-gray-900">{{ $notification->user->name }} submitted a verification request.</p>
+                                        <p class="text-sm text-gray-500">{{ $notification->created_at->format('F j, Y, g:i a') }}</p>
                                     </div>
                                 </div>
                             @endif
@@ -112,6 +114,7 @@
                         data.newOrders.reverse().forEach(order => {
                             const userName = order.user ? order.user.name : 'Unknown User';
                             const statusText = order.status === 'Processing' ? 'is currently being processed' : 'action performed on the order';
+                            const dateTime = new Date(order.created_at).toLocaleString();
                             const orderHtml = `
                                 <div class="flex items-center p-4 border rounded-lg bg-white shadow-sm hover:bg-gray-50 transition-colors">
                                     <div class="flex-shrink-0">
@@ -121,6 +124,8 @@
                                     </div>
                                     <div class="ml-4">
                                         <p class="text-lg font-medium text-gray-900">Order ID: ${order.id} from ${userName} ${statusText}.</p>
+                                        <p class="text-sm text-gray-500">${dateTime}</p>
+                                        <a href="/admin/orders/${order.id}" class="text-blue-600 hover:text-blue-800 mt-2 inline-block">View Details</a>
                                     </div>
                                 </div>
                             `;
@@ -129,6 +134,7 @@
 
                         data.newVerifications.reverse().forEach(verification => {
                             const userName = verification.user ? verification.user.name : 'Unknown User';
+                            const dateTime = new Date(verification.created_at).toLocaleString();
                             const verificationHtml = `
                                 <div class="flex items-center p-4 border rounded-lg bg-white shadow-sm hover:bg-gray-50 transition-colors">
                                     <div class="flex-shrink-0">
@@ -138,6 +144,7 @@
                                     </div>
                                     <div class="ml-4">
                                         <p class="text-lg font-medium text-gray-900">${userName} submitted a verification request.</p>
+                                        <p class="text-sm text-gray-500">${dateTime}</p>
                                     </div>
                                 </div>
                             `;
@@ -145,7 +152,7 @@
                         });
                     }
                 } catch (error) {
-                    console.error('Error fetching notifications:', error);
+                    console.error('Error fetching new notifications:', error);
                 }
             }
 

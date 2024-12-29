@@ -258,21 +258,16 @@ class AdminController extends Controller
 
     public function updateStatus(Request $request)
     {
-        $orderId = $request->input("order_id");
-        $status = $request->input("status");
+        $validated = $request->validate([
+            'order_id' => 'required|exists:orders,id',
+            'status' => 'required|in:in_queue,processing,on-deliver,delivered,cancelled',
+        ]);
 
-        $order = Order::find($orderId);
-        if ($order) {
-            $order->status = $status;
-            $order->notifiedbyuser = false;
-            $order->save();
-            return response()->json(["success" => true]);
-        } else {
-            return response()->json(
-                ["success" => false, "message" => "Order not found"],
-                404
-            );
-        }
+        $order = Order::find($validated['order_id']);
+        $order->status = $validated['status'];
+        $order->save();
+
+        return redirect()->back()->with('success', 'Order status updated successfully.');
     }
 
     public function fetchOrdersAndVerification()

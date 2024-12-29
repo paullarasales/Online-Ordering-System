@@ -56,5 +56,27 @@
                 @endforelse
             </ul>
         </div>
+
+        <!-- Status Update Section -->
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+            <h3 class="text-lg font-semibold text-gray-800">Update Order Status</h3>
+            <form action="{{ route('admin.orders.updateStatus') }}" method="POST">
+                @csrf
+                <input type="hidden" name="order_id" value="{{ $order->id }}">
+                <div class="mt-4">
+                    <label for="status" class="block text-sm font-medium text-gray-500">Status</label>
+                    <select id="status" name="status" class="mt-1 block w-full px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                        <option value="in_queue" {{ $order->status == 'in_queue' ? 'selected' : '' }}>In Queue</option>
+                        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
+                        <option value="on-deliver" {{ $order->status == 'on-deliver' ? 'selected' : '' }}>On Delivery</option>
+                        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
+                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                    </select>
+                </div>
+                <button type="submit" class="mt-4 inline-flex items-center px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    Update Status
+                </button>
+            </form>
+        </div>
     </div>
 </x-admin-layout>

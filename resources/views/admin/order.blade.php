@@ -4,7 +4,7 @@
             <button class="filter-btn p-2 bg-gray-300 text-white rounded hover:bg-blue-700" data-status="all">All</button>
             <button class="filter-btn p-2 bg-yellow-300 text-gray-700 rounded hover:bg-gray-400" data-status="in-queue">In Queue</button>
             <button class="filter-btn p-2 bg-blue-400 text-gray-700 rounded hover:bg-gray-400" data-status="processing">Processing</button>
-            <button class="filter-btn p-2 bg-orange-400 text-gray-700 rounded hover:bg-gray-400" data-status="on-deliver">On Deliver</button>
+            <button class="filter-btn p-2 bg-orange-400 text-gray-700 rounded hover:bg-gray-400" data-status="on-deliver">On Delivery</button>
             <button class="filter-btn p-2 bg-green-400 text-gray-700 rounded hover:bg-gray-400" data-status="delivered">Delivered</button>
             <button class="filter-btn p-2 bg-red-400 text-gray-700 rounded hover:bg-gray-400" data-status="cancelled">Cancelled</button>
         </div>
@@ -28,13 +28,15 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-md text-gray-800">{{ $order->user->name }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-md text-gray-800">{{ $order->payment_method }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <select name="status" id="status-{{ $order->id }}" data-order-id="{{ $order->id }}" class="status-dropdown p-2 w-32 rounded-md border border-gray-300 text-md" @if($order->status == 'delivered' || $order->status == 'cancelled') disabled @endif>
-                                        <option value="in-queue" {{ ($order->status == 'in-queue') ? 'selected' : '' }}>In Queue</option>
-                                        <option value="processing" {{ $order->status == 'processing' ? 'selected' : '' }}>Processing</option>
-                                        <option value="on-deliver" {{ $order->status == 'on-deliver' ? 'selected' : '' }}>On Deliver</option>
-                                        <option value="delivered" {{ $order->status == 'delivered' ? 'selected' : '' }}>Delivered</option>
-                                        <option value="cancelled" {{ $order->status == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                    </select>
+                                    <span class="inline-block px-4 py-2 rounded-md text-white 
+                                        @if($order->status == 'in-queue') bg-yellow-400 
+                                        @elseif($order->status == 'processing') bg-blue-400 
+                                        @elseif($order->status == 'on-deliver') bg-orange-400 
+                                        @elseif($order->status == 'delivered') bg-green-400 
+                                        @elseif($order->status == 'cancelled') bg-red-400 
+                                        @endif">
+                                        {{ ucfirst(str_replace('-', ' ', $order->status)) }}
+                                    </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <a href="{{ route('admin.order.details', $order->id) }}" class="text-blue-600 hover:text-blue-800 text-md font-semibold transition duration-150 ease-in-out">View Details</a>
@@ -99,16 +101,17 @@
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${order.user.name}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-800">${order.payment_method}</td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <select name="status" id="status-${order.id}" data-order-id="${order.id}" class="status-dropdown p-2 rounded-md border border-gray-300 text-sm" ${order.status === 'delivered' || order.status === 'cancelled' ? 'disabled' : ''}>
-                                        <option value="in-queue" ${order.status === 'in-queue' ? 'selected' : ''}>In Queue</option>
-                                        <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>Processing</option>
-                                        <option value="on-deliver" ${order.status === 'on-deliver' ? 'selected' : ''}>On Deliver</option>
-                                        <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Delivered</option>
-                                        <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
-                                    </select>
+                                    <span class="inline-block px-4 py-2 rounded-md text-white 
+                                        ${order.status === 'in-queue' ? 'bg-yellow-400' : ''}
+                                        ${order.status === 'processing' ? 'bg-blue-400' : ''}
+                                        ${order.status === 'on-deliver' ? 'bg-orange-400' : ''}
+                                        ${order.status === 'delivered' ? 'bg-green-400' : ''}
+                                        ${order.status === 'cancelled' ? 'bg-red-400' : ''}">
+                                        ${order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('-', ' ')}
+                                    </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    <a href="{{ route('admin.order.details', $order->id) }}" class="text-blue-600 hover:text-blue-800 text-sm font-semibold transition duration-150 ease-in-out">View Details</a>
+                                    <a href="/admin/orders/${order.id}" class="text-blue-600 hover:text-blue-800 text-sm font-semibold transition duration-150 ease-in-out">View Details</a>
                                 </td>
                             </tr>
                         `;
@@ -117,45 +120,7 @@
                 } else {
                     orderTableBody.innerHTML = '<tr><td colspan="5" class="text-center px-6 py-4 text-gray-600">No orders found</td></tr>';
                 }
-
-                attachStatusChangeListeners();
             }
-
-            function attachStatusChangeListeners() {
-                const statusDropdowns = document.querySelectorAll('.status-dropdown');
-                statusDropdowns.forEach(dropdown => {
-                    dropdown.addEventListener('change', function () {
-                        const orderId = this.dataset.orderId;
-                        const newStatus = this.value;
-                        updateOrderStatus(orderId, newStatus);
-                    });
-                });
-            }
-
-            function updateOrderStatus(orderId, status) {
-                fetch("{{ route('admin.orders.updateStatus') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    },
-                    body: JSON.stringify({ order_id: orderId, status: status }),
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Order status updated successfully');
-                    } else {
-                        alert('Failed to update order status: ' + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error updating order status: ', error);
-                    alert('An error occurred while updating the order status');
-                });
-            }
-
-            attachStatusChangeListeners();
         });
     </script>
 </x-admin-layout>
