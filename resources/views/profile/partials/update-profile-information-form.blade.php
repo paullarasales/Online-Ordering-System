@@ -59,6 +59,20 @@
         </div>
 
         <div>
+            <x-input-label for="municipality" :value="_('Municipality')"/>
+            <select id="municipality" name="municipality" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                <option value="">{{__("Select Municipality")}}</option>
+                <option value="Urbiztondo" {{ old('municipality', $user->municipality) == 'Urbiztondo' ? 'selected' : '' }}>Urbiztondo</option>
+                <option value="Calasio" {{ old('municipality', $user->municipality) == 'Calasio' ? 'selected' : '' }}>Calasio</option>
+                <option value="Bayambang" {{ old('municipality', $user->municipality) == 'Bayambang' ? 'selected' : '' }}>Bayambang</option>
+                <option value="Basista" {{ old('municipality', $user->municipality) == 'Basista' ? 'selected' : '' }}>Basista</option>
+                <option value="Malasique" {{ old('municipality', $user->municipality) == 'Malasique' ? 'selected' : '' }}>Malasique</option>
+                <option value="San Carlos" {{ old('municipality', $user->municipality) == 'San Carlos' ? 'selected' : '' }}>San Carlos</option>
+            </select>
+            <x-input-error class="mt-2" :messages="$errors->get('municipality')" />
+        </div>
+
+        <div>
             <x-input-label for="address" :value="__('Address')" />
             <x-text-input id="address" name="address" type="text" class="mt-1 block w-full" :value="old('address', $user->address)" required autofocus autocomplete="address" />
             <x-input-error class="mt-2" :messages="$errors->get('address')" />
@@ -85,7 +99,7 @@
 
         <div class="flex items-center mt-6">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
-            
+    
 
             @if (session('status') === 'profile-updated')
                 <p

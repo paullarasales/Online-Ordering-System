@@ -8,6 +8,7 @@
             <p class="text-lg text-gray-600 mb-2"><strong>Order ID:</strong> {{ $order->id }}</p>
             <p class="text-lg text-gray-600 mb-2"><strong>Address:</strong> {{ $order->address }}</p>
             <p class="text-lg text-gray-600 mb-2"><strong>Payment Method:</strong> {{ $order->payment_method }}</p>
+            <p class="text-lg text-gray-600 mb-2"><strong>Shipping Fee:</strong> ₱{{ number_format($order->shipping_fee, 2) }}</p>
         </div>
 
         <!-- Order Items -->
@@ -25,10 +26,15 @@
                                 <p class="text-sm text-gray-500">Quantity: {{ $item->quantity }}</p>
                             </div>
                         </div>
-                        <p class="text-lg font-semibold text-gray-700">₱{{ number_format(optional($item->product)->price * $item->quantity + 60, 2) }}</p>
+                        <p class="text-lg font-semibold text-gray-700">₱{{ number_format(optional($item->product)->price * $item->quantity, 2) }}</p>
                     </li>
                 @endforeach
             </ul>
+        </div>
+
+        <!-- Total Price -->
+        <div class="mt-8 bg-gray-50 p-6 rounded-lg shadow-md text-right">
+            <p class="text-xl font-bold text-gray-700">Total Price: ₱{{ number_format($order->items->sum(fn($item) => $item->product->price * $item->quantity) + $order->shipping_fee, 2) }}</p>
         </div>
         
         <div class="mt-12 text-center">

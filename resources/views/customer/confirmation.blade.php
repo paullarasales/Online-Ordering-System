@@ -52,14 +52,16 @@
                                     <h3 class="text-lg font-semibold">{{ $cartItem->product->product_name }}</h3>
                                     <p class="text-gray-600">Quantity: {{ $cartItem->quantity }}</p>
                                     <p class="text-gray-600">Price: ₱{{ $cartItem->product->price }}</p>
-                                    <p class="text-gray-600">Shipping Fee: ₱60</p>
                                 </div>
                                 <img class="w-20 h-20 object-cover rounded-lg" src="{{ $cartItem->product->photo }}" alt="{{ $cartItem->product->product_name }} Photo">
                             </li>
                         @endforeach
                     </ul>
-
-                    <p class="text-gray-600 mt-4">Total Price: ₱{{ $totalPrice }}</p>
+                    
+                    <div>
+                        <p>Shipping Fee: ₱{{ number_format($shippingFee, 2) }}</p>
+                        <p>Total Price: ₱{{ number_format($totalPrice, 2) }}</p>
+                    </div>
                 </div>
             </div>
         </div>

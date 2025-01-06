@@ -259,32 +259,55 @@ class UserController extends Controller
 
     public function prepareCheckout(Request $request)
     {
+        $shippingFees = [
+            'Urbiztondo' => 70,
+            'Calasio' => 90,
+            'Bayambang' => 80,
+            'Basista' => 60,
+            'Malasique' => 50,
+            'San Carlos' => 70
+        ];
+
+        $userMunicipality = Auth::user()->municipality;
+        
+        $shippingFee = $shippingFees[$userMunicipality];
+
         $cartItems = CartItem::where("user_id", auth()->id())
             ->with("product")
             ->get();
 
         $totalPrice = $cartItems->sum(function ($item) {
-            return $item->quantity * $item->product->price + 60;
-        });
+            return $item->quantity * $item->product->price;
+        }) + $shippingFee;
 
         $paymentMethod = "Cash On Delivery";
 
         return view(
             "customer.confirmation",
-            compact("cartItems", "totalPrice", "paymentMethod")
+            compact("cartItems", "totalPrice", "paymentMethod", "shippingFee")
         );
     }
 
     public function createOrder(Request $request)
     {
-        // Fetch cart items from the request
-        $cartItemsData = $request->input("cartItems");
+        $shippingFees = [
+            'Urbiztondo' => 70,
+            'Calasio' => 90,
+            'Bayambang' => 80,
+            'Basista' => 60,
+            'Malasique' => 50,
+            'San Carlos' => 70
+        ];
 
         $user = auth()->user();
 
         if (!$user->address && !$user->contact_number) {
             return redirect()->back()->withErrors(['message' => 'Please update your address and contact number in your profile before placing an order.']);
         }
+
+        //user's municipality and the shipping fee
+        $userMunicipality = $user->municipality;
+        $shippingFee = $shippingFees[$userMunicipality] ?? 60;
 
         // Create a new order
         $order = new Order();
@@ -296,9 +319,10 @@ class UserController extends Controller
         $order->notified = false;
         $order->markasreceived = false;
         $order->notifiedbyuser = false;
+        $order->shipping_fee = $shippingFee;
         $order->save();
 
-        foreach ($cartItemsData as $cartItemId => $cartItemData) {
+        foreach ($request->input("cartItems") as $cartItemId => $cartItemData) {
             $order->items()->create([
                 "product_id" => $cartItemData["product_id"],
                 "quantity" => $cartItemData["quantity"],
@@ -309,7 +333,7 @@ class UserController extends Controller
 
         Mail::to($order->user->email)->send(new \App\Mail\ReceiptMail($order));
 
-        return redirect()->route("thankyou", ["orderId" => $order->id]);
+        return redirect()->route("thankyou", ["orderId" => $order->id, "shippingFee" => $shippingFee]);
     }
 
     public function thankyou($orderId)

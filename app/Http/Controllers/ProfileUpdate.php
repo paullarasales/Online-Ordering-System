@@ -17,6 +17,7 @@ class ProfileUpdate extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
+            'municipality' => 'required|string|max:255',
             'contact_number' => 'required|digits:10',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
@@ -26,6 +27,7 @@ class ProfileUpdate extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
+            'municipality' => $request->municipality,
             'address' => $request->address,
             'contact_number' => '+63' . $request->contact_number,
         ];
