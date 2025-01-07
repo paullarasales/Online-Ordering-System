@@ -35,7 +35,7 @@
                                         @elseif($order->status == 'delivered') bg-green-400 
                                         @elseif($order->status == 'cancelled') bg-red-400 
                                         @endif">
-                                        {{ ucfirst(str_replace('-', ' ', $order->status)) }}
+                                        {{ $order->status == 'on-deliver' ? 'On Delivery' : ucfirst(str_replace('-', ' ', $order->status)) }}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
@@ -107,7 +107,7 @@
                                         ${order.status === 'on-deliver' ? 'bg-orange-400' : ''}
                                         ${order.status === 'delivered' ? 'bg-green-400' : ''}
                                         ${order.status === 'cancelled' ? 'bg-red-400' : ''}">
-                                        ${order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('-', ' ')}
+                                        ${order.status === 'on-deliver' ? 'On Delivery' : order.status.charAt(0).toUpperCase() + order.status.slice(1).replace('-', ' ')}
                                     </span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">

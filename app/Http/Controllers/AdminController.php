@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Mail;
 use App\Http\Controllers\SalesController;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Message;
@@ -26,7 +28,7 @@ class AdminController extends Controller
             ->where("orders.status", "delivered")
             ->whereMonth("orders.created_at", Carbon::now()->subMonth()->month)
             ->whereYear("orders.created_at", Carbon::now()->subMonth()->year)
-            ->selectRaw("SUM(order_items.quantity * products.price + 60) as total_sales")
+            ->selectRaw("SUM(order_items.quantity * products.price + orders.shipping_fee) as total_sales")
             ->value("total_sales");
     }
 
@@ -46,61 +48,67 @@ class AdminController extends Controller
             ->count();
     }
 
-    public function dashboard()
-    {
-        $userCount = User::where("usertype", "user")->count();
-        $orderCount = Order::count();
-        $salesController = new SalesController();
+    public function dashboard(Request $request)
+{
+    $currentYear = $request->input('year', Carbon::now()->year);
 
-        $totalSales = OrderItem::join(
-            "products",
-            "order_items.product_id",
-            "=",
-            "products.id"
+    $userCount = User::where("usertype", "user")
+        ->whereYear('created_at', $currentYear)
+        ->count();
+
+    $orderCount = Order::whereYear('created_at', $currentYear)
+        ->count();
+
+    $totalSales = OrderItem::join(
+        "products",
+        "order_items.product_id",
+        "=",
+        "products.id"
+    )
+        ->join("orders", "order_items.order_id", "=", "orders.id")
+        ->where("orders.status", "delivered")
+        ->whereYear("orders.created_at", $currentYear)
+        ->selectRaw(
+            "SUM(order_items.quantity * products.price + orders.shipping_fee) as total_sales"
         )
+        ->value("total_sales");
+
+    $lastMonthSales = $this->getLastMonthSales();
+    $lastMonthOrders = $this->getLastMonthOrders();
+    $lastMonthCustomers = $this->getLastMonthCustomers();
+
+    $salesChange = $totalSales - $lastMonthSales;
+    $orderChange = $orderCount - $lastMonthOrders;
+    $customerChange = $userCount - $lastMonthCustomers;
+
+    $salesData = [];
+    $salesMonths = [];
+    for ($i = 0; $i < 12; $i++) {
+        $month = Carbon::now()->subMonths($i)->format('M');
+        $salesMonths[] = $month;
+
+        $monthlySales = OrderItem::join("products", "order_items.product_id", "=", "products.id")
             ->join("orders", "order_items.order_id", "=", "orders.id")
             ->where("orders.status", "delivered")
-            ->selectRaw(
-                "SUM(order_items.quantity * products.price + 60) as total_sales"
-            )
+            ->whereMonth("orders.created_at", Carbon::now()->subMonths($i)->month)
+            ->whereYear("orders.created_at", $currentYear)
+            ->selectRaw("SUM(order_items.quantity * products.price + orders.shipping_fee) as total_sales")
             ->value("total_sales");
 
-        $lastMonthSales = $this->getLastMonthSales();
-        $lastMonthOrders = $this->getLastMonthOrders();
-        $lastMonthCustomers = $this->getLastMonthCustomers();
-
-        $salesChange = $totalSales - $lastMonthSales;
-        $orderChange = $orderCount - $lastMonthOrders;
-        $customerChange = $userCount - $lastMonthCustomers;
-
-        $salesData = [];
-        $salesMonths = [];
-        for ($i = 0; $i < 12; $i++) {
-            $month = Carbon::now()->subMonths($i)->format('M');
-            $salesMonths[] = $month;
-
-            $monthlySales = OrderItem::join("products", "order_items.product_id", "=", "products.id")
-                ->join("orders", "order_items.order_id", "=", "orders.id")
-                ->where("orders.status", "delivered")
-                ->whereMonth("orders.created_at", Carbon::now()->subMonths($i)->month)
-                ->whereYear("orders.created_at", Carbon::now()->subMonths($i)->year)
-                ->selectRaw("SUM(order_items.quantity * products.price + 60) as total_sales")
-                ->value("total_sales");
-
-            $salesData[] = $monthlySales ?? 0;
-        }
-
-        $orders = Order::with("user")
-            ->orderBy("created_at", "desc")
-            ->limit(15)
-            ->get();
-
-        return view(
-            "admin.dashboard",
-            compact("orders", "totalSales", "orderCount", "userCount", "salesChange", "orderChange", "customerChange", "lastMonthSales", "lastMonthOrders", "lastMonthCustomers", "salesData", "salesMonths")
-        );
+        $salesData[] = $monthlySales ?? 0;
     }
 
+    $orders = Order::with("user")
+        ->whereYear('created_at', $currentYear)
+        ->orderBy("created_at", "desc")
+        ->limit(15)
+        ->get();
+
+    return view(
+        "admin.dashboard",
+        compact("orders", "totalSales", "orderCount", "userCount", "salesChange", "orderChange", "customerChange", "lastMonthSales", "lastMonthOrders", "lastMonthCustomers", "salesData", "salesMonths", "currentYear")
+    );
+}
 
     public function customer()
     {
@@ -265,6 +273,7 @@ class AdminController extends Controller
 
         $order = Order::find($validated['order_id']);
         $order->status = $validated['status'];
+        $order->notifiedbyuser = false;
         $order->save();
 
         return redirect()->back()->with('success', 'Order status updated successfully.');
@@ -515,13 +524,25 @@ class AdminController extends Controller
 
     public function reports(Request $request)
     {
-        //last 7 days
+        // Default date range for total sales: last 7 days
         $defaultStartDate = Carbon::now()->subDays(7)->startOfDay();
         $defaultEndDate = Carbon::now()->endOfDay();
-    
-        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date'))->startOfDay() : $defaultStartDate;
-        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : $defaultEndDate;
-    
+        
+        // Initialize startDate and endDate for total sales calculation
+        $startDate = $defaultStartDate;
+        $endDate = $defaultEndDate;
+        
+        // Sales per day calculation (filtered by start and end date)
+        if ($request->filled('start_date') && $request->filled('end_date')) {
+            $startDate = Carbon::parse($request->input('start_date'))->startOfDay();
+            $endDate = Carbon::parse($request->input('end_date'))->endOfDay();
+        } elseif ($request->filled('year')) {
+            $year = $request->input('year');
+            $startDate = Carbon::createFromDate($year, 1, 1)->startOfDay();
+            $endDate = Carbon::createFromDate($year, 12, 31)->endOfDay();
+        }
+
+        // Sales per day calculation (filtered by start and end date)
         $salesPerDay = OrderItem::join("products", "order_items.product_id", "=", "products.id")
             ->join("orders", "order_items.order_id", "=", "orders.id")
             ->where("orders.status", "delivered")
@@ -530,41 +551,88 @@ class AdminController extends Controller
             ->groupBy("date")
             ->orderBy("date", "asc")
             ->get();
-    
+
         $totalSales = $salesPerDay->sum('sales');
-    
-        return view('admin.report', compact('salesPerDay', 'totalSales', 'startDate', 'endDate'));
+
+        // **Most Sold Products Query** (Custom date filtering for most sold products)
+        $mostSoldProductsQuery = OrderItem::join("products", "order_items.product_id", "=", "products.id")
+            ->join("orders", "order_items.order_id", "=", "orders.id")
+            ->where("orders.status", "delivered")
+            ->select("products.product_name", \DB::raw("SUM(order_items.quantity) as total_quantity"))
+            ->groupBy("products.id", "products.product_name")
+            ->orderByDesc(\DB::raw("SUM(order_items.quantity)"));
+
+        // Apply custom date filtering for top-selling products (if provided by frontend)
+        if ($request->filled('top_selling_start_date') && $request->filled('top_selling_end_date')) {
+            $topSellingStartDate = Carbon::parse($request->input('top_selling_start_date'))->startOfDay();
+            $topSellingEndDate = Carbon::parse($request->input('top_selling_end_date'))->endOfDay();
+            $mostSoldProductsQuery->whereBetween('orders.created_at', [$topSellingStartDate, $topSellingEndDate]);
+        }
+
+        // Get the top 5 most sold products
+        $mostSoldProducts = $mostSoldProductsQuery->limit(5)->get();
+
+        // Return the view with the selected data
+        return view('admin.report', compact('salesPerDay', 'totalSales', 'startDate', 'endDate', 'mostSoldProducts'));
     }
-    
     public function downloadReport(Request $request)
-    {
-        $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date'))->startOfDay() : Carbon::now()->subDays(7)->startOfDay();
-        $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : Carbon::now()->endOfDay();
-    
-        $salesPerDay = OrderItem::join("products", "order_items.product_id", "=", "products.id")
-            ->join("orders", "order_items.order_id", "=", "orders.id")
-            ->where("orders.status", "delivered")
-            ->whereBetween("orders.created_at", [$startDate, $endDate])
-            ->selectRaw("DATE(orders.created_at) as date, SUM(order_items.quantity * products.price + 60) as sales")
-            ->groupBy("date")
-            ->orderBy("date", "asc")
-            ->get();
-    
-        $totalSales = $salesPerDay->sum('sales');
-    
-        $chartImage = $request->input('chart_image');
-    
-        $data = [
-            'salesPerDay' => $salesPerDay,
-            'totalSales' => $totalSales,
-            'startDate' => $startDate,
-            'endDate' => $endDate,
-            'chartImage' => $chartImage,
-        ];
-    
-        $pdf = PDF::loadView('admin.pdf_report', $data);
-    
-        return $pdf->download('sales_report.pdf');
+{
+    $startDate = $request->input('start_date') ? Carbon::parse($request->input('start_date'))->startOfDay() : Carbon::now()->subDays(7)->startOfDay();
+    $endDate = $request->input('end_date') ? Carbon::parse($request->input('end_date'))->endOfDay() : Carbon::now()->endOfDay();
+
+    $sales = OrderItem::join("products", "order_items.product_id", "=", "products.id")
+        ->join("orders", "order_items.order_id", "=", "orders.id")
+        ->join("users", "orders.user_id", "=", "users.id")
+        ->where("orders.status", "delivered")
+        ->whereBetween("orders.created_at", [$startDate, $endDate])
+        ->selectRaw("orders.id as order_id, orders.created_at as order_date, users.name as customer_name, SUM(order_items.quantity * products.price + 60) as total")
+        ->groupBy("orders.id", "orders.created_at", "users.name")
+        ->orderBy("orders.created_at", "asc")
+        ->get();
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+
+    // Add header row
+    $sheet->setCellValue('A1', 'Order ID');
+    $sheet->setCellValue('B1', 'Order Date');
+    $sheet->setCellValue('C1', 'Customer Name');
+    $sheet->setCellValue('D1', 'Total');
+
+    // Populate data rows
+    $row = 2;
+    $overallTotal = 0;
+    foreach ($sales as $sale) {
+        $sheet->setCellValue('A' . $row, $sale->order_id);
+        $sheet->setCellValue('B' . $row, Carbon::parse($sale->order_date)->format('Y-m-d H:i:s'));
+        $sheet->setCellValue('C' . $row, $sale->customer_name);
+        $sheet->setCellValue('D' . $row, '₱' . number_format($sale->total, 2));
+        $overallTotal += $sale->total;
+        $row++;
     }
 
+    // Add overall total row
+    $sheet->setCellValue('C' . $row, 'Overall Total');
+    $sheet->setCellValue('D' . $row, '₱' . number_format($overallTotal, 2));
+
+    // Set the file name
+    $fileName = 'sales_report_' . $startDate->format('Ymd') . '_to_' . $endDate->format('Ymd') . '.xlsx';
+
+    // Write the file to output
+    $writer = new Xlsx($spreadsheet);
+
+    // Start the download process
+    return response()->stream(
+        function () use ($writer) {
+            $writer->save('php://output'); // Write to the output stream
+        },
+        200,
+        [
+            "Content-Type" => "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "Content-Disposition" => "attachment;filename=\"$fileName\"",
+            "Cache-Control" => "max-age=0",
+        ]
+    );
+}
+    
 }

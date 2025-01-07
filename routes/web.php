@@ -189,8 +189,8 @@ Route::get('/order/stats', [AdminController::class, 'orderStatus'])->name('admin
 Route::get('/orders/filter', [AdminController::class, 'filter'])->name('admin.orders.filter');
 Route::get('/admin/block/{id}', [AdminController::class, 'blockUser'])->name('admin.block');
 Route::post('/order/{id}/send-receipt', [AdminController::class, 'sendReceipt'])->name('send-receipt');
-Route::get('/admin/report', [AdminController::class, 'reports'])->name('admin.reports');
-Route::get('/admin/reports/download', [AdminController::class, 'downloadReport'])->name('admin.reports.download');
+Route::match(['get', 'post'], '/admin/report', [AdminController::class, 'reports'])->name('admin.reports');
+Route::post('/admin/reports/download', [AdminController::class, 'downloadReport'])->name('admin.reports.download');
 Route::get('/get-total-sales', [SalesController::class, 'getTotalSales']);
 
 

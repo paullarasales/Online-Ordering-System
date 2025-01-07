@@ -42,19 +42,14 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // $verification = $user->verification()->create([
-        //     'verified' => false,
-        // ]);
-
-        // dd($verification);
-
         event(new Registered($user));
 
-        if (!$user->hasVerifiedEmail()) {
-            return redirect()->route('verification.notice');
-        }
-
         Auth::login($user);
+
+        if (!$user->hasVerifiedEmail()) {
+            session()->flash('verification_sent', 'A verification link has been sent to your email address. Please verify your email.');
+            return redirect()->route('register');
+        }
 
         return redirect(route('userdashboard', absolute: false));
     }

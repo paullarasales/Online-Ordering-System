@@ -13,9 +13,9 @@
     @endif
 
     <!-- Main content -->
-    <div class="container mx-auto py-4 max-w-5xl">
+    <div class="container mx-auto py-4 max-w-7xl">
         <!-- Product Display Section -->
-        <div id="product-list" class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div id="product-list" class="grid grid-cols-2 sm:grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
             @if($products->isEmpty())
                 <div class="text-center text-gray-600">No products to display.</div>
             @else
